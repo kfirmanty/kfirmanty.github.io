@@ -1,0 +1,99 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title></title>
+
+</head>
+
+<body>
+    <div id="app"></div>
+    <button id="startbutton" style="height: 50px; width: 200px;" onclick="startExperience();">Start experience</button>
+    <div id="coords"></div>
+    <script>
+        function startExperience() {
+            document.getElementById('startbutton').remove();
+
+            let audio = [];
+            let app = document.getElementById('app');
+            for (let i = 1; i < 5; i++) {
+                let snippet = new Audio(`audio/${i}.mp3`);
+                audio[i] = snippet;
+            }
+
+            let id;
+            let targets = [{
+                latitude: 52.407519576693936,
+                longitude: 16.919767761653407,
+                audio: 1,
+                name: "enigma"
+            },
+            {
+                latitude: 52.41074522698251,
+                longitude: 16.906121561295134,
+                audio: 1,
+                name: "asnyka"
+            },
+            {
+                latitude: 52.407087243673416,
+                longitude: 16.918188713775262,
+                audio: 2,
+                name: "filharmonia"
+            },
+            {
+                latitude: 52.40663764554719,
+                longitude: 16.91977214099325,
+                audio: 3,
+                name: "ptasie radio"
+            },
+            {
+                latitude: 52.406936634105115,
+                longitude: 16.920196922030634,
+                audio: 4,
+                name: "kolorking"
+            },
+            {
+                latitude: 52.406854279217505,
+                longitude: 16.92142129999564,
+                audio: 5,
+                name: "biblioteka"
+            },
+            {
+                latitude: 52.407616964576064,
+                longitude: 16.91907236376629,
+                audio: 6,
+                name: "zamek"
+            }
+            ];
+            let options = {
+                enableHighAccuracy: false,
+                timeout: 5000,
+                maximumAge: 0,
+            };
+            const MIN_DISTANCE = 0.0003;
+            let isNear = (p1, p2) => {
+                return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
+            }
+            const success = (pos) => {
+                const crd = pos.coords;
+                document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
+                targets.forEach(target => {
+                    if (isNear(target, crd)) {
+                        if (audio[target.audio].paused) {
+                            audio[target.audio].play();
+                            app.innerText = "You are in: " + target.name;
+                        }
+                    }
+                });
+
+            }
+
+            const error = (err) => {
+                console.error(`ERROR(${err.code}): ${err.message}`);
+            }
+
+            id = navigator.geolocation.watchPosition(success, error, options);
+        }
+    </script>
+</body>

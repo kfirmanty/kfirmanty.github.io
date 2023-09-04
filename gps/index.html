@@ -89,6 +89,11 @@
                         if (audio[target.audio].paused) {
                             audio[target.audio].play();
                             app.innerText = "You are in: " + target.name;
+                            targets.forEach((t, index) => {
+                                if (t.audio != target.audio) {
+                                    audio[t.audio].pause()
+                                }
+                            })
                         }
                     }
                 });

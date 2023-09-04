@@ -63,6 +63,7 @@
                 latitude: 52.407616964576064,
                 longitude: 16.91907236376629,
                 audio: 1,
+                minDistance: 0.0003,
                 name: "zamek"
             },
             {
@@ -79,7 +80,8 @@
             };
             const MIN_DISTANCE = 0.0001;
             let isNear = (p1, p2) => {
-                return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
+                let minDistance = p1.minDistance || MIN_DISTANCE;
+                return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
             }
             const success = (pos) => {
                 const crd = pos.coords;

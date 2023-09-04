@@ -42,17 +42,15 @@
                 name: "filharmonia"
             },
             {
-                latitude: 52.40672122058239,
-                longitude: 16.91967440789258,
+                latitude: 52.40663764554719,
+                longitude: 16.91977214099325,
                 audio: 4,
-                minDistance: 0.0003,
                 name: "ptasie radio"
             },
             {
                 latitude: 52.406936634105115,
                 longitude: 16.920196922030634,
                 audio: 5,
-                minDistance: 0.0003,
                 name: "kolorking"
             },
             {
@@ -65,7 +63,6 @@
                 latitude: 52.407616964576064,
                 longitude: 16.91907236376629,
                 audio: 1,
-                minDistance: 0.0003,
                 name: "zamek"
             },
             {
@@ -80,42 +77,22 @@
                 timeout: 5000,
                 maximumAge: 0,
             };
-            const MIN_DISTANCE = 0.0001;
+            const MIN_DISTANCE = 0.0003;
             let isNear = (p1, p2) => {
-                let minDistance = p1.minDistance || MIN_DISTANCE;
-                return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
-            }
-
-            let distanceFrom = (p1, p2) => {
-                return { x: Math.abs(p1.latitude - p2.latitude), y: Math.abs(p1.longitude - p2.longitude) }
-            }
-            const euclideanDistance = ({ x, y }) => {
-                return Math.sqrt((x * x) + (y * y))
+                return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
             }
             const success = (pos) => {
                 const crd = pos.coords;
                 document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
-                let nearest = { target: null, euclideanDistance: 10000000 }
                 targets.forEach(target => {
-                    let distance = distanceFrom(target, crd);
-                    let euclideanDistance = euclideanDistance(distance);
-                    if (euclideanDistance < nearest.euclideanDistance) {
-                        nearest.euclideanDistance = euclideanDistance;
-                        nearest.target = target
+                    if (isNear(target, crd)) {
+                        if (audio[target.audio].paused) {
+                            audio[target.audio].play();
+                            app.innerText = "You are in: " + target.name;
+                        }
                     }
                 });
-                if (isNear(nearest.target, crd)) {
-                    let target = nearest.target;
-                    if (audio[target.audio].paused) {
-                        audio[target.audio].play();
-                        app.innerText = "You are in: " + target.name;
-                        targets.forEach((t) => {
-                            if (t.audio != target.audio) {
-                                audio[t.audio].pause()
-                            }
-                        })
-                    }
-                }
+
             }
 
             const error = (err) => {

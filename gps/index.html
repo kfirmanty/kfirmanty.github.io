@@ -83,23 +83,37 @@
                 let minDistance = p1.minDistance || MIN_DISTANCE;
                 return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
             }
+
+            let distanceFrom = (p1, p2) => {
+                return { x: Math.abs(p1.latitude - p2.latitude), y: Math.abs(p1.longitude - p2.longitude) }
+            }
+            const euclideanDistance = ({ x, y }) => {
+                return Math.sqrt((x * x) + (y * y))
+            }
             const success = (pos) => {
                 const crd = pos.coords;
                 document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
+                let nearest = { target: null, euclideanDistance: 10000000 }
                 targets.forEach(target => {
-                    if (isNear(target, crd)) {
-                        if (audio[target.audio].paused) {
-                            audio[target.audio].play();
-                            app.innerText = "You are in: " + target.name;
-                            targets.forEach((t, index) => {
-                                if (t.audio != target.audio) {
-                                    audio[t.audio].pause()
-                                }
-                            })
-                        }
+                    let distance = distanceFrom(target, crd);
+                    let euclideanDistance = euclideanDistance(distance);
+                    if (euclideanDistance < nearest.euclideanDistance) {
+                        nearest.euclideanDistance = euclideanDistance;
+                        nearest.target = target
                     }
                 });
-
+                if (isNear(nearest.target, crd)) {
+                    let target = nearest.target;
+                    if (audio[target.audio].paused) {
+                        audio[target.audio].play();
+                        app.innerText = "You are in: " + target.name;
+                        targets.forEach((t) => {
+                            if (t.audio != target.audio) {
+                                audio[t.audio].pause()
+                            }
+                        })
+                    }
+                }
             }
 
             const error = (err) => {

@@ -17,7 +17,9 @@
 
             let audio = [];
             let app = document.getElementById('app');
-            for (let i = 1; i < 7; i++) {
+            const firstAudio = 1;
+            const lastAudio = 6;
+            for (let i = firstAudio; i < (lastAudio + 1); i++) {
                 let snippet = new Audio(`audio/${i}.mp3`);
                 audio[i] = snippet;
             }
@@ -66,10 +68,22 @@
                 name: "zamek"
             },
             {
-                latitude: 53.36341260,
-                longitude: 14.60432191,
-                audio: 6,
-                name: "test"
+                latitude: 53.36566061450592,
+                longitude: 14.605989128627435,
+                audio: 1,
+                name: "lapidarium"
+            },
+            {
+                latitude: 53.363991291515184,
+                longitude: 14.604128643780358,
+                audio: 4,
+                name: "park"
+            },
+            {
+                latitude: 53.3622055384041,
+                longitude: 14.60322683343649,
+                audio: 5,
+                name: "stalowa"
             }
             ];
             let options = {
@@ -81,6 +95,7 @@
             let isNear = (p1, p2) => {
                 return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
             }
+            let playingAudioIndex = -1;
             const success = (pos) => {
                 const crd = pos.coords;
                 document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
@@ -90,8 +105,15 @@
                             audio[target.audio].play();
                             app.innerText = "You are in: " + target.name;
                         }
+                        playingAudioIndex = target.audio;
                     }
                 });
+
+                for (let i = firstAudio; i < (lastAudio + 1); i++) {
+                    if (i != playingAudioIndex) {
+                        audio[i].pause();
+                    }
+                }
 
             }
 

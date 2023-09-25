@@ -80,8 +80,8 @@
                 name: "park"
             },
             {
-                latitude: 53.3622055384041,
-                longitude: 14.60322683343649,
+                latitude: 53.362189933283815,
+                longitude: 14.603244143724053,
                 audio: 5,
                 name: "stalowa"
             }
@@ -110,12 +110,16 @@
                 });
 
                 for (let i = firstAudio; i < (lastAudio + 1); i++) {
-                    if (i != playingAudioIndex) {
+                    if (i != playingAudioIndex && !(audio[i].paused)) {
                         audio[i].pause();
                     }
                 }
 
             }
+
+            //TO CHECK:
+            //Instead of isNearDistance try setting up 4 points and checking if coordinates are inside polygon defined by them
+            //Should audio stop if user gets far from the marker/leaves the area?
 
             const error = (err) => {
                 console.error(`ERROR(${err.code}): ${err.message}`);

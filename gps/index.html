@@ -17,8 +17,8 @@
 
             let audio = [];
             let app = document.getElementById('app');
-            const firstAudio = 1;
-            const lastAudio = 6;
+            const firstAudio = 2;
+            const lastAudio = 13;
             for (let i = firstAudio; i < (lastAudio + 1); i++) {
                 let snippet = new Audio(`audio/${i}.mp3`);
                 audio[i] = snippet;
@@ -26,75 +26,117 @@
 
             let id;
             let targets = [{
-                latitude: 52.407519576693936,
-                longitude: 16.919767761653407,
+                latitude: 52.4077429,
+                longitude: 16.9171703,
                 audio: 2,
-                name: "enigma"
+                name: "zegar"
             },
+
             {
-                latitude: 52.41074522698251,
-                longitude: 16.906121561295134,
-                audio: 1,
-                name: "asnyka"
-            },
-            {
-                latitude: 52.407087243673416,
-                longitude: 16.918188713775262,
+                latitude: 52.4089761,
+                longitude: 16.9164174,
                 audio: 3,
-                name: "filharmonia"
+                name: "drzewo (park Mickiewicza)"
             },
+
             {
-                latitude: 52.40663764554719,
-                longitude: 16.91977214099325,
+                latitude: 52.4089127,
+                longitude: 16.9206315,
                 audio: 4,
-                name: "ptasie radio"
+                name: "kamienica (przy Fredry)"
             },
+
             {
-                latitude: 52.406936634105115,
-                longitude: 16.920196922030634,
+                latitude: 52.4088704,
+                longitude: 16.9205041,
                 audio: 5,
+                name: "pomnik, mieszkaniec mickiewicza"
+            },
+
+            {
+                latitude: 52.4080361,
+                longitude: 16.9250059,
+                audio: 6,
+                name: "skrzyneczka (przy Arkadii)"
+            },
+
+            {
+                latitude: 52.4067285,
+                longitude: 16.9196671,
+                audio: 7,
+                name: "suka przybyszewskiego"
+            },
+
+            {
+                latitude: 52.4082786,
+                longitude: 16.9278782,
+                audio: 8,
+                name: "plac wolnosci - szachisci"
+            },
+
+            {
+                latitude: 52.4092336,
+                longitude: 16.9193353,
+                audio: 9,
+                name: "collegium maius"
+            },
+
+            {
+                latitude: 52.409569,
+                longitude: 16.9178729,
+                audio: 10,
+                name: "opera"
+            },
+
+            {
+                latitude: 52.4080978,
+                longitude: 16.9224462,
+                audio: 11,
+                name: "okraglak"
+            },
+
+            {
+                latitude: 52.4068855,
+                longitude: 16.9229834,
+                audio: 12,
+                name: "przejscie kantaka"
+            },
+
+            {
+                latitude: 52.4071616,
+                longitude: 16.9203245,
+                audio: 13,
                 name: "kolorking"
             },
-            {
-                latitude: 52.406854279217505,
-                longitude: 16.92142129999564,
-                audio: 6,
-                name: "biblioteka"
-            },
-            {
-                latitude: 52.407616964576064,
-                longitude: 16.91907236376629,
-                audio: 1,
-                name: "zamek"
-            },
+
             {
                 latitude: 53.36566061450592,
                 longitude: 14.605989128627435,
-                audio: 1,
+                audio: 2,
                 name: "lapidarium"
             },
             {
                 latitude: 53.363991291515184,
                 longitude: 14.604128643780358,
-                audio: 4,
+                audio: 3,
                 name: "park"
             },
             {
                 latitude: 53.362189933283815,
                 longitude: 14.603244143724053,
-                audio: 5,
+                audio: 4,
                 name: "stalowa"
             },
             {
                 latitude: 53.36279047047709,
                 longitude: 14.606110431484815,
-                audio: 3,
+                audio: 5,
                 name: "zeliwna"
             },
             {
                 latitude: 53.36196120616845,
                 longitude: 14.604947082053974,
-                audio: 2,
+                audio: 6,
                 name: "stalowa-olkuska"
             }
             ];
@@ -103,7 +145,7 @@
                 timeout: 5000,
                 maximumAge: 0,
             };
-            const MIN_DISTANCE = 0.0003;
+            const MIN_DISTANCE = 0.0004;
             let isNear = (p1, p2) => {
                 return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
             }

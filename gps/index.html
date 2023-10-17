@@ -145,7 +145,7 @@
                 timeout: 10000,
                 maximumAge: 0,
             };
-            const MIN_DISTANCE = 0.0004;
+            const MIN_DISTANCE = 0.0003;
             let isNear = (p1, p2) => {
                 return Math.abs(p1.latitude - p2.latitude) <= MIN_DISTANCE && Math.abs(p1.longitude - p2.longitude) <= MIN_DISTANCE;
             }

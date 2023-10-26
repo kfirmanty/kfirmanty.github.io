@@ -18,7 +18,7 @@
             let audio = [];
             let app = document.getElementById('app');
             const firstAudio = 2;
-            const lastAudio = 13;
+            const lastAudio = 14;
             for (let i = firstAudio; i < (lastAudio + 1); i++) {
                 let snippet = new Audio(`audio/${i}.mp3`);
                 audio[i] = snippet;
@@ -180,6 +180,8 @@
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);
+            playingAudioIndex = 14
+            audio[14].play()
         }
     </script>
 </body>

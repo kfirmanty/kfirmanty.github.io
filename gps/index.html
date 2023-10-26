@@ -2,14 +2,24 @@
 
 <head>
     <meta charset="utf-8">
-
     <title></title>
-
+    <style>
+        html {
+            height: 100%;
+        }
+    </style>
 </head>
 
-<body>
+<body style="height: 100%;
+padding: 0;
+margin: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;">
     <div id="app"></div>
-    <button id="startbutton" style="height: 50px; width: 200px;" onclick="startExperience();">Start experience</button>
+    <button id="startbutton" style="height: 75px; width: 300px; font-size:200%" onclick="startExperience();">Start
+        experience</button>
     <div style="font-size:300%;" id="coords"></div>
     <script>
         function startExperience() {

@@ -1,0 +1,189 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        html {
+            height: 100%;
+            background: linear-gradient(136deg, #fff, #0500b6);
+            background-size: 400% 400%;
+            -webkit-animation: AnimationName 6s ease infinite;
+            -moz-animation: AnimationName 6s ease infinite;
+            -o-animation: AnimationName 6s ease infinite;
+            animation: AnimationName 6s ease infinite;
+        }
+
+        @-webkit-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @-moz-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @-o-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+    </style>
+</head>
+
+<body style="height: 100%;
+padding: 0;
+margin: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;">
+    <div id="app"></div>
+    <button id="startbutton"
+        style="height: 75px; width: 300px; font-size:200%; background: linear-gradient(136deg, #fff, #0500b6);"
+        onclick="startExperience();">Start
+        experience</button>
+    <div style="font-size:300%;" id="coords"></div>
+    <script>
+        function startExperience() {
+            document.getElementById('startbutton').remove();
+
+            let audio = [];
+            let app = document.getElementById('app');
+            const firstAudio = 1;
+            const lastAudio = 7;
+            for (let i = firstAudio; i < (lastAudio + 1); i++) {
+                let snippet = new Audio(`audio/${i}.mp3`);
+                audio[i] = snippet;
+            }
+
+            let id;
+            let targets = [{
+                latitude: 51.7863552,
+                longitude: 19.4747182,
+                audio: 1,
+                name: "CHAVA ROSENFARB"
+            },
+            {
+                latitude: 51.7862668,
+                longitude: 19.4747547,
+                audio: 2,
+                name: "JACK FUCHS"
+            },
+            {
+                latitude: 51.7862865,
+                longitude: 19.474763,
+                audio: 3,
+                name: "JANKIEL HERSZKOWICZ"
+            },
+            {
+                latitude: 51.7860922,
+                longitude: 19.4733841,
+                audio: 4,
+                name: "ALINA MARGOLIS"
+            },
+            {
+                latitude: 51.7863222,
+                longitude: 19.4728591,
+                audio: 5,
+                name: "HALINA ELCZEWSKA"
+            },
+            {
+                latitude: 51.7862347,
+                longitude: 19.4725727,
+                audio: 6,
+                name: "LUCIE BIALER"
+            },
+            {
+                latitude: 1,
+                longitude: 1,
+                audio: 7,
+                name: "START"
+            }
+            ];
+            let options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+            };
+            const MIN_DISTANCE = 0.0001;
+            let isNear = (p1, p2) => {
+                const minDistance = p1.minDistance || MIN_DISTANCE
+                return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
+            }
+            let playingAudioIndex = -1;
+            const success = (pos) => {
+                const crd = pos.coords;
+                document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
+                targets.forEach(target => {
+                    if (isNear(target, crd)) {
+                        if (audio[target.audio].paused) {
+                            audio[target.audio].play();
+                            app.innerText = "Tree: " + target.name;
+                        }
+                        playingAudioIndex = target.audio;
+                    }
+                });
+
+                for (let i = firstAudio; i < (lastAudio + 1); i++) {
+                    if (i != playingAudioIndex && !(audio[i].paused)) {
+                        audio[i].pause();
+                    }
+                }
+
+            }
+
+            //TO CHECK:
+            //Instead of isNearDistance try setting up 4 points and checking if coordinates are inside polygon defined by them
+            //Should audio stop if user gets far from the marker/leaves the area?
+
+            const error = (err) => {
+                console.error(`ERROR(${err.code}): ${err.message}`);
+            }
+            playingAudioIndex = 7
+            audio[7].play()
+            id = navigator.geolocation.watchPosition(success, error, options);
+        }
+    </script>
+</body>

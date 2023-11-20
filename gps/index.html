@@ -92,7 +92,7 @@ justify-content: center;">
             let audio = [];
             let app = document.getElementById('app');
             const firstAudio = 2;
-            const lastAudio = 14;
+            const lastAudio = 19;
             for (let i = firstAudio; i < (lastAudio + 1); i++) {
                 let snippet = new Audio(`audio/${i}.mp3`);
                 audio[i] = snippet;
@@ -187,6 +187,48 @@ justify-content: center;">
             },
 
             {
+                latitude: 0,
+                longitude: 0,
+                audio: 14,
+                name: "qr kolorking"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 15,
+                name: "qr biblioteka"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 16,
+                name: "qr cik"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 17,
+                name: "qr enigma"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 18,
+                name: "qr teatr"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 19,
+                name: "qr zamek"
+            },
+
+            {
                 latitude: 53.36566061450592,
                 longitude: 14.605989128627435,
                 audio: 2,
@@ -255,6 +297,16 @@ justify-content: center;">
 
             const error = (err) => {
                 console.error(`ERROR(${err.code}): ${err.message}`);
+            }
+
+            if (window.location.hash) {
+                const file = window.location.hash.substring(1);
+                const qrs = { kolorking: 14, biblioteka: 15, cik: 16, enigma: 17, teatr: 18, zamek: 19 }
+                const index = qrs[file]
+                if (index) {
+                    playingAudioIndex = index
+                    audio[index].play();
+                }
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);

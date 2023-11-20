@@ -1,0 +1,314 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        html {
+            height: 100%;
+            background: linear-gradient(136deg, #fff, #0500b6);
+            background-size: 400% 400%;
+            -webkit-animation: AnimationName 6s ease infinite;
+            -moz-animation: AnimationName 6s ease infinite;
+            -o-animation: AnimationName 6s ease infinite;
+            animation: AnimationName 6s ease infinite;
+        }
+
+        @-webkit-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @-moz-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @-o-keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+
+        @keyframes AnimationName {
+            0% {
+                background-position: 0% 99%
+            }
+
+            50% {
+                background-position: 100% 2%
+            }
+
+            100% {
+                background-position: 0% 99%
+            }
+        }
+    </style>
+</head>
+
+<body style="height: 100%;
+padding: 0;
+margin: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;">
+    <div id="app"></div>
+    <button id="startbutton"
+        style="height: 75px; width: 300px; font-size:200%; background: linear-gradient(136deg, #fff, #0500b6);"
+        onclick="startExperience();">Start
+        experience</button>
+    <div style="font-size:300%;" id="coords"></div>
+    <script>
+        function startExperience() {
+            document.getElementById('startbutton').remove();
+
+            let audio = [];
+            let app = document.getElementById('app');
+
+            const loadFile = (index) => {
+                let snippet = new Audio(`audio/${i}.mp3`);
+                audio[i] = snippet;
+            }
+
+            let id;
+            let targets = [{
+                latitude: 52.4076014,
+                longitude: 16.9179557,
+                audio: 2,
+                name: "zegar"
+            },
+
+            {
+                latitude: 52.4087072,
+                longitude: 16.9172981,
+                audio: 3,
+                name: "drzewo (park Mickiewicza)"
+            },
+
+            {
+                latitude: 52.4089127,
+                longitude: 16.9206315,
+                audio: 4,
+                name: "kamienica (przy Fredry)"
+            },
+
+            {
+                latitude: 52.4079362,
+                longitude: 16.9167903,
+                audio: 5,
+                name: "pomnik, mieszkaniec mickiewicza"
+            },
+
+            {
+                latitude: 52.4080361,
+                longitude: 16.9250059,
+                audio: 6,
+                name: "skrzyneczka (przy Arkadii)"
+            },
+
+            {
+                latitude: 52.4067285,
+                longitude: 16.9196671,
+                audio: 7,
+                name: "suka przybyszewskiego"
+            },
+
+            {
+                latitude: 52.4082786,
+                longitude: 16.9278782,
+                audio: 8,
+                minDistance: 0.0004,
+                name: "plac wolnosci - szachisci"
+            },
+
+            {
+                latitude: 52.4094264,
+                longitude: 16.9190025,
+                audio: 9,
+                name: "collegium maius"
+            },
+
+            {
+                latitude: 52.4097548,
+                longitude: 16.9175843,
+                audio: 10,
+                name: "opera"
+            },
+
+            {
+                latitude: 52.4080978,
+                longitude: 16.9224462,
+                audio: 11,
+                minDistance: 0.0004,
+                name: "okraglak"
+            },
+
+            {
+                latitude: 52.4068855,
+                longitude: 16.9229834,
+                audio: 12,
+                minDistance: 0.0004,
+                name: "przejscie kantaka"
+            },
+
+            {
+                latitude: 52.4071616,
+                longitude: 16.9203245,
+                audio: 13,
+                name: "kolorking"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 14,
+                name: "qr kolorking"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 15,
+                name: "qr biblioteka"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 16,
+                name: "qr cik"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 17,
+                name: "qr enigma"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 18,
+                name: "qr teatr"
+            },
+
+            {
+                latitude: 0,
+                longitude: 0,
+                audio: 19,
+                name: "qr zamek"
+            },
+
+            {
+                latitude: 53.36566061450592,
+                longitude: 14.605989128627435,
+                audio: 2,
+                name: "lapidarium"
+            },
+            {
+                latitude: 53.363991291515184,
+                longitude: 14.604128643780358,
+                audio: 3,
+                name: "park"
+            },
+            {
+                latitude: 53.362189933283815,
+                longitude: 14.603244143724053,
+                audio: 4,
+                name: "stalowa"
+            },
+            {
+                latitude: 53.36279047047709,
+                longitude: 14.606110431484815,
+                audio: 5,
+                name: "zeliwna"
+            },
+            {
+                latitude: 53.36196120616845,
+                longitude: 14.604947082053974,
+                audio: 6,
+                name: "stalowa-olkuska"
+            }
+            ];
+            let options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+            };
+            const MIN_DISTANCE = 0.0001;
+            let isNear = (p1, p2) => {
+                const minDistance = p1.minDistance || MIN_DISTANCE
+                return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
+            }
+            let playingAudioIndex = -1;
+            const success = (pos) => {
+                const crd = pos.coords;
+                document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
+                targets.forEach(target => {
+                    if (isNear(target, crd)) {
+                        if (!audio[target.audio]) {
+                            loadFile(target.audio)
+                        }
+                        if (audio[target.audio].paused) {
+                            if (playingAudioIndex >= 0) {
+                                audio[playingAudioIndex].pause()
+                            }
+                            audio[target.audio].play();
+                            app.innerText = "You are in: " + target.name;
+                        }
+                        playingAudioIndex = target.audio;
+                    }
+                });
+            }
+
+            //TO CHECK:
+            //Instead of isNearDistance try setting up 4 points and checking if coordinates are inside polygon defined by them
+            //Should audio stop if user gets far from the marker/leaves the area?
+
+            const error = (err) => {
+                console.error(`ERROR(${err.code}): ${err.message}`);
+            }
+
+            if (window.location.hash) {
+                const file = window.location.hash.substring(1);
+                const qrs = { kolorking: 14, biblioteka: 15, cik: 16, enigma: 17, teatr: 18, zamek: 19 }
+                const index = qrs[file]
+                if (index) {
+                    playingAudioIndex = index
+                    loadFile(index)
+                    audio[index].play();
+                }
+            }
+
+            id = navigator.geolocation.watchPosition(success, error, options);
+        }
+    </script>
+</body>

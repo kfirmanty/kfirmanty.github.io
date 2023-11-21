@@ -260,6 +260,27 @@ justify-content: center;">
                 longitude: 14.604947082053974,
                 audio: 6,
                 name: "stalowa-olkuska"
+            },
+            {
+                latitude: 53.378908359980414,
+                longitude: 14.650128828998215,
+                audio: 2,
+                minDistance: 0.0002,
+                name: "nutka"
+            },
+            {
+                latitude: 53.379728573850876,
+                longitude: 14.627467534860031,
+                audio: 8,
+                minDistance: 0.0002,
+                name: "mol"
+            },
+            {
+                latitude: 53.371911227624956,
+                longitude: 14.605614802502421,
+                audio: 3,
+                minDistance: 0.0002,
+                name: "orlen"
             }
             ];
             let options = {
@@ -313,13 +334,13 @@ justify-content: center;">
 
             id = navigator.geolocation.watchPosition(success, error, options);
 
-            document.onvisibilitychange = () => {
+            /*document.onvisibilitychange = () => {
                 if (document.visibilityState === "visible") {
                     console.log("restarting gps listener");
                     navigator.geolocation.clearWatch(id);
                     id = navigator.geolocation.watchPosition(success, error, options);
                 }
-            };
+            };*/
         }
     </script>
 </body>

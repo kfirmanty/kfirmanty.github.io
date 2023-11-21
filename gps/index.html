@@ -353,7 +353,7 @@ justify-content: center;">
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);
-            const wakeLock = navigator.wakeLock.request("screen").catch(err => { alert('App could not get a lock on screen, GPS coordinates cant be tracked when phone is asleep') })
+            const wakeLock = navigator?.wakeLock?.request("screen").catch(err => { alert('App could not get a lock on screen, GPS coordinates cant be tracked when phone is asleep') })
 
             /*document.onvisibilitychange = () => {
                 if (document.visibilityState === "visible") {

@@ -264,8 +264,7 @@ justify-content: center;">
             ];
             let options = {
                 enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0,
+                timeout: 10000
             };
             const MIN_DISTANCE = 0.0001;
             let isNear = (p1, p2) => {
@@ -313,6 +312,14 @@ justify-content: center;">
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);
+
+            document.onvisibilitychange = () => {
+                if (document.visibilityState === "visible") {
+                    console.log("restarting gps listener");
+                    navigator.geolocation.clearWatch(id);
+                    id = navigator.geolocation.watchPosition(success, error, options);
+                }
+            };
         }
     </script>
 </body>

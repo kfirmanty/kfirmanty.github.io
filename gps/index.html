@@ -293,7 +293,24 @@ justify-content: center;">
                 return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
             }
             let playingAudioIndex = -1;
+
+            var elem = document.documentElement;
+            let inFullScreen = false
+            const openFullscreen = () => {
+                if (!inFullScreen) {
+                    inFullScreen = true
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    }
+                }
+            }
+
             const success = (pos) => {
+                //openFullscreen()
                 const crd = pos.coords;
                 document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
                 targets.forEach(target => {
@@ -320,6 +337,9 @@ justify-content: center;">
 
             const error = (err) => {
                 console.error(`ERROR(${err.code}): ${err.message}`);
+                if (err.code == 1) {
+                    alert('GPS permission blocked, app needs it to work')
+                }
             }
 
             if (window.location.hash) {
@@ -333,6 +353,7 @@ justify-content: center;">
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);
+            const wakeLock = navigator.wakeLock.request("screen").catch(err => { alert('App could not get a lock on screen, GPS coordinates cant be tracked when phone is asleep') })
 
             /*document.onvisibilitychange = () => {
                 if (document.visibilityState === "visible") {

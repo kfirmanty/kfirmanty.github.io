@@ -82,8 +82,9 @@ justify-content: center;">
     <div id="app"></div>
     <button id="startbutton"
         style="height: 75px; width: 300px; font-size:200%; background: linear-gradient(136deg, #fff, #0500b6);"
-        onclick="startExperience();">Start
-        experience</button>
+        onclick="startExperience();">
+        Rozpocznij
+    </button>
     <div style="font-size:300%;" id="coords"></div>
     <script>
         function startExperience() {
@@ -148,7 +149,7 @@ justify-content: center;">
                 longitude: 16.9278782,
                 audio: 8,
                 minDistance: 0.00045,
-                name: "plac wolnosci - szachisci"
+                name: "plac wolnościi - szachisci"
             },
 
             {
@@ -170,7 +171,7 @@ justify-content: center;">
                 longitude: 16.9224462,
                 audio: 11,
                 minDistance: 0.0004,
-                name: "okraglak"
+                name: "okrąglak"
             },
 
             {
@@ -178,7 +179,7 @@ justify-content: center;">
                 longitude: 16.9229834,
                 audio: 12,
                 minDistance: 0.0004,
-                name: "przejscie kantaka"
+                name: "przejście kantaka"
             },
 
             {
@@ -186,7 +187,7 @@ justify-content: center;">
                 longitude: 16.9202713,
                 audio: 13,
                 minDistance: 0.00028,
-                name: "kolorking"
+                name: "kołorking"
             },
 
             {
@@ -294,30 +295,14 @@ justify-content: center;">
             }
             let playingAudioIndex = -1;
 
-            var elem = document.documentElement;
-            let inFullScreen = false
-            const openFullscreen = () => {
-                if (!inFullScreen) {
-                    inFullScreen = true
-                    if (elem.requestFullscreen) {
-                        elem.requestFullscreen();
-                    } else if (elem.webkitRequestFullscreen) {
-                        elem.webkitRequestFullscreen();
-                    } else if (elem.msRequestFullscreen) {
-                        elem.msRequestFullscreen();
-                    }
-                }
-            }
-
             const success = (pos) => {
-                //openFullscreen()
                 const crd = pos.coords;
                 document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
                 targets.forEach(target => {
                     if (isNear(target, crd)) {
                         if (audio[target.audio].paused) {
                             audio[target.audio].play();
-                            app.innerText = "You are in: " + target.name;
+                            app.innerText = "Znajdujesz się w: " + target.name;
                         }
                         playingAudioIndex = target.audio;
                     }
@@ -331,14 +316,10 @@ justify-content: center;">
 
             }
 
-            //TO CHECK:
-            //Instead of isNearDistance try setting up 4 points and checking if coordinates are inside polygon defined by them
-            //Should audio stop if user gets far from the marker/leaves the area?
-
             const error = (err) => {
                 console.error(`ERROR(${err.code}): ${err.message}`);
                 if (err.code == 1) {
-                    alert('GPS permission blocked, app needs it to work')
+                    alert('Aplikacja potrzebuje dostępu do GPS!')
                 }
             }
 
@@ -353,15 +334,7 @@ justify-content: center;">
             }
 
             id = navigator.geolocation.watchPosition(success, error, options);
-            const wakeLock = navigator?.wakeLock?.request("screen").catch(err => { alert('App could not get a lock on screen, GPS coordinates cant be tracked when phone is asleep') })
-
-            /*document.onvisibilitychange = () => {
-                if (document.visibilityState === "visible") {
-                    console.log("restarting gps listener");
-                    navigator.geolocation.clearWatch(id);
-                    id = navigator.geolocation.watchPosition(success, error, options);
-                }
-            };*/
+            const wakeLock = navigator?.wakeLock?.request("screen").catch(err => { alert('W trybie uśpienia nie ma mozliwosci zbierania pozycji GPS. Po przybciu do punktu odblokuj telefon.') })
         }
     </script>
 </body>

@@ -6,68 +6,8 @@
     <style>
         html {
             height: 100%;
-            background: linear-gradient(136deg, #fff, #0500b6);
+            background: black;
             background-size: 400% 400%;
-            -webkit-animation: AnimationName 6s ease infinite;
-            -moz-animation: AnimationName 6s ease infinite;
-            -o-animation: AnimationName 6s ease infinite;
-            animation: AnimationName 6s ease infinite;
-        }
-
-        @-webkit-keyframes AnimationName {
-            0% {
-                background-position: 0% 99%
-            }
-
-            50% {
-                background-position: 100% 2%
-            }
-
-            100% {
-                background-position: 0% 99%
-            }
-        }
-
-        @-moz-keyframes AnimationName {
-            0% {
-                background-position: 0% 99%
-            }
-
-            50% {
-                background-position: 100% 2%
-            }
-
-            100% {
-                background-position: 0% 99%
-            }
-        }
-
-        @-o-keyframes AnimationName {
-            0% {
-                background-position: 0% 99%
-            }
-
-            50% {
-                background-position: 100% 2%
-            }
-
-            100% {
-                background-position: 0% 99%
-            }
-        }
-
-        @keyframes AnimationName {
-            0% {
-                background-position: 0% 99%
-            }
-
-            50% {
-                background-position: 100% 2%
-            }
-
-            100% {
-                background-position: 0% 99%
-            }
         }
     </style>
 </head>
@@ -81,11 +21,11 @@ align-items: center;
 justify-content: center;">
     <div id="app"></div>
     <button id="startbutton"
-        style="height: 75px; width: 300px; font-size:200%; background: linear-gradient(136deg, #fff, #0500b6);"
+        style="height: 100px; width: 280px; font-size:200%; border-radius: 12px; background: #eeeeee; box-shadow: 20px 20px 10px rgba(255, 255, 255, 0.2);"
         onclick="startExperience();">
         Rozpocznij
     </button>
-    <div style="font-size:300%;" id="coords"></div>
+    <div style="font-size:300%; color: #eeeeee" id="coords"></div>
     <script>
         function startExperience() {
             document.getElementById('startbutton').remove();
@@ -231,58 +171,6 @@ justify-content: center;">
                 audio: 19,
                 name: "qr zamek"
             },
-
-            {
-                latitude: 53.36566061450592,
-                longitude: 14.605989128627435,
-                audio: 2,
-                name: "lapidarium"
-            },
-            {
-                latitude: 53.363991291515184,
-                longitude: 14.604128643780358,
-                audio: 3,
-                name: "park"
-            },
-            {
-                latitude: 53.362189933283815,
-                longitude: 14.603244143724053,
-                audio: 4,
-                name: "stalowa"
-            },
-            {
-                latitude: 53.36279047047709,
-                longitude: 14.606110431484815,
-                audio: 5,
-                name: "zeliwna"
-            },
-            {
-                latitude: 53.36196120616845,
-                longitude: 14.604947082053974,
-                audio: 6,
-                name: "stalowa-olkuska"
-            },
-            {
-                latitude: 53.378908359980414,
-                longitude: 14.650128828998215,
-                audio: 2,
-                minDistance: 0.0002,
-                name: "nutka"
-            },
-            {
-                latitude: 53.379728573850876,
-                longitude: 14.627467534860031,
-                audio: 8,
-                minDistance: 0.0002,
-                name: "mol"
-            },
-            {
-                latitude: 53.371911227624956,
-                longitude: 14.605614802502421,
-                audio: 3,
-                minDistance: 0.0002,
-                name: "orlen"
-            }
             ];
             let options = {
                 enableHighAccuracy: true,

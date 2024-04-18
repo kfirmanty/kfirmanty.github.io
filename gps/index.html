@@ -29,10 +29,18 @@ font-family: Verdana, sans-serif;">
         onclick="startExperience();">
         Rozpocznij
     </button>
+    <button id="refreshbutton"
+    style="height: 100px; width: 280px; font-size:200%; border-radius: 12px; 
+    background: #eeeeee; 
+    box-shadow: -20px -20px 10px rgba(255, 255, 255, 0.2); display: none;"
+    onclick="window.location='https://fonorama.org/lapp-poznan/';">
+    Odśwież
+    </button>
     <div style="font-size:300%; color: #eeeeee" id="coords"></div>
     <script>
         function startExperience() {
             document.getElementById('startbutton').remove();
+            document.getElementById('refreshbutton').style.display = 'block';
 
             let audio = [];
             let app = document.getElementById('app');
@@ -194,20 +202,23 @@ font-family: Verdana, sans-serif;">
                 name: "fontanna 3"
             },
             {
-                latitude: 52.4082648,
-                longitude: 16.9192982,
+                latitude: 52.4081172,
+                longitude: 16.9197125,
+                minDistance: 0.0002,
                 audio: 23,
                 name: "blue note"
             },
             {
                 latitude: 52.4071984,
                 longitude: 16.9252061,
+                minDistance: 0.00015,
                 audio: 24,
                 name: "rzezby"
             },
             {
-                latitude: 52.4071984,
-                longitude: 16.9252061,
+                latitude: 52.4083519,
+                longitude: 16.9286541,
+                minDistance: 0.00015,
                 audio: 25,
                 name: "czarny pies"
             }

@@ -1,0 +1,213 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        html {
+            height: 100%;
+            background: black;
+            background-size: 400% 400%;
+        }
+    </style>
+</head>
+
+<body style="height: 100%;
+padding: 0;
+margin: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: top;
+font-family: Verdana, sans-serif;">
+    <img src="logo.png" alt="logo" width="50%" style="margin-bottom: 20vh; margin-top: 5vh">
+    <div id="app"></div>
+    <button id="startbutton"
+        style="height: 100px; width: 280px; font-size:200%; border-radius: 12px; 
+        background: #eeeeee; 
+        box-shadow: -20px -20px 10px rgba(255, 255, 255, 0.2);"
+        onclick="startExperience();">
+        Rozpocznij
+    </button>
+    <button id="refreshbutton"
+    style="height: 100px; width: 280px; font-size:200%; border-radius: 12px; 
+    background: #eeeeee; 
+    box-shadow: -20px -20px 10px rgba(255, 255, 255, 0.2); display: none;"
+    onclick="window.location='https://fonorama.org/lapp-jezyce/';">
+    Odśwież
+    </button>
+    <div style="font-size:300%; color: #eeeeee" id="coords"></div>
+    <script>
+        function startExperience() {
+            document.getElementById('startbutton').remove();
+            document.getElementById('refreshbutton').style.display = 'block';
+
+            let audio = [];
+            let app = document.getElementById('app');
+            const firstAudio = 1;
+            const lastAudio = 16;
+            for (let i = firstAudio; i < (lastAudio + 1); i++) {
+                let snippet = new Audio(`audio/${i}.mp3`);
+                audio[i] = snippet;
+            }
+
+            let id;
+            let targets = [{
+                latitude: 0,
+                longitude: 0,
+                audio: 1,
+                name: "dom tramwajarza"
+            },
+
+            {
+                latitude: 52.4091021,
+                longitude: 16.9031961,
+                minDistance: 0.0002,
+                audio: 2,
+                name: "zoo"
+            },
+
+            {
+                latitude: 52.4098187,
+                longitude: 16.9001597,
+                audio: 3,
+                name: "Jackowskiego 22"
+            },
+            {
+                latitude: 52.4099515,
+                longitude: 16.8993929,
+                minDistance: 0.00015,
+                audio: 4,
+                name: "drukarnia"
+            },
+            {
+                latitude: 1,
+                longitude: 1,
+                minDistance: 0.00015,
+                audio: 1,
+                name: "Chlasty"
+            },
+            {
+                latitude: 52.4115343,
+                longitude: 16.8995341,
+                minDistance: 0.00015,
+                audio: 6,
+                name: "Wawrzyniaka"
+            },
+            {
+                latitude: 52.4117794,
+                longitude: 16.9017534,
+                minDistance: 0.00015,
+                audio: 7,
+                name: "Archanioł"
+            },
+            {
+                latitude: 52.4120463,
+                longitude: 16.9037657,
+                audio: 8,
+                name: "Rynek"
+            },
+            {
+                latitude: 52.4126419,
+                longitude: 16.904301,
+                audio: 9,
+                name: "Zaułek"
+            },
+            {
+                latitude: 52.412602,
+                longitude: 16.9049045,
+                audio: 10,
+                name: "Rynek Maria Apteka"
+            },
+            {
+                latitude: 52.4122872,
+                longitude: 16.9051994,
+                audio: 11,
+                name: "Wiezyczka"
+            },
+            {
+                latitude: 52.4120302,
+                longitude: 16.9068458,
+                audio: 12,
+                name: "Rialto"
+            },
+            {
+                latitude: 52.4119766,
+                longitude: 16.9072014,
+                audio: 13,
+                name: "Tramwajarki Zabka"
+            },
+            {
+                latitude: 52.409998,
+                longitude: 16.910760,
+                audio: 14,
+                name: "Róg Słowackiego i Mickiewicza"
+            },
+            {
+                latitude: 52.4109013,
+                longitude: 16.906778,
+                minDistance: 0.00015,
+                audio: 15,
+                name: "Asnyka"
+            },
+            {
+                latitude: 10,
+                longitude: 10,
+                audio: 16,
+                name: "illa"
+            }
+            ];
+            let options = {
+                enableHighAccuracy: true,
+                timeout: 10000
+            };
+            const MIN_DISTANCE = 0.0001;
+            let isNear = (p1, p2) => {
+                const minDistance = p1.minDistance || MIN_DISTANCE
+                return Math.abs(p1.latitude - p2.latitude) <= minDistance && Math.abs(p1.longitude - p2.longitude) <= minDistance;
+            }
+            let playingAudioIndex = -1;
+
+            const success = (pos) => {
+                const crd = pos.coords;
+                document.getElementById('coords').innerText = crd.latitude + " " + crd.longitude;
+                targets.forEach(target => {
+                    if (isNear(target, crd)) {
+                        if (audio[target.audio].paused) {
+                            audio[target.audio].play();
+                            app.innerText = "Znajdujesz się w: " + target.name;
+                        }
+                        playingAudioIndex = target.audio;
+                    }
+                });
+
+                for (let i = firstAudio; i < (lastAudio + 1); i++) {
+                    if (i != playingAudioIndex && !(audio[i].paused)) {
+                        audio[i].pause();
+                    }
+                }
+
+            }
+
+            const error = (err) => {
+                console.error(`ERROR(${err.code}): ${err.message}`);
+                if (err.code == 1) {
+                    alert('Aplikacja potrzebuje dostępu do GPS!')
+                }
+            }
+
+            if (window.location.hash) {
+                const file = window.location.hash.substring(1);
+                const qrs = { tramwajarza: 1, illa: 16}
+                const index = qrs[file]
+                if (index) {
+                    playingAudioIndex = index
+                    audio[index].play();
+                }
+            }
+
+            id = navigator.geolocation.watchPosition(success, error, options);
+            const wakeLock = navigator?.wakeLock?.request("screen").catch(err => { alert('W trybie uśpienia nie ma mozliwosci zbierania pozycji GPS. Po przybciu do punktu odblokuj telefon.') })
+        }
+    </script>
+</body>

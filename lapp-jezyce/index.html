@@ -57,7 +57,7 @@ font-family: Verdana, sans-serif;">
             let audio = [];
             let app = document.getElementById('app');
             const firstAudio = 1;
-            const lastAudio = 16;
+            const lastAudio = 22;
             for (let i = firstAudio; i < (lastAudio + 1); i++) {
                 let snippet = new Audio(`audio/${i}.mp3`);
                 audio[i] = snippet;
@@ -66,7 +66,7 @@ font-family: Verdana, sans-serif;">
             let targets = [{
                 latitude: 0,
                 longitude: 0,
-                audio: 1,
+                audio: 17,
                 name: "dom tramwajarza"
             },
 
@@ -88,7 +88,14 @@ font-family: Verdana, sans-serif;">
                 latitude: 52.4099515,
                 longitude: 16.8993929,
                 minDistance: 0.00015,
-                audio: 4,
+                audio: 21,
+                name: "drukarnia intro"
+            },
+            {
+                latitude: 52.409467659013174,
+                longitude: 16.89866233051984,
+                minDistance: 0.00015,
+                audio: 22,
                 name: "drukarnia"
             },
             {
@@ -166,6 +173,24 @@ font-family: Verdana, sans-serif;">
                 longitude: 10,
                 audio: 16,
                 name: "illa"
+            },
+            {
+                latitude: 52.4083992,
+                longitude: 16.9081557,
+                audio: 18,
+                name: "pcss"
+            },
+            {
+                latitude: 52.4083617,
+                longitude: 16.9072645,
+                audio: 19,
+                name: "zoo1"
+            },
+            {
+                latitude: 52.408649,
+                longitude: 16.9067616,
+                audio: 20,
+                name: "zoo2"
             }
             ];
             let options = {

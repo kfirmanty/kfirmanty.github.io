@@ -4,7 +4,7 @@ function storePlayingAudio(playingAudioIndex, position) {
     }
     try {
         const lastPlayingAudio = {
-            index: playingAudioIndex,
+            id: playingAudioIndex,
             position
         };
         localStorage.setItem('lastPlayingAudio', JSON.stringify(lastPlayingAudio));
@@ -23,14 +23,10 @@ function loadLastPlayingAudio() {
             return;
         }
 
-        const { index, position } = JSON.parse(lastPlayingAudio);
+        const { id, position } = JSON.parse(lastPlayingAudio);
 
-        if (typeof index !== 'number' || typeof position !== 'number') {
-            console.error("Invalid data format in localStorage for last playing audio.");
-            return;
-        }
         return {
-            index,
+            id,
             position
         };
     } catch (e) {

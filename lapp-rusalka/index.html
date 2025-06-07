@@ -125,7 +125,7 @@
     const pauseAudio = new Audio("audio/pauza.mp3");
 
     const logDebug = (msg) => {
-      if (!DEV_MODE) return;
+      //if (!DEV_MODE) return;
       const logBox = document.getElementById('debugLog');
       const newLine = document.createElement('div');
       newLine.textContent = msg;
@@ -208,7 +208,7 @@
         if (position) {
           audioMap[id].currentTime = position;
         }
-        updateDebug({ latitude: 0, longitude: 0 }, id, name, position);
+        updateDebug({ latitude: 0, longitude: 0 }, id, name);
       }
 
       function stopAllExcept(idToKeep) {
@@ -224,11 +224,11 @@
         gpsStatus.innerText = 'GPS Połączony';
         coordsDisplay.innerText = `${crd.latitude.toFixed(6)}, ${crd.longitude.toFixed(6)}`;
         updateDebug(crd, playingId, targets.find(t => t.id === playingId)?.name);
-        logDebug(`📍 GPS: ${crd.latitude.toFixed(6)}, ${crd.longitude.toFixed(6)}`);
+        //logDebug(`📍 GPS: ${crd.latitude.toFixed(6)}, ${crd.longitude.toFixed(6)}`);
 
         for (const target of targets) {
           if (isNear(target, crd)) {
-            logDebug(`🎯 Blisko: ${target.name}`);
+            //logDebug(`🎯 Blisko: ${target.name}`);
             if (audioMap[target.id].paused) {
               playAudioForTarget(target.id, target.name);
             }
@@ -321,6 +321,7 @@
         //check if it exists and is not at the end
         // if it exists and wasn't at the end play it from position
         const lastPlayed = loadLastPlayingAudio();
+        logDebug(`🔄 Odtwarzanie ostatniego: ${lastPlayed ? `${lastPlayed.id}:${lastPlayed.position}` : 'brak'}`);
         if (lastPlayed && audioMap[lastPlayed.id]) {
           logDebug(`🔄 Odtwarzanie ostatniego: ${lastPlayed.id}`);
           playAudioForTarget(lastPlayed.id, 'odtworzony ostatnio', lastPlayed.position);

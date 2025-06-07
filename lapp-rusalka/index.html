@@ -291,14 +291,18 @@
         isPaused = !isPaused;
       };
 
-      refreshButton.onclick = () => {
+      const savePlayingStatus = () => {
         let currentlyPlaying = audioMap[playingId];
         if (currentlyPlaying) {
           let currentTime = currentlyPlaying.currentTime;
           storePlayingAudio(playingId, currentTime);
         }
+      };
+      refreshButton.onclick = () => {
+        savePlayingStatus();
         window.location.reload();
       };
+      window.onbeforeunload = savePlayingStatus;
 
       const hashTrigger = window.location.hash?.substring(1);
       if (hashTrigger) {

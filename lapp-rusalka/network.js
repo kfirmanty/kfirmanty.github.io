@@ -24,7 +24,7 @@ function initNetworkSystem({ map, currentPlayerId }) {
             [WebSocket.CLOSING, WebSocket.CLOSED].includes(state.ws.readyState)
         ) {
             console.log("restarting ws");
-            state.ws = new WebSocket("http://localhost:9080");
+            state.ws = new WebSocket("https://firmanty.com:9080");
             state.ws.onmessage = (event) => {
                 const msg = JSON.parse(event.data);
                 if (msg.type === "playerPosition") {

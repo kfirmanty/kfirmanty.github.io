@@ -33,7 +33,7 @@ function startExperience() {
     pauseButton.onclick = () => {
         if (isPaused) {
             gps.resume();
-            audio.unpause();
+            audio.resume();
             pauseButton.innerText = "Pauza";
         } else {
             gps.pause();

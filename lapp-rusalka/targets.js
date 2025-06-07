@@ -206,4 +206,18 @@ const targets = [
     "lng": 14.604279010497695,
     "id": "1_kilka słów o jeziorze"
   },
+
+  {
+    "name": "park",
+    "lat": 53.364020,
+    "lng": 14.604161,
+    "id": "2_wanda szlam"
+  },
+
+  {
+    "name": "lapidarium",
+    "lat": 53.365783,
+    "lng": 14.606104,
+    "id": "17_drzewo"
+  },
 ];

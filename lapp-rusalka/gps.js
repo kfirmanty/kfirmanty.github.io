@@ -1,4 +1,6 @@
-const MIN_DISTANCE = 0.0001;
+//0.01 == 1KM
+//0.0001 == 10m
+const MIN_DISTANCE = 0.0001; // 10m in degrees
 
 function isNear(target, crd) {
     const dist = target.minDistance || MIN_DISTANCE;

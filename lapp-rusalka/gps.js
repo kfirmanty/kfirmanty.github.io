@@ -22,14 +22,13 @@ function initGpsSystem({ audio, map, network, currentPlayerId }) {
         const crd = pos.coords;
         gpsStatus.innerText = 'GPS Połączony';
         coordsDisplay.innerText = `${crd.latitude.toFixed(6)}, ${crd.longitude.toFixed(6)}`;
-        updateDebug(crd, audio.getPlayingId(), targets.find(t => t.id === audio.getPlayingId())?.name);
 
         for (const target of targets) {
             if (isNear(target, crd)) {
-                //logDebug(`🎯 Blisko: ${target.name}`);
-                if (audio.isTrackPaused(target.id)) {
-                    audio.playAudioForTarget({ id: target.id, name: target.name });
-                }
+                logDebug(`🎯 Blisko: ${target.name}`);
+                audio.playAudioForTarget({ id: target.id, name: target.name });
+
+                app.innerText = `Znajdujesz się w: ${target.name}`;
                 break;
             }
         }

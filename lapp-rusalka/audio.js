@@ -30,20 +30,11 @@ function initAudioSystem({ storage }) {
         audioMap[id].play();
         state.playingId = id;
 
+        updateDebug({ latitude: 0, longitude: 0 }, id, name);
+
         if (position) {
             audioMap[id].currentTime = position;
         }
-
-        app.innerText = `Znajdujesz się w: ${name}`;
-        updateDebug({ latitude: 0, longitude: 0 }, id, name);
-    }
-
-    const isTrackPaused = (id) => {
-        return audioMap[id]?.paused;
-    }
-
-    const getPlayingId = () => {
-        return state.playingId;
     }
 
     const savePlayingStatus = () => {
@@ -76,8 +67,6 @@ function initAudioSystem({ storage }) {
 
     return {
         playAudioForTarget,
-        isTrackPaused,
-        getPlayingId,
         savePlayingStatus,
         resumeLastPlaying,
         resume,

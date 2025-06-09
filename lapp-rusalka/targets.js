@@ -4,8 +4,8 @@
 const targets = [
   {
     "name": "kilka słów o jeziorze",
-    "lat": 52.42336245287288,
-    "lng": 16.887654940663392,
+    "lat": 52.423497,
+    "lng": 16.888135,
     "id": "1_kilka słów o jeziorze",
     "minDistance": 0.00007
   },
@@ -14,7 +14,7 @@ const targets = [
     "lat": 52.4294716,
     "lng": 16.8675367,
     "id": "2_wanda szlam",
-    "minDistance": 0.0003
+    "minDistance": 0.0004
   },
   {
     "name": "Tur 1",
@@ -46,22 +46,22 @@ const targets = [
   },
   {
     "name": "Zanurzanie w ścieżkę 1",
-    "lat": 52.42568401445951,
-    "lng": 16.87693357204269,
+    "lat": 52.425622,
+    "lng": 16.877373,
     "id": "5_zanurzanie",
     "minDistance": 0.0001
   },
   {
     "name": "Zanurzanie w ścieżkę 2",
-    "lat": 52.425174973312785,
-    "lng": 16.878362983592602,
+    "lat": 52.424882,
+    "lng": 16.878708,
     "id": "5_zanurzanie",
     "minDistance": 0.0001
   },
   {
     "name": "Małże 1",
-    "lat": 52.42344962175207,
-    "lng": 16.882216003385324,
+    "lat": 52.423370,
+    "lng": 16.882715,
     "id": "6_małże",
     "minDistance": 0.00015
   },
@@ -77,7 +77,7 @@ const targets = [
     "lat": 52.4303269,
     "lng": 16.8684592,
     "id": "7_obserwatorium",
-    "minDistance": 0.0001
+    "minDistance": 0.00015
   },
   {
     "name": "BOBRY",
@@ -88,29 +88,29 @@ const targets = [
   },
   {
     "name": "Porosty  Elsensee-Rusałka GENERAL PLAN",
-    "lat": 52.425166203482235,
-    "lng": 16.886008270452646,
+    "lat": 52.425484,
+    "lng": 16.885352,
     "id": "10_porosty",
     "minDistance": 0.00007
   },
   {
     "name": "Porosty  Elsensee-Rusałka GENERAL PLAN 2",
-    "lat": 52.426328150398746,
-    "lng": 16.88344000141914,
+    "lat": 52.426572,
+    "lng": 16.883632,
     "id": "10_porosty",
     "minDistance": 0.00007
   },
   {
     "name": "Niewidzialny biegacz",
-    "lat": 52.4292989,
-    "lng": 16.8773018,
+    "lat": 52.429479,
+    "lng": 16.877393,
     "id": "11_Niewidzialny biegacz",
     "minDistance": 0.0004
   },
   {
     "name": "Żużel 1",
-    "lat": 52.4240307,
-    "lng": 16.8876878,
+    "lat": 52.423932,
+    "lng": 16.887943,
     "id": "12_żużel",
     "minDistance": 0.0001
   },
@@ -137,8 +137,8 @@ const targets = [
   },
   {
     "name": "Ośrodek 2",
-    "lat": 52.4278488,
-    "lng": 16.8788105,
+    "lat": 52.427911,
+    "lng": 16.878951,
     "id": "14_ośrodek",
     "minDistance": 0.00007
   },
@@ -158,22 +158,22 @@ const targets = [
   },
   {
     "name": "Budowa jeziora 1",
-    "lat": 52.42396701376059,
-    "lng": 16.880620051573374,
+    "lat": 52.424241,
+    "lng": 16.880019,
     "id": "15_budowa jeziora",
     "minDistance": 0.0001
   },
   {
     "name": "Budowa jeziora 2",
-    "lat": 52.42363172507543,
-    "lng": 16.88154044056591,
+    "lat": 52.423586,
+    "lng": 16.881883,
     "id": "15_budowa jeziora",
     "minDistance": 0.0001
   },
   {
     "name": "Piosenka topielca 1",
-    "lat": 52.42590715393103,
-    "lng": 16.87421197245166,
+    "lat": 52.4226206,
+    "lng": 16.873732,
     "id": "16_piostenka topielca geja",
     "minDistance": 0.00015
   },
@@ -186,29 +186,29 @@ const targets = [
   },
   {
     "name": "Pomnik - miejsce rozstrzelań",
-    "lat": 52.424141,
-    "lng": 16.8790659,
+    "lat": 52.424180,
+    "lng": 16.879154,
     "id": "17_Pomnik miejsce rozstrzelań",
-    "minDistance": 0.0001
+    "minDistance": 0.00015
   },
   {
     "name": "Pomnik - miejsce rozstrzelań INTRO lektorzy",
-    "lat": 52.42447913753543,
-    "lng": 16.87948179159561,
-    "id": "17_Pomnik miejsce rozstrzelań",
-    "minDistance": 0.00007
+    "lat": 52.424531,
+    "lng": 16.879429,
+    "id": "18_Pomnik intro lektorzy",
+    "minDistance": 0.00001
   },
   {
     "name": "Stare drzewo 1",
-    "lat": 52.4265588,
-    "lng": 16.883474,
+    "lat": 52.426774,
+    "lng": 16.883203,
     "id": "19_drzewo",
     "minDistance": 0.0002
   },
   {
     "name": "Stare drzewo 2",
-    "lat": 52.4272528,
-    "lng": 16.8809009,
+    "lat": 52.427392,
+    "lng": 16.880503,
     "id": "19_drzewo",
     "minDistance": 0.0002
   },

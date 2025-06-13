@@ -25,7 +25,7 @@ function initGpsSystem({ audio, map, network, currentPlayerId }) {
 
         for (const target of targets) {
             if (isNear(target, crd)) {
-                logDebug(`🎯 Blisko: ${target.name}`);
+                console.log(`🎯 Blisko: ${target.name}`);
                 audio.playAudioForTarget({ id: target.id, name: target.name });
 
                 app.innerText = `Znajdujesz się w: ${target.name}`;
@@ -40,7 +40,7 @@ function initGpsSystem({ audio, map, network, currentPlayerId }) {
     };
 
     const onError = err => {
-        logDebug(`ERROR(${err.code}): ${err.message}`);
+        console.log(`ERROR(${err.code}): ${err.message}`);
         gpsStatus.innerText = 'Błąd GPS';
         switch (err.code) {
             case 1:

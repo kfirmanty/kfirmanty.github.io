@@ -60,10 +60,10 @@ function startExperience() {
         }
         const trigger = triggerLookup[hashTrigger];
         if (!trigger) {
-            logDebug(`🔗 Nie znaleziono triggera dla ${hashTrigger}`);
+            console.log(`🔗 Nie znaleziono triggera dla ${hashTrigger}`);
             return;
         }
-        logDebug(`🔗 Odtwórz z hash: ${hashTrigger}`);
+        console.log(`🔗 Odtwórz z hash: ${hashTrigger}`);
         audio.playAudioForTarget({ id: trigger, name: hashTrigger.replace(/-/g, ' ') });
     } else {
         audio.resumeLastPlaying();

@@ -6,11 +6,23 @@ function initStorageSystem() {
         try {
             const lastPlayingAudio = {
                 id: playingAudioIndex,
-                position
+                position,
+                playedAt: new Date().toISOString()
             };
             localStorage.setItem('lastPlayingAudio', JSON.stringify(lastPlayingAudio));
         } catch (e) {
             console.error("Error storing last playing audio in localStorage:", e);
+        }
+    }
+
+    const clearLastPlayingAudio = () => {
+        if (!localStorage) {
+            return;
+        }
+        try {
+            localStorage.setItem('lastPlayingAudio', undefined);
+        } catch (e) {
+            console.error("Error clearing last playing audio in localStorage:", e);
         }
     }
 
@@ -24,11 +36,12 @@ function initStorageSystem() {
                 return;
             }
 
-            const { id, position } = JSON.parse(lastPlayingAudio);
+            const { id, position, playedAt } = JSON.parse(lastPlayingAudio);
 
             return {
                 id,
-                position
+                position,
+                playedAt: playedAt || new Date().toISOString()
             };
         } catch (e) {
             console.error("Error loading last playing audio from localStorage:", e);
@@ -38,6 +51,7 @@ function initStorageSystem() {
 
     return {
         storePlayingAudio,
-        loadLastPlayingAudio
+        loadLastPlayingAudio,
+        clearLastPlayingAudio
     }
 }

@@ -30,7 +30,7 @@ function initAudioSystem({ storage }) {
         audioMap[id].play();
         state.playingId = id;
 
-        updateDebug({ latitude: 0, longitude: 0 }, id, name);
+        console.log('odtwarzanie pliku audio', { position, id, name });
 
         if (position) {
             audioMap[id].currentTime = position;
@@ -40,17 +40,32 @@ function initAudioSystem({ storage }) {
     const savePlayingStatus = () => {
         const currentlyPlaying = audioMap[state.playingId];
         if (currentlyPlaying) {
-            const currentTime = currentlyPlaying.currentTime;
-            storage.storePlayingAudio(state.playingId, currentTime);
+            if (currentlyPlaying.paused) {
+                console.log('🎧 Audio already finished, clearing local storage');
+                storage.clearLastPlayingAudio();
+            } else {
+                const currentTime = currentlyPlaying.currentTime;
+                storage.storePlayingAudio(state.playingId, currentTime);
+            }
         }
     };
 
+    const hasBeenPlayingLessThan10MinutesAgo = (playedAt) => {
+        const now = new Date();
+        const playedTime = new Date(playedAt);
+        const diffInMinutes = (now - playedTime) / (1000 * 60);
+        return diffInMinutes < 10;
+    }
+
     const resumeLastPlaying = () => {
         const lastPlayed = storage.loadLastPlayingAudio();
-        logDebug(`🔄 Odtwarzanie ostatniego: ${lastPlayed ? `${lastPlayed.id}:${lastPlayed.position}` : 'brak'}`);
-        if (lastPlayed && audioMap[lastPlayed.id]) {
-            logDebug(`🔄 Odtwarzanie ostatniego: ${lastPlayed.id}`);
-            playAudioForTarget({ id: lastPlayed.id, position: lastPlayed.position });
+        console.log(`🔄 Odtwarzanie ostatniego: ${lastPlayed ? `${lastPlayed.id}:${lastPlayed.position}` : 'brak'}`);
+        if (lastPlayed && audioMap[lastPlayed.id] && lastPlayed.playedAt) {
+            if (hasBeenPlayingLessThan10MinutesAgo(lastPlayed.playedAt)) {
+                playAudioForTarget({ id: lastPlayed.id, position: lastPlayed.position });
+            } else {
+                console.log('🔄 plik odtworzony więcej niż 10 minut temu, nie odtwarzam ponownie');
+            }
         }
     }
 

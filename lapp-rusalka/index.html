@@ -6,7 +6,6 @@
   <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <script src="targets.js"></script>
-  <script src="debug.js"></script>
   <script src="storage.js"></script>
   <script src="map.js"></script>
   <script src="network.js"></script>
@@ -47,16 +46,6 @@
   </div>
   <div id="coords" style="font-size:300%; color: #eeeeee" aria-live="polite"></div>
 
-  <div id="debugOverlay" aria-hidden="true">
-    <h4>🛠️ Tryb Debug</h4>
-    <div><strong>Narracja:</strong> <span id="debugNarration">-</span></div>
-    <div><strong>Koordynaty:</strong> <span id="debugCoords">-</span></div>
-    <div><strong>Audio:</strong> <span id="debugAudio">-</span></div>
-    <div><strong>Miejsce:</strong> <span id="debugTarget">-</span></div>
-    <div class="log" id="debugLog"></div>
-  </div>
-
-  <button id="debugToggle" onclick="toggleDebugOverlay()" aria-label="Włącz lub wyłącz tryb debugowania">Debug</button>
 </body>
 
 </html>

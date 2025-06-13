@@ -15,6 +15,7 @@ const updateDebug = (coords, audio, targetName) => {
     document.getElementById('debugCoords').innerText = `${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)}`;
     document.getElementById('debugAudio').innerText = audio || "-";
     document.getElementById('debugTarget').innerText = targetName || "-";
+    document.getElementById('debugNarration').innerText = isDay ? 'Dzienna' : 'Nocna';
 };
 
 function toggleDebugOverlay() {

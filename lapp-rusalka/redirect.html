@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Przekierowanie...</title>
+    <script>
+        (function () {
+            const path = window.location.pathname;
+            const match = path.match(/^\/lapp-rusalka-qr(\d+)$/);
+            if (match) {
+                const index = match[1];
+                window.location.replace(`/lapp-rusalka#lapp-rusalka-start-${index}`);
+            } else {
+                window.location.replace("/lapp-rusalka");
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <p>Przekierowanie...</p>
+</body>
+
+</html>

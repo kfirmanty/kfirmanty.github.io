@@ -64,7 +64,7 @@ function startExperience() {
             return;
         }
         logDebug(`🔗 Odtwórz z hash: ${hashTrigger}`);
-        audio.playAudioForTarget({ id: hashTrigger, name: hashTrigger.replace(/-/g, ' ') });
+        audio.playAudioForTarget({ id: trigger, name: hashTrigger.replace(/-/g, ' ') });
     } else {
         audio.resumeLastPlaying();
     }

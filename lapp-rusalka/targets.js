@@ -515,31 +515,31 @@ const nightTargets = [
     "name": "QR_1_punkt startowy golęcin",
     "lat": 0,
     "lng": 0,
-    "id": "QR_2_PRZY STADIONIE GOLĘCIN"
+    "id": "QR_1_punkt startowy golęcin"
   },
   {
     "name": "QR_2_punkt startowy ośrodek",
     "lat": 0,
     "lng": 0,
-    "id": "QR_1_PRZY OŚRODKU RUSAŁKA"
+    "id": "QR_2_punkt startowy ośrodek"
   },
   {
     "name": "QR_3_punkt startowy mostek bobrowy",
     "lat": 0,
     "lng": 0,
-    "id": "QR_3_PRZY MOSTKU BOBROWYM"
+    "id": "QR_3_punkt startowy mostek bobrowy"
   },
   {
     "name": "QR_4_punkt startowy plaża nudystów",
     "lat": 0,
     "lng": 0,
-    "id": "QR_4_Wejście od plaży nudystów"
+    "id": "QR_4_punkt startowy plaża nudystów"
   },
   {
     "name": "QR_5_punkt startowy ulica botaniczna",
     "lat": 0,
     "lng": 0,
-    "id": "QR_5_ULICA BOTANICZNA"
+    "id": "QR_5_punkt startowy botaniczna"
   },
 
   //test

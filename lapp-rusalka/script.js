@@ -56,7 +56,7 @@ function startExperience() {
             "lapp-rusalka-start-2": "QR_2_punkt startowy ośrodek",
             "lapp-rusalka-start-3": "QR_3_punkt startowy mostek bobrowy",
             "lapp-rusalka-start-4": "QR_4_punkt startowy plaża nudystów",
-            "lapp-rusalka-start-5": "QR_5_punkt startowy ulica botaniczna",
+            "lapp-rusalka-start-5": "QR_5_punkt startowy botaniczna",
         }
         const trigger = triggerLookup[hashTrigger];
         if (!trigger) {

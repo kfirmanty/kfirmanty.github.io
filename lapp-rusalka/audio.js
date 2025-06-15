@@ -17,6 +17,7 @@ function initAudioSystem({ storage }) {
     const stopAllExcept = (idToKeep) => {
         Object.entries(audioMap).forEach(([id, audio]) => {
             if (id !== idToKeep && !audio.paused) {
+                console.log('⏹️ Zatrzymywanie audio:', id);
                 audio.pause();
             }
         });

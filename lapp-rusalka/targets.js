@@ -95,8 +95,8 @@ const dayTargets = [
   },
   {
     "name": "Porosty  Elsensee-Rusałka GENERAL PLAN",
-    "lat": 52.425484,
-    "lng": 16.885352,
+    "lat": 52.425259,
+    "lng": 16.885733,
     "id": "10_porosty",
     "minDistance": 0.00007
   },
@@ -133,7 +133,7 @@ const dayTargets = [
     "lat": 52.4286152,
     "lng": 16.8777662,
     "id": "13_grill",
-    "minDistance": 0.0005
+    "minDistance": 0.00025
   },
   {
     "name": "Ośrodek 1",
@@ -196,7 +196,7 @@ const dayTargets = [
     "lat": 52.424293,
     "lng": 16.879284,
     "id": "17_Pomnik miejsce rozstrzelań",
-    "minDistance": 0.00015
+    "minDistance": 0.0001
   },
   {
     "name": "Pomnik - miejsce rozstrzelań INTRO lektorzy",
@@ -210,7 +210,7 @@ const dayTargets = [
     "lat": 52.426774,
     "lng": 16.883203,
     "id": "19_drzewo",
-    "minDistance": 0.0002
+    "minDistance": 0.0001
   },
   {
     "name": "Stare drzewo 2",
@@ -413,8 +413,8 @@ const nightTargets = [
   },
   {
     "name": "Porosty  Elsensee-Rusałka GENERAL PLAN",
-    "lat": 52.425484,
-    "lng": 16.885352,
+    "lat": 52.425259,
+    "lng": 16.885733,
     "id": "8_Kompletna dezorientacja I",
     "minDistance": 0.00007
   },
@@ -451,7 +451,7 @@ const nightTargets = [
     "lat": 52.4286152,
     "lng": 16.8777662,
     "id": "10_Dodatek 1 RE2",
-    "minDistance": 0.0005
+    "minDistance": 0.00025
   },
   {
     "name": "Ośrodek 3",

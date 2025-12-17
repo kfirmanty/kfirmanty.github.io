@@ -1,0 +1,141 @@
+[
+  {
+    "name": "Izba Rzemieślnicza",
+    "lat": 52.402254,
+    "lng": 16.9219257,
+    "id": "Negocjacje",
+    "minDistance": 0.0002
+  },
+  {
+    "name": "Ratajczaka 13",
+    "lat": 52.404588,
+    "lng": 16.924338,
+    "id": "Interes z flagami",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Pasaż Apollo",
+    "lat": 52.404921,
+    "lng": 16.925203,
+    "id": "Fotograf",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Piekary/Wysoka",
+    "lat": 52.405173,
+    "lng": 16.927989,
+    "id": "Flagi",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Skwer",
+    "lat": 52.405631,
+    "lng": 16.929644,
+    "id": "Hełmy",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Szymańskiego",
+    "lat": 52.405445,
+    "lng": 16.929953,
+    "id": "Okopy",
+    "minDistance": 0.0001
+  },
+  {
+    "name": "Wrocławska",
+    "lat": 52.406139,
+    "lng": 16.932923,
+    "id": "Marynarze",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Rynek",
+    "lat": 52.408366,
+    "lng": 16.933588,
+    "id": "Koń",
+    "minDistance": 0.0005
+  },
+  {
+    "name": "Wroniecka",
+    "lat": 52.408941,
+    "lng": 16.933841,
+    "id": "Telefon",
+    "minDistance": 0.0002
+  },
+  {
+    "name": "Orlen",
+    "lat": 52.411416,
+    "lng": 16.934218,
+    "id": "Rekonstrukcja",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Muzeum",
+    "lat": 52.411768,
+    "lng": 16.931238,
+    "id": "napisy końcowe",
+    "minDistance": 0.0004
+  },
+  {
+    "name": "Garbary 28 Brama",
+    "lat": 52.404713,
+    "lng": 16.937489,
+    "id": "Przysięga",
+    "minDistance": 0.0001
+  },
+  {
+    "name": "Garbary 36 aż do Wielkiej",
+    "lat": 52.405396,
+    "lng": 16.937525,
+    "id": "Dom Piekarza + Ziemniaczany blues",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Wielka 18",
+    "lat": 52.408626,
+    "lng": 16.937764,
+    "id": "Ratusz",
+    "minDistance": 0.0002
+  },
+  {
+    "name": "\"Hotel Lech, św. Marcin 74, przy 2. filarze, licząc od Zamku\"",
+    "lat": 52.40726473735547,
+    "lng": 16.920536389836435,
+    "id": "dwa hotele.mp3",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "\"ŚW. Marcin, końcówka fontann z biało-czerwonymi paskami",
+    "lat": 0,
+    "id": "kantaka.mp3",
+    "minDistance": null
+  },
+  {
+    "name": "narożnik Kantaka i 27 grudnia",
+    "lat": 52.40800318535956,
+    "lng": 16.923249231412033,
+    "id": "pocisk.mp3",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "27 grudnia 3",
+    "lat": 52.407848001079486,
+    "lng": 16.929485022940792,
+    "id": "bazar.mp3",
+    "minDistance": 0.0002
+  },
+  {
+    "name": "\"poczta polska, aleje Marcinkowskiego róg z 23 lutego\"",
+    "lat": 52.410014982349125,
+    "lng": 16.929654601448767,
+    "id": "telegrafistka.mp3",
+    "minDistance": 0.00015000000000000001
+  },
+  {
+    "name": "Weterana",
+    "lat": 52.41115416780709,
+    "lng": 16.9298485709948,
+    "id": "mieszkanie fiedlera.mp3",
+    "minDistance": 0.00015000000000000001
+  }
+]

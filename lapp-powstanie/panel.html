@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="pl">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <script src="targets.js"></script>
+
+  <title>Panel zarządzania targetami - Fonorama Muzeum Powstania</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #header {
+      padding: 20px;
+      background: #f5f5f5;
+      border-bottom: 2px solid #ddd;
+      text-align: center;
+    }
+
+    #header h1 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+    }
+
+    #exportButton {
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #exportButton:hover {
+      background: #45a049;
+    }
+
+    #exportButton:active {
+      background: #3d8b40;
+    }
+
+    #container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    #sidebar {
+      width: 350px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      border-left: 2px solid #ddd;
+      padding: 10px;
+    }
+
+    .target-control {
+      background: white;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .target-control h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .target-control .target-id {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .target-control .coords {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 8px;
+      font-family: monospace;
+    }
+
+    .target-control label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .target-control input[type="range"] {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .target-control .value-display {
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 10000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>Panel zarządzania punktami</h1>
+    <button id="exportButton" onclick="exportTargets()">Export do schowka</button>
+  </div>
+
+  <div id="container">
+    <div id="map"></div>
+    <div id="sidebar"></div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <script>
+    // Store target state with updated positions and minDistance values
+    let targetStates = [];
+
+    // Initialize map centered on Poznań
+    const map = L.map('map').setView([52.4064, 16.9252], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 24,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // Create markers and controls for each target
+    targets.forEach((target, index) => {
+      // Skip targets with lat/lng = 0 (QR codes)
+      if (target.lat === 0 && target.lng === 0) {
+        // Still store them for export
+        targetStates.push({
+          index: index,
+          name: target.name,
+          lat: target.lat,
+          lng: target.lng,
+          id: target.id,
+          minDistance: target.minDistance,
+          marker: null,
+          circle: null
+        });
+        return;
+      }
+
+      // Create draggable marker
+      const marker = L.marker([target.lat, target.lng], {
+        draggable: true
+      }).addTo(map);
+
+      marker.bindPopup(target.name);
+
+      // Create circle representing minDistance
+      const minDist = target.minDistance || 0.0001;
+      const radius = minDist * 111000; // Convert degrees to meters
+      const circle = L.circle([target.lat, target.lng], {
+        color: 'blue',
+        fillColor: '#30f',
+        fillOpacity: 0.2,
+        radius: radius
+      }).addTo(map);
+
+      // Store target state
+      const targetState = {
+        index: index,
+        name: target.name,
+        lat: target.lat,
+        lng: target.lng,
+        id: target.id,
+        minDistance: minDist,
+        marker: marker,
+        circle: circle
+      };
+      targetStates.push(targetState);
+
+      // Handle marker drag
+      marker.on('dragend', function (event) {
+        const position = marker.getLatLng();
+        targetState.lat = position.lat;
+        targetState.lng = position.lng;
+        circle.setLatLng(position);
+        updateCoords(index);
+      });
+
+      // Create sidebar control
+      createTargetControl(targetState, index);
+    });
+
+    function createTargetControl(targetState, index) {
+      const sidebar = document.getElementById('sidebar');
+      const controlDiv = document.createElement('div');
+      controlDiv.className = 'target-control';
+      controlDiv.id = `control-${index}`;
+
+      const minDist = targetState.minDistance || 0.0001;
+
+      controlDiv.innerHTML = `
+        <h3>${targetState.name}</h3>
+        <div class="target-id">${targetState.id}</div>
+        <div class="coords" id="coords-${index}">
+          Lat: ${targetState.lat.toFixed(6)}<br>
+          Lng: ${targetState.lng.toFixed(6)}
+        </div>
+        <label for="slider-${index}">Min Distance:</label>
+        <input type="range" id="slider-${index}" min="0.00001" max="0.001" step="0.00001" value="${minDist}">
+        <div class="value-display" id="value-${index}">${minDist.toFixed(5)} (${(minDist * 111).toFixed(1)} km)</div>
+      `;
+
+      sidebar.appendChild(controlDiv);
+
+      // Handle slider change
+      const slider = document.getElementById(`slider-${index}`);
+      slider.addEventListener('input', function () {
+        const newMinDist = parseFloat(slider.value);
+        targetState.minDistance = newMinDist;
+
+        // Update circle radius
+        if (targetState.circle) {
+          const newRadius = newMinDist * 111000;
+          targetState.circle.setRadius(newRadius);
+        }
+
+        // Update display
+        document.getElementById(`value-${index}`).textContent =
+          `${newMinDist.toFixed(5)} (${(newMinDist * 111).toFixed(1)} km)`;
+      });
+    }
+
+    function updateCoords(index) {
+      const targetState = targetStates[index];
+      const coordsDiv = document.getElementById(`coords-${index}`);
+      if (coordsDiv) {
+        coordsDiv.innerHTML = `
+          Lat: ${targetState.lat.toFixed(6)}<br>
+          Lng: ${targetState.lng.toFixed(6)}
+        `;
+      }
+    }
+
+    function exportTargets() {
+      // Build the targets array in the same format as targets.js
+      let output = '//0.01 == 1KM\n//0.0001 == 10m\n\nconst targets = [\n';
+
+      targetStates.forEach((state, idx) => {
+        output += '  {\n';
+        output += `    "name": "${state.name}",\n`;
+        output += `    "lat": ${state.lat},\n`;
+        output += `    "lng": ${state.lng},\n`;
+        output += `    "id": "${state.id}"`;
+
+        // Only add minDistance if it exists
+        if (state.minDistance !== undefined) {
+          output += `,\n    "minDistance": ${state.minDistance}\n`;
+        } else {
+          output += '\n';
+        }
+
+        output += '  }';
+
+        // Add comma unless it's the last item
+        if (idx < targetStates.length - 1) {
+          output += ',';
+        }
+        output += '\n';
+      });
+
+      output += '];\n';
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(output).then(function () {
+        showNotification('Skopiowano do schowka!');
+      }, function (err) {
+        showNotification('Błąd kopiowania: ' + err, true);
+      });
+    }
+
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.background = isError ? '#f44336' : '#4CAF50';
+      notification.style.display = 'block';
+
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>

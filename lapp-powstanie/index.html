@@ -27,6 +27,12 @@
 
   <div id="gpsStatus" aria-live="polite">Łączenie z GPS...</div>
 
+  <div id="bufferingIndicator" style="display: none;" aria-live="polite">
+    <div class="spinner"></div>
+    <div id="bufferingMessage">Ładowanie audio...</div>
+    <div id="bufferingProgress">0%</div>
+  </div>
+
   <img src="logo.png" alt="Logo aplikacji Fonorama Muzeum Powstania" width="30%"
     style="margin-bottom: 10vh; margin-top: 5vh">
   <div id="app" style="text-align: center; text-shadow: -20px -20px 10px rgba(255, 255, 255, 0.2);"></div>

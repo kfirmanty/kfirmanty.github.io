@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V I R T U A L N Y I N S P E K T O R A T</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'VT323', monospace;
+      cursor: none;
+      user-select: none;
+    }
+
+    #game-canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* Custom Cursor */
+    #cursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      width: 24px;
+      height: 24px;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+
+    #cursor::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 24px;
+      background: #ff71ce;
+      position: absolute;
+      left: 10px;
+      top: 0;
+      box-shadow: 0 0 8px #ff71ce88;
+    }
+
+    #cursor::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 4px;
+      background: #ff71ce;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      box-shadow: 0 0 8px #ff71ce88;
+    }
+
+    #cursor.interact {
+      transform: translate(-50%, -50%) scale(1.5);
+    }
+
+    #cursor.interact::before,
+    #cursor.interact::after {
+      background: #01cdfe;
+      box-shadow: 0 0 12px #01cdfe88;
+    }
+
+    #cursor.hidden {
+      display: none;
+    }
+
+    /* HUD */
+    #hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Scanlines overlay */
+    #scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.08) 2px,
+          rgba(0, 0, 0, 0.08) 4px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Dialogue Box */
+    #dialogue-overlay {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      pointer-events: none;
+      z-index: 200;
+      display: none;
+      justify-content: center;
+    }
+
+    #dialogue-overlay.active {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    #dialogue-box {
+      max-width: 700px;
+      width: 100%;
+      background: linear-gradient(180deg, #1a0a2eee, #0d0521ee);
+      border: 2px solid #b967ff;
+      border-radius: 4px;
+      padding: 20px 24px;
+      box-shadow: 0 0 30px #b967ff44, inset 0 0 30px #b967ff11;
+    }
+
+    #dialogue-speaker {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      color: #01cdfe;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #01cdfe88;
+      letter-spacing: 2px;
+    }
+
+    #dialogue-text {
+      font-size: 22px;
+      color: #e0d0ff;
+      line-height: 1.5;
+      text-shadow: 0 0 4px #e0d0ff44;
+      min-height: 50px;
+    }
+
+    #dialogue-choices {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dialogue-choice {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      color: #ff71ce;
+      background: #1a0a2e88;
+      border: 1px solid #ff71ce44;
+      padding: 8px 16px;
+      cursor: none;
+      text-align: left;
+      transition: all 0.15s;
+      pointer-events: auto;
+    }
+
+    .dialogue-choice:hover {
+      background: #ff71ce22;
+      border-color: #ff71ce;
+      text-shadow: 0 0 8px #ff71ce88;
+      padding-left: 24px;
+    }
+
+    #dialogue-continue {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: #01cdfe88;
+      margin-top: 12px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Notification */
+    #notification {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      color: #01cdfe;
+      text-shadow: 0 0 10px #01cdfe88;
+      background: #0d0521cc;
+      border: 1px solid #01cdfe44;
+      padding: 8px 24px;
+      border-radius: 2px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    #notification.show {
+      opacity: 1;
+    }
+
+    /* Title Screen */
+    #title-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, #0a0a2e, #1a0a3e, #0d0521);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+    }
+
+    #title-screen h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 28px;
+      color: #ff71ce;
+      text-shadow: 0 0 20px #ff71ce88, 0 4px 0 #b967ff;
+      letter-spacing: 8px;
+      margin-bottom: 20px;
+    }
+
+    #title-screen h2 {
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      color: #01cdfe;
+      text-shadow: 0 0 10px #01cdfe66;
+      letter-spacing: 6px;
+      margin-bottom: 60px;
+    }
+
+    #start-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: #fffb96;
+      background: transparent;
+      border: 2px solid #fffb96;
+      padding: 16px 40px;
+      cursor: none;
+      letter-spacing: 4px;
+      transition: all 0.2s;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    #start-btn:hover {
+      background: #fffb9622;
+      box-shadow: 0 0 20px #fffb9644;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 5px #fffb9622;
+      }
+
+      50% {
+        box-shadow: 0 0 20px #fffb9644;
+      }
+    }
+
+    #title-screen .hint {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: #b967ff88;
+      margin-top: 30px;
+      letter-spacing: 2px;
+    }
+
+    /* Loading */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0d0521;
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      color: #b967ff;
+      letter-spacing: 4px;
+    }
+
+    #loading.hidden {
+      display: none;
+    }
+
+    /* Transition overlay */
+    #transition {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      z-index: 400;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s;
+    }
+
+    #transition.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Crosshair in pointer lock mode */
+    #crosshair {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 150;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">L O A D I N G . . .</div>
+
+  <div id="title-screen" style="display:none;">
+    <h1>V I R T U A L N Y</h1>
+    <h2>I N S P E K T O R A T</h2>
+    <button id="start-btn">E N T E R</button>
+    <div class="hint">WASD to move · Mouse to look · Click to interact</div>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+  <div id="scanlines"></div>
+  <div id="cursor"></div>
+
+  <div id="hud"></div>
+
+  <div id="dialogue-overlay">
+    <div id="dialogue-box">
+      <div id="dialogue-speaker"></div>
+      <div id="dialogue-text"></div>
+      <div id="dialogue-choices"></div>
+      <div id="dialogue-continue" style="display:none;">▼ Click to continue</div>
+    </div>
+  </div>
+
+  <div id="notification"></div>
+  <div id="transition"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="js/game.js"></script>
+</body>
+
+</html>

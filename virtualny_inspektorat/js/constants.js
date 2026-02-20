@@ -1,0 +1,10 @@
+export const RENDER_WIDTH = 640;
+export const RENDER_HEIGHT = 480;
+export const PLAYER_HEIGHT = 1.6;
+export const PLAYER_RADIUS = 0.4;
+export const MOVE_SPEED = 4.0;
+export const MOUSE_SENSITIVITY = 0.002;
+export const GRAVITY = -15;
+export const JUMP_FORCE = 6;
+export const INTERACT_DISTANCE = 4.0;
+export const STEP_HEIGHT = 0.5;

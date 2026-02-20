@@ -1,0 +1,577 @@
+{
+  "id": "temple_exterior",
+  "title": "V I R T U A L N Y I N S P E K T O R A T",
+  "onStart": {
+    "dialogue": {
+      "nodes": [
+        {
+          "text": "You have been C H O S E N ."
+        }
+      ]
+    }
+  },
+  "sky": {
+    "type": "gradient",
+    "stops": [
+      [0, "#0a0e2a"],
+      [0.3, "#0f2847"],
+      [0.6, "#1a5a7a"],
+      [1, "#2a8aaa"]
+    ]
+  },
+  "fog": {
+    "color": "#1a4a6a",
+    "near": 25,
+    "far": 75
+  },
+  "ambient": {
+    "color": "#4488aa",
+    "intensity": 0.35
+  },
+  "lights": [
+    {
+      "type": "directional",
+      "color": "#ffeedd",
+      "intensity": 0.8,
+      "position": [10, 20, 5],
+      "castShadow": true
+    },
+    {
+      "type": "point",
+      "color": "#ff71ce",
+      "intensity": 0.6,
+      "distance": 15,
+      "position": [-8, 6, 5]
+    },
+    {
+      "type": "point",
+      "color": "#01cdfe",
+      "intensity": 0.6,
+      "distance": 15,
+      "position": [8, 6, -2]
+    },
+    {
+      "type": "hemisphere",
+      "skyColor": "#4488cc",
+      "groundColor": "#2a1a3a",
+      "intensity": 0.3
+    }
+  ],
+  "water": {
+    "width": 200,
+    "height": 200,
+    "level": -1.5,
+    "color": "#2244aa"
+  },
+  "spawn": {
+    "position": [0, 2.2, 10],
+    "rotation": [0, 0, 0]
+  },
+  "objects": [
+    {
+      "id": "platform",
+      "type": "box",
+      "params": {
+        "width": 22,
+        "height": 1.5,
+        "depth": 28
+      },
+      "position": [0, -0.25, -2],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.7,
+        "metalness": 0.2
+      },
+      "collision": true,
+      "collisionOptions": {
+        "walkable": true
+      }
+    },
+    {
+      "id": "stairs_front",
+      "type": "stairs",
+      "params": {
+        "steps": 10,
+        "stepWidth": 8,
+        "stepHeight": 0.2,
+        "stepDepth": 0.5
+      },
+      "position": [0, 0.5, 8],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.7,
+        "metalness": 0.2
+      },
+      "collision": true,
+      "collisionOptions": {
+        "walkable": true,
+        "isStairs": true
+      }
+    },
+    {
+      "id": "temple_floor",
+      "type": "box",
+      "params": {
+        "width": 12,
+        "height": 0.3,
+        "depth": 10
+      },
+      "position": [0, 2.55, -2],
+      "material": {
+        "color": "#d4c45e",
+        "roughness": 0.6,
+        "metalness": 0.1
+      },
+      "collision": true,
+      "collisionOptions": {
+        "walkable": true
+      }
+    },
+    {
+      "_comment": "Left column row",
+      "id": "col_l1",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [-5, 2.7, 2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_l2",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [-5, 2.7, 0],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_l3",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [-5, 2.7, -2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_l4",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [-5, 2.7, -5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "_comment": "Right column row",
+      "id": "col_r1",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [5, 2.7, 2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_r2",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [5, 2.7, 0],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_r3",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [5, 2.7, -2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_r4",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [5, 2.7, -5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "_comment": "Front columns",
+      "id": "col_f1",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [-3.5, 2.7, 2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_f2",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [0, 2.7, 2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "col_f3",
+      "type": "column",
+      "params": {
+        "radius": 0.35,
+        "height": 4.5
+      },
+      "position": [3.5, 2.7, 2.5],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "roof_beam",
+      "type": "box",
+      "params": {
+        "width": 12,
+        "height": 0.5,
+        "depth": 10
+      },
+      "position": [0, 7.2, -2],
+      "material": {
+        "color": "#c8b850",
+        "roughness": 0.6
+      },
+      "collision": false
+    },
+    {
+      "id": "pediment_front",
+      "type": "pediment",
+      "params": {
+        "width": 12,
+        "height": 2.5,
+        "depth": 0.5
+      },
+      "position": [0, 7.45, 2.5],
+      "material": {
+        "color": "#b8a840",
+        "roughness": 0.7
+      },
+      "collision": false
+    },
+    {
+      "id": "back_wall",
+      "type": "box",
+      "params": {
+        "width": 10,
+        "height": 5,
+        "depth": 0.4
+      },
+      "position": [0, 5.2, -6.8],
+      "material": {
+        "color": "#b8a840",
+        "roughness": 0.8
+      },
+      "collision": true
+    },
+    {
+      "id": "left_wall",
+      "type": "box",
+      "params": {
+        "width": 0.4,
+        "height": 3.5,
+        "depth": 9
+      },
+      "position": [-4.8, 4.45, -2],
+      "material": {
+        "color": "#b8a840",
+        "roughness": 0.8,
+        "transparent": true,
+        "opacity": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "right_wall",
+      "type": "box",
+      "params": {
+        "width": 0.4,
+        "height": 3.5,
+        "depth": 9
+      },
+      "position": [4.8, 4.45, -2],
+      "material": {
+        "color": "#b8a840",
+        "roughness": 0.8,
+        "transparent": true,
+        "opacity": 0.6
+      },
+      "collision": true
+    },
+    {
+      "_comment": "The Oracle Head - main interactive NPC",
+      "id": "oracle_head",
+      "type": "head",
+      "params": {
+        "scale": 1.4,
+        "eyeMaterial": {
+          "color": "#111122"
+        }
+      },
+      "position": [0, 4.2, -4],
+      "material": {
+        "color": "#d4b896",
+        "roughness": 0.5,
+        "metalness": 0.1,
+        "flatShading": true
+      },
+      "collision": true,
+      "animation": {
+        "type": "bob",
+        "speed": 0.8,
+        "amplitude": 0.15,
+        "offset": 0
+      },
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "☉ Speak to the Oracle",
+        "dialogue": {
+          "nodes": [
+            {
+              "speaker": "T H E   O R A C L E",
+              "text": "W E L C O M E,   T R A V E L E R . . .",
+              "next": 1
+            },
+            {
+              "speaker": "T H E   O R A C L E",
+              "text": "You stand at the threshold of the V I R T U A L N Y I N S P E K T O R A T. To enter, you must prove your mind is sharp enough to navigate its halls.",
+              "next": 2
+            },
+            {
+              "speaker": "T H E   O R A C L E",
+              "text": "Answer me this: I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. I have roads, but no cars. What am I?",
+              "choices": [
+                {
+                  "text": "A map",
+                  "correct": true,
+                  "response": "Y E S . . .   You see beyond the surface. The temple opens its mouth to receive you. Enter, and discover what lies within the dream."
+                },
+                {
+                  "text": "A painting",
+                  "correct": false,
+                  "response": "A painting has detail, but not the structure I describe. Think again, traveler..."
+                },
+                {
+                  "text": "A computer",
+                  "correct": false,
+                  "response": "Technology is a mirror of the mind, but it is not what I am. Consider my words once more..."
+                },
+                {
+                  "text": "A dream",
+                  "correct": false,
+                  "response": "Dreams are vast and formless. What I am is more... defined. Try again..."
+                }
+              ]
+            }
+          ]
+        },
+        "onSuccess": {
+          "type": "transition",
+          "target": "temple_interior"
+        }
+      }
+    },
+    {
+      "id": "pedestal",
+      "type": "box",
+      "params": {
+        "width": 1.5,
+        "height": 1.5,
+        "depth": 1.5
+      },
+      "position": [0, 3, -4],
+      "material": {
+        "color": "#8a7a9a",
+        "roughness": 0.5,
+        "metalness": 0.3
+      },
+      "collision": true
+    },
+    {
+      "_comment": "Floating decorative orbs",
+      "id": "orb_pink_1",
+      "type": "sphere",
+      "params": {
+        "radius": 1.5,
+        "widthSegments": 10,
+        "heightSegments": 8
+      },
+      "position": [-12, 6, 4],
+      "material": {
+        "color": "#d162a4",
+        "emissive": "#d162a4",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.2,
+        "metalness": 0.8
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.5,
+        "amplitude": 1.2,
+        "offset": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "orb_green_1",
+      "type": "sphere",
+      "params": {
+        "radius": 2,
+        "widthSegments": 10,
+        "heightSegments": 8
+      },
+      "position": [-15, 4, -8],
+      "material": {
+        "color": "#05d9a6",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.2,
+        "metalness": 0.8
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.4,
+        "amplitude": 1.5,
+        "offset": 2
+      },
+      "collision": false
+    },
+    {
+      "id": "orb_pink_2",
+      "type": "sphere",
+      "params": {
+        "radius": 1.8,
+        "widthSegments": 10,
+        "heightSegments": 8
+      },
+      "position": [14, 5, 0],
+      "material": {
+        "color": "#d162a4",
+        "emissive": "#d162a4",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.2,
+        "metalness": 0.8
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.6,
+        "amplitude": 1,
+        "offset": 1
+      },
+      "collision": false
+    },
+    {
+      "id": "orb_green_2",
+      "type": "sphere",
+      "params": {
+        "radius": 1.2,
+        "widthSegments": 8,
+        "heightSegments": 6
+      },
+      "position": [10, 9, -10],
+      "material": {
+        "color": "#05d9a6",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.2,
+        "metalness": 0.8
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.7,
+        "amplitude": 0.8,
+        "offset": 3
+      },
+      "collision": false
+    },
+    {
+      "id": "orb_purple_1",
+      "type": "sphere",
+      "params": {
+        "radius": 0.8,
+        "widthSegments": 8,
+        "heightSegments": 6
+      },
+      "position": [12, 3, 10],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.4,
+        "roughness": 0.2,
+        "metalness": 0.8
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.9,
+        "amplitude": 0.6,
+        "offset": 5
+      },
+      "collision": false
+    }
+  ]
+}

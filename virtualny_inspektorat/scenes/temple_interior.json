@@ -1,0 +1,478 @@
+{
+  "id": "temple_interior",
+  "title": "B E P A T I E N T",
+  "sky": {
+    "type": "gradient",
+    "stops": [
+      [0, "#0a0015"],
+      [0.5, "#150030"],
+      [1, "#1a0040"]
+    ]
+  },
+  "fog": {
+    "color": "#0a0020",
+    "near": 5,
+    "far": 30
+  },
+  "ambient": {
+    "color": "#6644aa",
+    "intensity": 0.25
+  },
+  "lights": [
+    {
+      "type": "point",
+      "color": "#ff71ce",
+      "intensity": 1,
+      "distance": 20,
+      "position": [0, 4, 0]
+    },
+    {
+      "type": "point",
+      "color": "#01cdfe",
+      "intensity": 0.8,
+      "distance": 15,
+      "position": [-5, 3, -5]
+    },
+    {
+      "type": "point",
+      "color": "#b967ff",
+      "intensity": 0.8,
+      "distance": 15,
+      "position": [5, 3, 5]
+    },
+    {
+      "type": "point",
+      "color": "#fffb96",
+      "intensity": 50.5,
+      "distance": 10,
+      "position": [0, 4.4, 0]
+    }
+  ],
+  "spawn": {
+    "position": [0, 1.6, 8],
+    "rotation": [0, 180, 0]
+  },
+  "objects": [
+    {
+      "id": "floor",
+      "type": "box",
+      "params": {
+        "width": 16,
+        "height": 0.5,
+        "depth": 20
+      },
+      "position": [0, -0.25, 0],
+      "material": {
+        "color": "#1a1a2e",
+        "roughness": 0.3,
+        "metalness": 0.7
+      },
+      "collision": true,
+      "collisionOptions": {
+        "walkable": true
+      }
+    },
+    {
+      "id": "ceiling",
+      "type": "box",
+      "params": {
+        "width": 16,
+        "height": 0.3,
+        "depth": 20
+      },
+      "position": [0, 5.15, 0],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.9,
+        "texture": "sky",
+        "textureRepeat": [4, 5]
+      },
+      "collision": false
+    },
+    {
+      "id": "wall_back",
+      "type": "box",
+      "params": {
+        "width": 16,
+        "height": 5,
+        "depth": 0.4
+      },
+      "position": [0, 2.5, -10],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [4, 1.25]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_front",
+      "type": "box",
+      "params": {
+        "width": 16,
+        "height": 5,
+        "depth": 0.4
+      },
+      "position": [0, 2.5, 10],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [4, 1.25]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_left",
+      "type": "box",
+      "params": {
+        "width": 0.4,
+        "height": 5,
+        "depth": 20
+      },
+      "position": [-8, 2.5, 0],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [5, 1.25]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_right",
+      "type": "box",
+      "params": {
+        "width": 0.4,
+        "height": 5,
+        "depth": 20
+      },
+      "position": [8, 2.5, 0],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [5, 1.25]
+      },
+      "collision": true
+    },
+    {
+      "id": "int_col_1",
+      "type": "column",
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [-6, 0, -6],
+      "material": {
+        "color": "#3a2a5a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "int_col_2",
+      "type": "column",
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [6, 0, -6],
+      "material": {
+        "color": "#3a2a5a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "int_col_3",
+      "type": "column",
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [-6, 0, 6],
+      "material": {
+        "color": "#3a2a5a",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "int_col_4",
+      "type": "column",
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [6, 0, 6],
+      "material": {
+        "color": "#3a2a5a",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "altar_base",
+      "type": "box",
+      "params": {
+        "width": 3,
+        "height": 0.8,
+        "depth": 3
+      },
+      "position": [0, 0.4, -5],
+      "material": {
+        "color": "#2a1a4a",
+        "roughness": 0.3,
+        "metalness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "altar_top",
+      "type": "box",
+      "params": {
+        "width": 2.5,
+        "height": 0.2,
+        "depth": 2.5
+      },
+      "position": [0, 0.9, -5],
+      "material": {
+        "color": "#fffb96",
+        "emissive": "#fffb96",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.2,
+        "metalness": 0.5
+      },
+      "collision": false
+    },
+    {
+      "id": "crystal",
+      "type": "cone",
+      "params": {
+        "radius": 0.3,
+        "height": 1.2,
+        "segments": 5
+      },
+      "position": [0, 2, -5],
+      "material": {
+        "color": "#01cdfe",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 1,
+        "transparent": true,
+        "opacity": 0.8,
+        "roughness": 0.1,
+        "metalness": 0.9
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1.2,
+        "amplitude": 0.3,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Examine the Crystal",
+        "examineText": "A crystal of pure vapor energy. It hums with an ancient resonance. Perhaps there are more secrets to uncover in this place..."
+      }
+    },
+    {
+      "id": "torus_1",
+      "type": "torus",
+      "params": {
+        "radius": 0.6,
+        "tube": 0.08,
+        "radialSegments": 6,
+        "tubularSegments": 12
+      },
+      "position": [0, 2, -5],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "rotate",
+        "speed": 0.8,
+        "axis": "y"
+      },
+      "collision": false
+    },
+    {
+      "id": "torus_2",
+      "type": "torus",
+      "params": {
+        "radius": 0.8,
+        "tube": 0.06,
+        "radialSegments": 6,
+        "tubularSegments": 12
+      },
+      "position": [0, 2, -5],
+      "rotation": [90, 0, 0],
+      "material": {
+        "color": "#01cdfe",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 0.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "rotate",
+        "speed": -0.5,
+        "axis": "x"
+      },
+      "collision": false
+    },
+    {
+      "id": "tile_glow_1",
+      "type": "box",
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [-3, 0.01, -3],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+    {
+      "id": "tile_glow_2",
+      "type": "box",
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [3, 0.01, -3],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+    {
+      "id": "tile_glow_3",
+      "type": "box",
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [-3, 0.01, 3],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+    {
+      "id": "tile_glow_4",
+      "type": "box",
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [3, 0.01, 3],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+    {
+      "id": "int_orb_1",
+      "type": "sphere",
+      "params": {
+        "radius": 0.3,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [-5, 3, 0],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1,
+        "amplitude": 0.5,
+        "offset": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "int_orb_2",
+      "type": "sphere",
+      "params": {
+        "radius": 0.25,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [5, 2.5, -2],
+      "material": {
+        "color": "#01cdfe",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1.3,
+        "amplitude": 0.4,
+        "offset": 2
+      },
+      "collision": false
+    },
+    {
+      "id": "int_orb_3",
+      "type": "sphere",
+      "params": {
+        "radius": 0.2,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [3, 4, 4],
+      "material": {
+        "color": "#fffb96",
+        "emissive": "#fffb96",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.9,
+        "amplitude": 0.3,
+        "offset": 4
+      },
+      "collision": false
+    }
+  ]
+}

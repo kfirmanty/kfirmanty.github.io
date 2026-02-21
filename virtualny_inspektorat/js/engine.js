@@ -66,10 +66,16 @@ export class VaporwaveEngine {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('title-screen').style.display = 'flex';
 
-    document.getElementById('start-btn').addEventListener('click', async () => {
+    const startGame = async (sceneId) => {
       document.getElementById('title-screen').style.display = 'none';
-      await this.loadScene('temple_exterior');
+      await this.loadScene(sceneId);
       this.gameLoop();
+    };
+
+    document.getElementById('start-btn').addEventListener('click', () => startGame('temple_exterior'));
+
+    document.querySelectorAll('.scene-btn').forEach(btn => {
+      btn.addEventListener('click', () => startGame(btn.dataset.scene));
     });
   }
 

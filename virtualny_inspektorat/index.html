@@ -288,6 +288,45 @@
       letter-spacing: 2px;
     }
 
+    #scene-select {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .scene-select-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #b967ff88;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+    }
+
+    .scene-select-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .scene-btn {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: #b967ff;
+      background: transparent;
+      border: 1px solid #b967ff44;
+      padding: 8px 16px;
+      cursor: none;
+      letter-spacing: 2px;
+      transition: all 0.2s;
+    }
+
+    .scene-btn:hover {
+      background: #b967ff22;
+      border-color: #b967ff;
+      color: #ff71ce;
+      text-shadow: 0 0 8px #ff71ce88;
+    }
+
     /* Loading */
     #loading {
       position: fixed;
@@ -349,6 +388,14 @@
     <h2>I N S P E K T O R A T</h2>
     <button id="start-btn">E N T E R</button>
     <div class="hint">WASD to move · Mouse to look · Click to interact</div>
+    <div id="scene-select">
+      <div class="scene-select-label">S C E N E S</div>
+      <div class="scene-select-buttons">
+        <button class="scene-btn" data-scene="temple_exterior">Temple Exterior</button>
+        <button class="scene-btn" data-scene="temple_interior">Temple Interior</button>
+        <button class="scene-btn" data-scene="lake">Lake</button>
+      </div>
+    </div>
   </div>
 
   <canvas id="game-canvas"></canvas>

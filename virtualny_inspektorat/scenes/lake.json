@@ -4,382 +4,522 @@
   "sky": {
     "type": "gradient",
     "stops": [
-      [0, "#0a1a0a"],
-      [0.4, "#1a3a2a"],
-      [0.7, "#2a4a3a"],
-      [1, "#1a3a2a"]
+      [0, "#4a6a5a"],
+      [0.3, "#5a7a6a"],
+      [0.6, "#6a8a7a"],
+      [1, "#5a7a6a"]
     ]
   },
   "fog": {
-    "color": "#1a3a2a",
-    "near": 1,
-    "far": 18
+    "color": "#5a7a6a",
+    "near": 2,
+    "far": 28
   },
   "ambient": {
-    "color": "#2a5a4a",
-    "intensity": 0.55
+    "color": "#5a8a6a",
+    "intensity": 0.7
   },
   "lights": [
     {
       "type": "directional",
-      "color": "#88aa88",
-      "intensity": 0.4,
-      "position": [5, 15, 5]
+      "color": "#aaccaa",
+      "intensity": 0.6,
+      "position": [8, 20, 10]
     },
     {
       "type": "point",
       "color": "#05d9a6",
-      "intensity": 0.6,
-      "distance": 12,
-      "position": [0, 3, 0]
+      "intensity": 0.8,
+      "distance": 20,
+      "position": [0, 4, 0]
     },
     {
       "type": "point",
       "color": "#b967ff",
+      "intensity": 0.5,
+      "distance": 15,
+      "position": [-12, 3, -10]
+    },
+    {
+      "type": "point",
+      "color": "#ff71ce",
       "intensity": 0.4,
-      "distance": 10,
-      "position": [-8, 2, -5]
+      "distance": 15,
+      "position": [15, 3, 8]
     }
   ],
   "water": {
-    "width": 60,
-    "height": 60,
+    "width": 120,
+    "height": 120,
     "level": -0.5,
-    "color": "#1a4a3a"
+    "color": "#2a6a5a"
   },
   "spawn": {
-    "position": [0, 1.6, 8],
-    "rotation": [0, 180, 0]
+    "position": [0, 1.6, 18],
+    "rotation": [0, 0, 0]
   },
   "objects": [
     {
-      "id": "shore_main",
+      "id": "ground_main",
       "type": "box",
-      "params": {
-        "width": 20,
-        "height": 0.6,
-        "depth": 12
-      },
-      "position": [0, -0.3, 10],
-      "material": {
-        "color": "#3a4a2a",
-        "roughness": 0.9,
-        "metalness": 0.05
-      },
+      "params": { "width": 30, "height": 0.6, "depth": 18 },
+      "position": [0, -0.3, 18],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
       "collision": true,
-      "collisionOptions": {
-        "walkable": true
-      }
+      "collisionOptions": { "walkable": true }
     },
     {
-      "id": "shore_left",
+      "id": "ground_left",
       "type": "box",
-      "params": {
-        "width": 10,
-        "height": 0.6,
-        "depth": 20
-      },
-      "position": [-12, -0.3, 2],
-      "material": {
-        "color": "#3a4a2a",
-        "roughness": 0.9,
-        "metalness": 0.05
-      },
+      "params": { "width": 16, "height": 0.6, "depth": 35 },
+      "position": [-20, -0.3, 0],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
       "collision": true,
-      "collisionOptions": {
-        "walkable": true
-      }
+      "collisionOptions": { "walkable": true }
     },
     {
-      "id": "shore_far",
+      "id": "ground_right",
       "type": "box",
-      "params": {
-        "width": 14,
-        "height": 0.6,
-        "depth": 8
-      },
-      "position": [0, -0.3, -10],
-      "material": {
-        "color": "#3a4a2a",
-        "roughness": 0.9,
-        "metalness": 0.05
-      },
+      "params": { "width": 14, "height": 0.6, "depth": 30 },
+      "position": [20, -0.3, 2],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
       "collision": true,
-      "collisionOptions": {
-        "walkable": true
-      }
+      "collisionOptions": { "walkable": true }
     },
     {
-      "id": "shore_right",
+      "id": "ground_far",
       "type": "box",
-      "params": {
-        "width": 8,
-        "height": 0.6,
-        "depth": 16
-      },
-      "position": [11, -0.3, 0],
-      "material": {
-        "color": "#3a4a2a",
-        "roughness": 0.9,
-        "metalness": 0.05
-      },
+      "params": { "width": 24, "height": 0.6, "depth": 14 },
+      "position": [0, -0.3, -18],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
       "collision": true,
-      "collisionOptions": {
-        "walkable": true
-      }
+      "collisionOptions": { "walkable": true }
     },
+    {
+      "id": "ground_far_left",
+      "type": "box",
+      "params": { "width": 12, "height": 0.6, "depth": 10 },
+      "position": [-16, -0.3, -14],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "ground_far_right",
+      "type": "box",
+      "params": { "width": 10, "height": 0.6, "depth": 12 },
+      "position": [18, -0.3, -12],
+      "material": { "color": "#4a5a3a", "roughness": 0.9, "metalness": 0.05 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+
+    {
+      "id": "hill_1",
+      "type": "box",
+      "params": { "width": 6, "height": 0.4, "depth": 5 },
+      "position": [8, 0.2, 20],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_1b",
+      "type": "box",
+      "params": { "width": 3.5, "height": 0.4, "depth": 3 },
+      "position": [8, 0.6, 20],
+      "material": { "color": "#355528", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_2",
+      "type": "box",
+      "params": { "width": 8, "height": 0.4, "depth": 6 },
+      "position": [-8, 0.2, 14],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_2b",
+      "type": "box",
+      "params": { "width": 5, "height": 0.35, "depth": 3.5 },
+      "position": [-8, 0.57, 14],
+      "material": { "color": "#355528", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_3",
+      "type": "box",
+      "params": { "width": 7, "height": 0.5, "depth": 5 },
+      "position": [-22, 0.25, 8],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_4",
+      "type": "box",
+      "params": { "width": 5, "height": 0.4, "depth": 7 },
+      "position": [22, 0.2, -4],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_4b",
+      "type": "box",
+      "params": { "width": 3, "height": 0.35, "depth": 4 },
+      "position": [22, 0.57, -4],
+      "material": { "color": "#355528", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_5",
+      "type": "box",
+      "params": { "width": 6, "height": 0.45, "depth": 4 },
+      "position": [-5, 0.22, -20],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_6",
+      "type": "box",
+      "params": { "width": 4, "height": 0.4, "depth": 5 },
+      "position": [12, 0.2, 12],
+      "material": { "color": "#355528", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "hill_7",
+      "type": "box",
+      "params": { "width": 9, "height": 0.5, "depth": 6 },
+      "position": [-18, 0.25, -6],
+      "material": { "color": "#3a5a2a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+
     {
       "id": "palm1_trunk",
       "type": "cylinder",
-      "params": {
-        "radiusTop": 0.12,
-        "radiusBottom": 0.2,
-        "height": 5,
-        "segments": 6
-      },
-      "position": [3, 2.5, 12],
-      "material": {
-        "color": "#5a3a1a",
-        "roughness": 0.9,
-        "metalness": 0.0
-      },
+      "params": { "radiusTop": 0.12, "radiusBottom": 0.2, "height": 5, "segments": 6 },
+      "position": [5, 2.5, 20],
+      "material": { "color": "#5a3a1a", "roughness": 0.9, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "palm1_canopy",
       "type": "cone",
-      "params": {
-        "radius": 1.8,
-        "height": 2.5,
-        "segments": 5
-      },
-      "position": [3, 5.75, 12],
-      "material": {
-        "color": "#1a5a2a",
-        "roughness": 0.8,
-        "metalness": 0.0
-      },
+      "params": { "radius": 1.8, "height": 2.5, "segments": 5 },
+      "position": [5, 5.75, 20],
+      "material": { "color": "#1a6a2a", "roughness": 0.8, "metalness": 0.0 },
       "collision": false
     },
     {
       "id": "palm2_trunk",
       "type": "cylinder",
-      "params": {
-        "radiusTop": 0.1,
-        "radiusBottom": 0.18,
-        "height": 4.5,
-        "segments": 6
-      },
-      "position": [-5, 2.25, 13],
-      "material": {
-        "color": "#4a2a10",
-        "roughness": 0.9,
-        "metalness": 0.0
-      },
+      "params": { "radiusTop": 0.1, "radiusBottom": 0.18, "height": 4.5, "segments": 6 },
+      "position": [-7, 2.25, 22],
+      "material": { "color": "#4a2a10", "roughness": 0.9, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "palm2_canopy",
       "type": "cone",
-      "params": {
-        "radius": 1.5,
-        "height": 2.2,
-        "segments": 5
-      },
-      "position": [-5, 5.25, 13],
-      "material": {
-        "color": "#2a6a3a",
-        "roughness": 0.8,
-        "metalness": 0.0
-      },
+      "params": { "radius": 1.5, "height": 2.2, "segments": 5 },
+      "position": [-7, 5.25, 22],
+      "material": { "color": "#2a7a3a", "roughness": 0.8, "metalness": 0.0 },
       "collision": false
     },
     {
       "id": "palm3_trunk",
       "type": "cylinder",
-      "params": {
-        "radiusTop": 0.14,
-        "radiusBottom": 0.22,
-        "height": 6,
-        "segments": 6
-      },
-      "position": [-14, 3, -2],
-      "material": {
-        "color": "#5a3a1a",
-        "roughness": 0.9,
-        "metalness": 0.0
-      },
+      "params": { "radiusTop": 0.14, "radiusBottom": 0.22, "height": 6, "segments": 6 },
+      "position": [-24, 3, -2],
+      "material": { "color": "#5a3a1a", "roughness": 0.9, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "palm3_canopy",
       "type": "cone",
-      "params": {
-        "radius": 2,
-        "height": 2.8,
-        "segments": 5
-      },
-      "position": [-14, 6.9, -2],
-      "material": {
-        "color": "#1a5a2a",
-        "roughness": 0.8,
-        "metalness": 0.0
-      },
+      "params": { "radius": 2, "height": 2.8, "segments": 5 },
+      "position": [-24, 6.9, -2],
+      "material": { "color": "#1a6a2a", "roughness": 0.8, "metalness": 0.0 },
       "collision": false
     },
     {
       "id": "palm4_trunk",
       "type": "cylinder",
-      "params": {
-        "radiusTop": 0.1,
-        "radiusBottom": 0.16,
-        "height": 4,
-        "segments": 6
-      },
-      "position": [8, 2, 5],
-      "material": {
-        "color": "#4a2a10",
-        "roughness": 0.9,
-        "metalness": 0.0
-      },
+      "params": { "radiusTop": 0.1, "radiusBottom": 0.16, "height": 4, "segments": 6 },
+      "position": [16, 2, 6],
+      "material": { "color": "#4a2a10", "roughness": 0.9, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "palm4_canopy",
       "type": "cone",
-      "params": {
-        "radius": 1.4,
-        "height": 2,
-        "segments": 5
-      },
-      "position": [8, 4.8, 5],
-      "material": {
-        "color": "#2a6a3a",
-        "roughness": 0.8,
-        "metalness": 0.0
-      },
+      "params": { "radius": 1.4, "height": 2, "segments": 5 },
+      "position": [16, 4.8, 6],
+      "material": { "color": "#2a7a3a", "roughness": 0.8, "metalness": 0.0 },
       "collision": false
     },
     {
       "id": "palm5_trunk",
       "type": "cylinder",
-      "params": {
-        "radiusTop": 0.12,
-        "radiusBottom": 0.2,
-        "height": 5.5,
-        "segments": 6
-      },
-      "position": [4, 2.75, -8],
-      "material": {
-        "color": "#5a3a1a",
-        "roughness": 0.9,
-        "metalness": 0.0
-      },
+      "params": { "radiusTop": 0.12, "radiusBottom": 0.2, "height": 5.5, "segments": 6 },
+      "position": [6, 2.75, -16],
+      "material": { "color": "#5a3a1a", "roughness": 0.9, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "palm5_canopy",
       "type": "cone",
-      "params": {
-        "radius": 1.6,
-        "height": 2.4,
-        "segments": 5
-      },
-      "position": [4, 6.2, -8],
+      "params": { "radius": 1.6, "height": 2.4, "segments": 5 },
+      "position": [6, 6.2, -16],
+      "material": { "color": "#1a6a2a", "roughness": 0.8, "metalness": 0.0 },
+      "collision": false
+    },
+    {
+      "id": "palm6_trunk",
+      "type": "cylinder",
+      "params": { "radiusTop": 0.13, "radiusBottom": 0.2, "height": 5.2, "segments": 6 },
+      "position": [-15, 2.6, 10],
+      "material": { "color": "#5a3a1a", "roughness": 0.9, "metalness": 0.0 },
+      "collision": true
+    },
+    {
+      "id": "palm6_canopy",
+      "type": "cone",
+      "params": { "radius": 1.7, "height": 2.3, "segments": 5 },
+      "position": [-15, 5.85, 10],
+      "material": { "color": "#2a7a3a", "roughness": 0.8, "metalness": 0.0 },
+      "collision": false
+    },
+    {
+      "id": "palm7_trunk",
+      "type": "cylinder",
+      "params": { "radiusTop": 0.11, "radiusBottom": 0.17, "height": 4.2, "segments": 6 },
+      "position": [24, 2.1, -6],
+      "material": { "color": "#4a2a10", "roughness": 0.9, "metalness": 0.0 },
+      "collision": true
+    },
+    {
+      "id": "palm7_canopy",
+      "type": "cone",
+      "params": { "radius": 1.3, "height": 2, "segments": 5 },
+      "position": [24, 4.9, -6],
+      "material": { "color": "#1a6a2a", "roughness": 0.8, "metalness": 0.0 },
+      "collision": false
+    },
+    {
+      "id": "palm8_trunk",
+      "type": "cylinder",
+      "params": { "radiusTop": 0.14, "radiusBottom": 0.22, "height": 5.8, "segments": 6 },
+      "position": [-10, 2.9, -18],
+      "material": { "color": "#5a3a1a", "roughness": 0.9, "metalness": 0.0 },
+      "collision": true
+    },
+    {
+      "id": "palm8_canopy",
+      "type": "cone",
+      "params": { "radius": 1.9, "height": 2.6, "segments": 5 },
+      "position": [-10, 6.5, -18],
+      "material": { "color": "#2a7a3a", "roughness": 0.8, "metalness": 0.0 },
+      "collision": false
+    },
+
+    {
+      "id": "shrine_base",
+      "type": "box",
+      "params": { "width": 3, "height": 0.6, "depth": 3 },
+      "position": [0, 0.3, -20],
       "material": {
-        "color": "#1a5a2a",
-        "roughness": 0.8,
-        "metalness": 0.0
+        "color": "#6a5a7a",
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": true
+    },
+    {
+      "id": "shrine_top",
+      "type": "box",
+      "params": { "width": 2, "height": 0.15, "depth": 2 },
+      "position": [0, 0.67, -20],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.2,
+        "metalness": 0.6
       },
       "collision": false
     },
     {
-      "id": "lake_orb",
-      "type": "sphere",
-      "params": {
-        "radius": 0.4,
-        "widthSegments": 6,
-        "heightSegments": 4
-      },
-      "position": [0, 1.5, -9],
+      "id": "shrine_pillar_l",
+      "type": "cylinder",
+      "params": { "radius": 0.15, "height": 2, "segments": 6 },
+      "position": [-1.2, 1, -20],
       "material": {
-        "color": "#05d9a6",
-        "emissive": "#05d9a6",
-        "emissiveIntensity": 1.5,
-        "roughness": 0.1
+        "color": "#6a5a7a",
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": true
+    },
+    {
+      "id": "shrine_pillar_r",
+      "type": "cylinder",
+      "params": { "radius": 0.15, "height": 2, "segments": 6 },
+      "position": [1.2, 1, -20],
+      "material": {
+        "color": "#6a5a7a",
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": true
+    },
+    {
+      "id": "shrine_lintel",
+      "type": "box",
+      "params": { "width": 3, "height": 0.2, "depth": 0.5 },
+      "position": [0, 2.1, -20],
+      "material": {
+        "color": "#6a5a7a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false
+    },
+    {
+      "id": "shrine_artifact",
+      "type": "sphere",
+      "params": { "radius": 0.2, "widthSegments": 6, "heightSegments": 4 },
+      "position": [0, 1.1, -20],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 1.2,
+        "roughness": 0.1,
+        "metalness": 0.8
       },
       "animation": {
         "type": "float",
-        "speed": 0.8,
-        "amplitude": 0.4,
+        "speed": 1.2,
+        "amplitude": 0.1,
         "offset": 0
       },
       "collision": false,
       "interactable": {
-        "type": "examine",
-        "hoverText": "✧ Examine the orb",
-        "examineText": "A sphere of concentrated vapor energy. The lake whispers ancient secrets..."
+        "type": "pickup",
+        "hoverText": "\u2295 Take the V E S T I G E",
+        "itemName": "V E S T I G E",
+        "stateKey": "has_vestige"
       }
     },
+
+    {
+      "id": "monster_body",
+      "type": "head",
+      "params": { "scale": 2.5 },
+      "position": [14, -0.8, -2],
+      "material": {
+        "color": "#2a5a4a",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.6,
+        "metalness": 0.4
+      },
+      "collision": false,
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "\u2609 Speak to the Lake Dweller",
+        "dialogue": {
+          "nodes": [
+            {
+              "speaker": "L A K E   D W E L L E R",
+              "text": "So you have come... the fog remembers all who walk these Shores."
+            },
+            {
+              "speaker": "L A K E   D W E L L E R",
+              "text": "The I N S P E K T O R A T was not always as it is. Once, the Waters were clear."
+            },
+            {
+              "speaker": "L A K E   D W E L L E R",
+              "text": "Take what the Shrine offers. You will need it for what lies beyond the Fog."
+            }
+          ]
+        }
+      }
+    },
+
     {
       "id": "rock1",
       "type": "sphere",
-      "params": {
-        "radius": 0.8,
-        "widthSegments": 5,
-        "heightSegments": 3
-      },
-      "position": [6, 0.1, 9],
+      "params": { "radius": 0.8, "widthSegments": 5, "heightSegments": 3 },
+      "position": [10, 0.1, 14],
       "scale": [1, 0.6, 1],
-      "material": {
-        "color": "#4a4a3a",
-        "roughness": 0.95,
-        "metalness": 0.0
-      },
+      "material": { "color": "#5a5a4a", "roughness": 0.95, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "rock2",
       "type": "sphere",
-      "params": {
-        "radius": 1.2,
-        "widthSegments": 5,
-        "heightSegments": 3
-      },
-      "position": [-9, 0.2, 7],
+      "params": { "radius": 1.2, "widthSegments": 5, "heightSegments": 3 },
+      "position": [-16, 0.2, 4],
       "scale": [1, 0.5, 0.8],
-      "material": {
-        "color": "#3a3a2a",
-        "roughness": 0.95,
-        "metalness": 0.0
-      },
+      "material": { "color": "#4a4a3a", "roughness": 0.95, "metalness": 0.0 },
       "collision": true
     },
     {
       "id": "rock3",
       "type": "sphere",
-      "params": {
-        "radius": 0.6,
-        "widthSegments": 4,
-        "heightSegments": 3
-      },
-      "position": [-3, 0, 5],
+      "params": { "radius": 0.6, "widthSegments": 4, "heightSegments": 3 },
+      "position": [-4, 0, 10],
       "scale": [1, 0.5, 1],
-      "material": {
-        "color": "#5a5a4a",
-        "roughness": 0.95,
-        "metalness": 0.0
-      },
+      "material": { "color": "#5a5a4a", "roughness": 0.95, "metalness": 0.0 },
       "collision": false
     },
     {
+      "id": "rock4",
+      "type": "sphere",
+      "params": { "radius": 1.0, "widthSegments": 5, "heightSegments": 3 },
+      "position": [20, 0.15, 10],
+      "scale": [1.2, 0.5, 0.9],
+      "material": { "color": "#4a4a3a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true
+    },
+    {
+      "id": "rock5",
+      "type": "sphere",
+      "params": { "radius": 0.7, "widthSegments": 4, "heightSegments": 3 },
+      "position": [8, 0.1, -14],
+      "scale": [1, 0.6, 1.1],
+      "material": { "color": "#5a5a4a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true
+    },
+    {
+      "id": "rock6",
+      "type": "sphere",
+      "params": { "radius": 0.9, "widthSegments": 5, "heightSegments": 3 },
+      "position": [-22, 0.15, -8],
+      "scale": [1, 0.4, 1],
+      "material": { "color": "#4a4a3a", "roughness": 0.95, "metalness": 0.0 },
+      "collision": true
+    },
+
+    {
       "id": "ruin_col1",
       "type": "column",
-      "params": {
-        "radius": 0.3,
-        "height": 3.5
-      },
-      "position": [13, 0, -3],
+      "params": { "radius": 0.3, "height": 3.5 },
+      "position": [22, 0, -10],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
@@ -392,11 +532,8 @@
     {
       "id": "ruin_col2",
       "type": "column",
-      "params": {
-        "radius": 0.25,
-        "height": 2.5
-      },
-      "position": [-15, 0, 5],
+      "params": { "radius": 0.25, "height": 2.5 },
+      "position": [-24, 0, 6],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
@@ -405,6 +542,40 @@
         "metalness": 0.3
       },
       "collision": true
+    },
+    {
+      "id": "ruin_col3",
+      "type": "column",
+      "params": { "radius": 0.28, "height": 3 },
+      "position": [-18, 0, -14],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.5,
+        "metalness": 0.3
+      },
+      "collision": true
+    },
+
+    {
+      "id": "lake_orb",
+      "type": "sphere",
+      "params": { "radius": 0.4, "widthSegments": 6, "heightSegments": 4 },
+      "position": [0, 1.5, -15],
+      "material": {
+        "color": "#05d9a6",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.8,
+        "amplitude": 0.4,
+        "offset": 0
+      },
+      "collision": false
     }
   ]
 }

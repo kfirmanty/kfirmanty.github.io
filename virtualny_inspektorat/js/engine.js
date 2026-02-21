@@ -264,6 +264,11 @@ export class VaporwaveEngine {
     if (!this.hoveredInteractable) return;
     const inter = this.hoveredInteractable;
 
+    if (inter.data.requires && !this.gameState[inter.data.requires]) {
+      this.notifications.show(inter.data.requiresText || 'Something is missing...', 2500);
+      return;
+    }
+
     if (inter.type === 'dialogue') {
       // Exit pointer lock for dialogue
       document.exitPointerLock();

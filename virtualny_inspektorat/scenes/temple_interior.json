@@ -16,7 +16,7 @@
   },
   "ambient": {
     "color": "#6644aa",
-    "intensity": 0.25
+    "intensity": 0.5
   },
   "lights": [
     {
@@ -50,7 +50,7 @@
   ],
   "spawn": {
     "position": [0, 1.6, 8],
-    "rotation": [0, 180, 0]
+    "rotation": [0, 0, 0]
   },
   "objects": [
     {
@@ -256,6 +256,36 @@
       "collision": false
     },
     {
+      "id": "decret",
+      "type": "cylinder",
+      "params": {
+        "radius": 0.15,
+        "height": 0.6,
+        "segments": 6
+      },
+      "position": [3, 0.3, -3],
+      "material": {
+        "color": "#fffb96",
+        "emissive": "#fffb96",
+        "emissiveIntensity": 0.8,
+        "roughness": 0.2,
+        "metalness": 0.6
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1.5,
+        "amplitude": 0.15,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "pickup",
+        "hoverText": "⊕ Pick up the D E C R E T",
+        "itemName": "D E C R E T",
+        "stateKey": "has_decret"
+      }
+    },
+    {
       "id": "crystal",
       "type": "cone",
       "params": {
@@ -281,9 +311,24 @@
       },
       "collision": false,
       "interactable": {
-        "type": "examine",
-        "hoverText": "✧ Examine the Crystal",
-        "examineText": "A crystal of pure vapor energy. It hums with an ancient resonance. Perhaps there are more secrets to uncover in this place..."
+        "type": "dialogue",
+        "hoverText": "✧ Touch the Crystal",
+        "requires": "has_decret",
+        "requiresText": "The crystal is dormant. It lacks power.",
+        "dialogue": {
+          "nodes": [
+            {
+              "text": "The D E C R E T dissolves into the crystal. Pure vapor energy surges through the chamber..."
+            },
+            {
+              "text": "I N S P E K T O R A T regains its power. The walls shimmer and a passage opens..."
+            }
+          ]
+        },
+        "onComplete": {
+          "type": "transition",
+          "target": "lake"
+        }
       }
     },
     {

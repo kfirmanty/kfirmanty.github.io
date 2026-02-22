@@ -337,7 +337,7 @@
         },
         "onComplete": {
           "type": "transition",
-          "target": "lake"
+          "target": "corridor"
         }
       }
     },

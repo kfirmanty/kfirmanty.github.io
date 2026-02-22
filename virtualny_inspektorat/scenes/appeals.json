@@ -1,0 +1,652 @@
+{
+  "id": "appeals",
+  "title": "A P P E A L S   C H A M B E R",
+  "onStart": {
+    "dialogue": {
+      "nodes": [
+        {
+          "text": "You have entered A P P E A L S. The air is heavy with D E N I A L S."
+        }
+      ]
+    }
+  },
+  "sky": {
+    "type": "gradient",
+    "stops": [
+      [0, "#0a0a30"],
+      [0.4, "#1a1040"],
+      [0.7, "#3a1a5a"],
+      [1, "#5a2a4a"]
+    ]
+  },
+  "fog": {
+    "color": "#1a0a2a",
+    "near": 6,
+    "far": 28
+  },
+  "ambient": {
+    "color": "#6644aa",
+    "intensity": 0.5
+  },
+  "lights": [
+    {
+      "type": "spot",
+      "color": "#ffe8d0",
+      "intensity": 6,
+      "distance": 16,
+      "angle": 35,
+      "penumbra": 0.4,
+      "decay": 2,
+      "position": [0, 5.5, 1],
+      "target": [0, 0.5, 1]
+    },
+    {
+      "type": "point",
+      "color": "#ff71ce",
+      "intensity": 0.8,
+      "distance": 14,
+      "position": [-6, 4, 6]
+    },
+    {
+      "type": "point",
+      "color": "#b967ff",
+      "intensity": 0.6,
+      "distance": 12,
+      "position": [6, 4, -2]
+    },
+    {
+      "type": "point",
+      "color": "#ff71ce",
+      "intensity": 1,
+      "distance": 15,
+      "position": [0, 5, -8]
+    },
+    {
+      "type": "point",
+      "color": "#01cdfe",
+      "intensity": 0.5,
+      "distance": 10,
+      "position": [0, 4, -6]
+    }
+  ],
+  "postProcessing": {
+    "ditherIntensity": 0.07,
+    "colorLevels": 18,
+    "chromaticAberration": 0.001,
+    "vignette": 0.5,
+    "bloomThreshold": 0.6,
+    "bloomStrength": 0.4
+  },
+  "spawn": {
+    "position": [0, 1.6, 8],
+    "rotation": [0, 0, 0]
+  },
+  "objects": [
+    {
+      "_comment": "=== STRUCTURE ===",
+      "id": "floor_main",
+      "type": "box",
+      "params": { "width": 16, "height": 0.5, "depth": 20 },
+      "position": [0, -0.25, 0],
+      "material": {
+        "color": "#5050a0",
+        "roughness": 0.15,
+        "metalness": 0.85,
+        "texture": "checkerboard",
+        "textureRepeat": [8, 10]
+      },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "floor_platform",
+      "type": "box",
+      "params": { "width": 16, "height": 0.5, "depth": 5 },
+      "position": [0, 1.75, -7.5],
+      "material": {
+        "color": "#4a3a6a",
+        "roughness": 0.2,
+        "metalness": 0.7,
+        "texture": "marble",
+        "textureRepeat": [4, 1.25]
+      },
+      "collision": true,
+      "collisionOptions": { "walkable": true }
+    },
+    {
+      "id": "stairs_up",
+      "type": "stairs",
+      "params": {
+        "steps": 8,
+        "stepWidth": 8,
+        "stepHeight": 0.25,
+        "stepDepth": 0.4
+      },
+      "position": [0, 0, -2],
+      "material": {
+        "color": "#4a3a6a",
+        "roughness": 0.3,
+        "metalness": 0.5
+      },
+      "collision": true,
+      "collisionOptions": {
+        "walkable": true,
+        "isStairs": true
+      }
+    },
+    {
+      "id": "ceiling",
+      "type": "box",
+      "params": { "width": 16, "height": 0.3, "depth": 20 },
+      "position": [0, 6.15, 0],
+      "material": {
+        "color": "#0a0a1a",
+        "roughness": 0.9,
+        "metalness": 0.3
+      },
+      "collision": false
+    },
+    {
+      "id": "wall_front",
+      "type": "box",
+      "params": { "width": 16, "height": 6, "depth": 0.4 },
+      "position": [0, 3, 10],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [4, 1.5]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_back",
+      "type": "box",
+      "params": { "width": 16, "height": 6, "depth": 0.4 },
+      "position": [0, 3, -10],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [4, 1.5]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_left",
+      "type": "box",
+      "params": { "width": 0.4, "height": 6, "depth": 20 },
+      "position": [-8, 3, 0],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [5, 1.5]
+      },
+      "collision": true
+    },
+    {
+      "id": "wall_right",
+      "type": "box",
+      "params": { "width": 0.4, "height": 6, "depth": 20 },
+      "position": [8, 3, 0],
+      "material": {
+        "color": "#ffffff",
+        "roughness": 0.8,
+        "texture": "marble",
+        "textureRepeat": [5, 1.5]
+      },
+      "collision": true
+    },
+
+    {
+      "_comment": "=== COLUMNS ===",
+      "id": "col_1",
+      "type": "column",
+      "params": { "radius": 0.4, "height": 6 },
+      "position": [-6, 0, 7],
+      "material": {
+        "color": "#2a1a4a",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "col_2",
+      "type": "column",
+      "params": { "radius": 0.4, "height": 6 },
+      "position": [6, 0, 7],
+      "material": {
+        "color": "#2a1a4a",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "col_3",
+      "type": "column",
+      "params": { "radius": 0.4, "height": 6 },
+      "position": [-6, 0, -1],
+      "material": {
+        "color": "#2a1a4a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+    {
+      "id": "col_4",
+      "type": "column",
+      "params": { "radius": 0.4, "height": 6 },
+      "position": [6, 0, -1],
+      "material": {
+        "color": "#2a1a4a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.4
+      },
+      "collision": true
+    },
+
+    {
+      "_comment": "=== APPEAL NOTICES ===",
+      "id": "notice_a",
+      "type": "box",
+      "params": { "width": 1.2, "height": 1.8, "depth": 0.1 },
+      "position": [-7.8, 2, 5],
+      "rotation": [0, 90, 0],
+      "material": {
+        "color": "#2a2a5a",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Appeal #773",
+        "text": "Appeal #773. Denied. Reason: I N S U F F I C I E N T."
+      }
+    },
+    {
+      "id": "notice_b",
+      "type": "box",
+      "params": { "width": 1.2, "height": 1.8, "depth": 0.1 },
+      "position": [7.8, 2, 2],
+      "rotation": [0, -90, 0],
+      "material": {
+        "color": "#2a2a5a",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Appeal #774",
+        "text": "Appeal #774. Denied. F A I R N E S S is not a recognized concept."
+      }
+    },
+    {
+      "id": "notice_c",
+      "type": "box",
+      "params": { "width": 1.2, "height": 1.8, "depth": 0.1 },
+      "position": [-7.8, 2, -1],
+      "rotation": [0, 90, 0],
+      "material": {
+        "color": "#2a2a5a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Appeal #775",
+        "text": "Appeal #775. This appeal has been appealed. Status: R E C U R S I V E."
+      }
+    },
+
+    {
+      "_comment": "=== CLERK DESK AND HEAD ===",
+      "id": "clerk_desk",
+      "type": "box",
+      "params": { "width": 3, "height": 1.2, "depth": 1.5 },
+      "position": [0, 0.6, 1],
+      "material": {
+        "color": "#1a1a3a",
+        "roughness": 0.3,
+        "metalness": 0.6
+      },
+      "collision": true
+    },
+    {
+      "id": "clerk_head",
+      "type": "head",
+      "params": { "scale": 1.0 },
+      "position": [0, 2, 1],
+      "material": {
+        "color": "#4a3a6a",
+        "roughness": 0.4,
+        "metalness": 0.3,
+        "flatShading": true
+      },
+      "animation": {
+        "type": "bob",
+        "speed": 0.4,
+        "amplitude": 0.08,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "☉ Speak to the Clerk of Appeals",
+        "dialogue": {
+          "nodes": [
+            {
+              "speaker": "C L E R K   O F   A P P E A L S",
+              "text": "Your appeal has been P R E - D E N I E D.",
+              "next": 1
+            },
+            {
+              "speaker": "C L E R K   O F   A P P E A L S",
+              "text": "State your appeal number.",
+              "choices": [
+                {
+                  "text": "#773",
+                  "correct": false,
+                  "response": "That appeal belongs to someone who no longer E X I S T S."
+                },
+                {
+                  "text": "#774",
+                  "correct": false,
+                  "response": "That appeal was denied before it was F I L E D."
+                },
+                {
+                  "text": "#775",
+                  "correct": false,
+                  "response": "That appeal is still appealing I T S E L F."
+                },
+                {
+                  "text": "I am not appealing",
+                  "correct": true,
+                  "response": "C O R R E C T. You may ascend."
+                }
+              ]
+            }
+          ]
+        },
+        "onSuccess": {
+          "type": "transition",
+          "target": "spire"
+        }
+      }
+    },
+
+    {
+      "_comment": "=== EXIT PORTAL (on raised platform) ===",
+      "id": "exit_portal",
+      "type": "torus",
+      "params": {
+        "radius": 1.5,
+        "tube": 0.15,
+        "radialSegments": 6,
+        "tubularSegments": 12
+      },
+      "position": [0, 4, -8.5],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.8,
+        "roughness": 0.2,
+        "metalness": 0.4
+      },
+      "animation": {
+        "type": "rotate",
+        "speed": 0.3,
+        "axis": "y"
+      },
+      "collision": false
+    },
+    {
+      "id": "exit_glow",
+      "type": "sphere",
+      "params": { "radius": 0.3, "widthSegments": 6, "heightSegments": 4 },
+      "position": [0, 4, -8.5],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 2,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "pulse",
+        "speed": 1,
+        "amplitude": 0.3,
+        "offset": 0
+      },
+      "collision": false
+    },
+
+    {
+      "_comment": "=== FLOATING DOCUMENTS ===",
+      "id": "doc_1",
+      "type": "box",
+      "params": { "width": 0.8, "height": 0.02, "depth": 1.1 },
+      "position": [-3, 4.5, 3],
+      "rotation": [5, 15, 3],
+      "material": {
+        "color": "#d0c0e0",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.3,
+        "amplitude": 0.4,
+        "offset": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "doc_2",
+      "type": "box",
+      "params": { "width": 0.8, "height": 0.02, "depth": 1.1 },
+      "position": [4, 5, -1],
+      "rotation": [-3, -20, 2],
+      "material": {
+        "color": "#d0c0e0",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.4,
+        "amplitude": 0.3,
+        "offset": 2
+      },
+      "collision": false
+    },
+    {
+      "id": "doc_3",
+      "type": "box",
+      "params": { "width": 0.8, "height": 0.02, "depth": 1.1 },
+      "position": [-2, 4.8, -3],
+      "rotation": [4, 30, -2],
+      "material": {
+        "color": "#d0c0e0",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.35,
+        "amplitude": 0.35,
+        "offset": 4
+      },
+      "collision": false
+    },
+    {
+      "id": "doc_4",
+      "type": "box",
+      "params": { "width": 0.8, "height": 0.02, "depth": 1.1 },
+      "position": [2, 4.3, 5],
+      "rotation": [-2, -10, 5],
+      "material": {
+        "color": "#d0c0e0",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.1,
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "animation": {
+        "type": "bob",
+        "speed": 0.25,
+        "amplitude": 0.5,
+        "offset": 1
+      },
+      "collision": false
+    },
+
+    {
+      "_comment": "=== GLOW TILES ===",
+      "id": "tile_glow_1",
+      "type": "box",
+      "params": { "width": 2, "height": 0.02, "depth": 2 },
+      "position": [-4, 0.01, 5],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+    {
+      "id": "tile_glow_2",
+      "type": "box",
+      "params": { "width": 2, "height": 0.02, "depth": 2 },
+      "position": [4, 0.01, -1],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.3,
+        "metalness": 0.8
+      },
+      "collision": false
+    },
+
+    {
+      "_comment": "=== FLOATING ORBS ===",
+      "id": "orb_1",
+      "type": "sphere",
+      "params": { "radius": 0.2, "widthSegments": 6, "heightSegments": 4 },
+      "position": [-5, 3.5, 2],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.9,
+        "amplitude": 0.3,
+        "offset": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "orb_2",
+      "type": "sphere",
+      "params": { "radius": 0.15, "widthSegments": 6, "heightSegments": 4 },
+      "position": [5, 4.5, -4],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1.1,
+        "amplitude": 0.25,
+        "offset": 3
+      },
+      "collision": false
+    },
+
+    {
+      "_comment": "=== DECORATIVE CRYSTALS ===",
+      "id": "crystal_1",
+      "type": "cone",
+      "params": { "radius": 0.25, "height": 1.2, "segments": 5 },
+      "position": [-5, 0.6, -4],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.6,
+        "transparent": true,
+        "opacity": 0.7,
+        "roughness": 0.1,
+        "metalness": 0.9
+      },
+      "collision": false
+    },
+    {
+      "id": "crystal_2",
+      "type": "cone",
+      "params": { "radius": 0.2, "height": 0.9, "segments": 4 },
+      "position": [5, 0.45, 7],
+      "rotation": [0, 0, 10],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.5,
+        "transparent": true,
+        "opacity": 0.7,
+        "roughness": 0.1,
+        "metalness": 0.9
+      },
+      "collision": false
+    },
+
+    {
+      "_comment": "=== FLAVOR OBJECTS ===",
+      "id": "regulation_sign",
+      "type": "box",
+      "params": { "width": 1.5, "height": 0.8, "depth": 0.05 },
+      "position": [7.8, 2, 7],
+      "rotation": [0, -90, 0],
+      "material": {
+        "color": "#2a2a5a",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Notice",
+        "text": "All appeals are final. All denials are also final. F I N A L I T Y is the only service we provide."
+      }
+    }
+  ]
+}

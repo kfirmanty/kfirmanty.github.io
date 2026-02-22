@@ -588,7 +588,7 @@
         },
         "onSuccess": {
           "type": "transition",
-          "target": "spire"
+          "target": "appeals"
         }
       }
     },

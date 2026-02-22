@@ -562,6 +562,19 @@
       }
     },
     {
+      "id": "bulletin_board_frame",
+      "type": "box",
+      "params": { "width": 2.2, "height": 1.7, "depth": 0.06 },
+      "position": [-7, 2.5, 0],
+      "rotation": [0, 30, 0],
+      "material": {
+        "color": "#5a4a3a",
+        "roughness": 0.6,
+        "metalness": 0.3
+      },
+      "collision": false
+    },
+    {
       "id": "bulletin_board",
       "type": "box",
       "params": { "width": 2, "height": 1.5, "depth": 0.1 },

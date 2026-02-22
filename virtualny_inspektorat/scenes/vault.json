@@ -4,17 +4,30 @@
   "onStart": {
     "dialogue": {
       "nodes": [
-        { "text": "You have descended into the V E R I F I C A T I O N   D E P A R T M E N T. The air is cold. The stone remembers every document ever processed." },
-        { "text": "An Auditor waits beyond the crystal barrier. Your documents will be... E X A M I N E D." }
+        {
+          "text": "You have descended into the V E R I F I C A T I O N   D E P A R T M E N T. The air is cold. The stone remembers every document ever processed."
+        },
+        {
+          "text": "An Auditor waits beyond the crystal barrier. Your documents will be... E X A M I N E D."
+        }
       ]
     }
   },
   "sky": {
     "type": "gradient",
     "stops": [
-      [0, "#050515"],
-      [0.5, "#0a0a2a"],
-      [1, "#0a1030"]
+      [
+        0,
+        "#050515"
+      ],
+      [
+        0.5,
+        "#0a0a2a"
+      ],
+      [
+        1,
+        "#0a1030"
+      ]
     ]
   },
   "fog": {
@@ -32,28 +45,63 @@
       "color": "#01cdfe",
       "intensity": 1.2,
       "distance": 18,
-      "position": [0, 4, 2]
+      "position": [
+        0,
+        4,
+        2
+      ]
     },
     {
       "type": "point",
       "color": "#01cdfe",
       "intensity": 0.8,
       "distance": 12,
-      "position": [-5, 3, -6]
+      "position": [
+        -5,
+        3,
+        -6
+      ]
     },
     {
       "type": "point",
       "color": "#b967ff",
       "intensity": 0.6,
       "distance": 12,
-      "position": [5, 3, -8]
+      "position": [
+        5,
+        3,
+        -8
+      ]
     },
     {
       "type": "point",
       "color": "#fffb96",
       "intensity": 0.5,
       "distance": 10,
-      "position": [0, 4, -10]
+      "position": [
+        0,
+        4,
+        -10
+      ]
+    },
+    {
+      "type": "spot",
+      "intensity": 8.3,
+      "color": "#ffffff",
+      "position": [
+        0,
+        1.1,
+        -7.3
+      ],
+      "distance": 20,
+      "angle": 45,
+      "penumbra": 0.3,
+      "decay": 2,
+      "target": [
+        0,
+        4,
+        -9
+      ]
     }
   ],
   "postProcessing": {
@@ -65,30 +113,59 @@
     "bloomStrength": 0.5
   },
   "spawn": {
-    "position": [0, 1.6, 10],
-    "rotation": [0, 0, 0]
+    "position": [
+      0,
+      1.6,
+      10
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "objects": [
     {
       "id": "floor",
       "type": "box",
-      "params": { "width": 20, "height": 0.5, "depth": 26 },
-      "position": [0, -0.25, -1],
+      "params": {
+        "width": 20,
+        "height": 0.5,
+        "depth": 26
+      },
+      "position": [
+        0,
+        -0.25,
+        -1
+      ],
       "material": {
         "color": "#5050a0",
         "roughness": 0.15,
         "metalness": 0.85,
         "texture": "checkerboard",
-        "textureRepeat": [10, 13]
+        "textureRepeat": [
+          10,
+          13
+        ]
       },
       "collision": true,
-      "collisionOptions": { "walkable": true }
+      "collisionOptions": {
+        "walkable": true
+      }
     },
     {
       "id": "ceiling",
       "type": "box",
-      "params": { "width": 20, "height": 0.3, "depth": 26 },
-      "position": [0, 6.15, -1],
+      "params": {
+        "width": 20,
+        "height": 0.3,
+        "depth": 26
+      },
+      "position": [
+        0,
+        6.15,
+        -1
+      ],
       "material": {
         "color": "#0a0a1a",
         "roughness": 0.9,
@@ -99,61 +176,112 @@
     {
       "id": "wall_back",
       "type": "box",
-      "params": { "width": 20, "height": 6, "depth": 0.4 },
-      "position": [0, 3, -14],
+      "params": {
+        "width": 20,
+        "height": 6,
+        "depth": 0.4
+      },
+      "position": [
+        0,
+        3,
+        -14
+      ],
       "material": {
         "color": "#ffffff",
         "roughness": 0.8,
         "texture": "marble",
-        "textureRepeat": [5, 1.5]
+        "textureRepeat": [
+          5,
+          1.5
+        ]
       },
       "collision": true
     },
     {
       "id": "wall_front",
       "type": "box",
-      "params": { "width": 20, "height": 6, "depth": 0.4 },
-      "position": [0, 3, 12],
+      "params": {
+        "width": 20,
+        "height": 6,
+        "depth": 0.4
+      },
+      "position": [
+        0,
+        3,
+        12
+      ],
       "material": {
         "color": "#ffffff",
         "roughness": 0.8,
         "texture": "marble",
-        "textureRepeat": [5, 1.5]
+        "textureRepeat": [
+          5,
+          1.5
+        ]
       },
       "collision": true
     },
     {
       "id": "wall_left",
       "type": "box",
-      "params": { "width": 0.4, "height": 6, "depth": 26 },
-      "position": [-10, 3, -1],
+      "params": {
+        "width": 0.4,
+        "height": 6,
+        "depth": 26
+      },
+      "position": [
+        -10,
+        3,
+        -1
+      ],
       "material": {
         "color": "#ffffff",
         "roughness": 0.8,
         "texture": "marble",
-        "textureRepeat": [6.5, 1.5]
+        "textureRepeat": [
+          6.5,
+          1.5
+        ]
       },
       "collision": true
     },
     {
       "id": "wall_right",
       "type": "box",
-      "params": { "width": 0.4, "height": 6, "depth": 26 },
-      "position": [10, 3, -1],
+      "params": {
+        "width": 0.4,
+        "height": 6,
+        "depth": 26
+      },
+      "position": [
+        10,
+        3,
+        -1
+      ],
       "material": {
         "color": "#ffffff",
         "roughness": 0.8,
         "texture": "marble",
-        "textureRepeat": [6.5, 1.5]
+        "textureRepeat": [
+          6.5,
+          1.5
+        ]
       },
       "collision": true
     },
-
     {
       "id": "crystal_wall",
       "type": "box",
-      "params": { "width": 14, "height": 5, "depth": 0.6 },
-      "position": [0, 2.5, -2],
+      "params": {
+        "width": 16,
+        "height": 5,
+        "depth": 0.6
+      },
+      "position": [
+        0,
+        2.5,
+        -2
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
@@ -171,19 +299,40 @@
         "requiresText": "A wall of solid crystal blocks access to the Auditor. A sign reads: 'STAMP OF PASSAGE REQUIRED. This is a S E C U R I T Y   B A R R I E R, not a suggestion.'",
         "dialogue": {
           "nodes": [
-            { "text": "You press the Stamp of Passage against the crystal barrier. It hums, verifying... V E R I F Y I N G..." },
-            { "text": "S T A M P   V A L I D A T E D. The security barrier shatters into a thousand shards of bureaucratic light." }
+            {
+              "text": "You press the Stamp of Passage against the crystal barrier. It hums, verifying... V E R I F Y I N G..."
+            },
+            {
+              "text": "S T A M P   V A L I D A T E D. The security barrier shatters into a thousand shards of bureaucratic light."
+            }
           ]
         },
-        "onComplete": { "type": "setState", "key": "vault_open", "value": true }
+        "onComplete": [
+          {
+            "type": "setState",
+            "key": "vault_open",
+            "value": true
+          },
+          {
+            "type": "fadeOut",
+            "target": "crystal_wall",
+            "duration": 1.5
+          }
+        ]
       }
     },
-
     {
       "id": "col_1",
       "type": "column",
-      "params": { "radius": 0.4, "height": 6 },
-      "position": [-7, 0, 6],
+      "params": {
+        "radius": 0.4,
+        "height": 6
+      },
+      "position": [
+        -7,
+        0,
+        6
+      ],
       "material": {
         "color": "#1a1a4a",
         "emissive": "#01cdfe",
@@ -195,8 +344,15 @@
     {
       "id": "col_2",
       "type": "column",
-      "params": { "radius": 0.4, "height": 6 },
-      "position": [7, 0, 6],
+      "params": {
+        "radius": 0.4,
+        "height": 6
+      },
+      "position": [
+        7,
+        0,
+        6
+      ],
       "material": {
         "color": "#1a1a4a",
         "emissive": "#01cdfe",
@@ -208,8 +364,15 @@
     {
       "id": "col_3",
       "type": "column",
-      "params": { "radius": 0.4, "height": 6 },
-      "position": [-7, 0, -8],
+      "params": {
+        "radius": 0.4,
+        "height": 6
+      },
+      "position": [
+        -7,
+        0,
+        -8
+      ],
       "material": {
         "color": "#1a1a4a",
         "emissive": "#b967ff",
@@ -221,8 +384,15 @@
     {
       "id": "col_4",
       "type": "column",
-      "params": { "radius": 0.4, "height": 6 },
-      "position": [7, 0, -8],
+      "params": {
+        "radius": 0.4,
+        "height": 6
+      },
+      "position": [
+        7,
+        0,
+        -8
+      ],
       "material": {
         "color": "#1a1a4a",
         "emissive": "#b967ff",
@@ -231,13 +401,24 @@
       },
       "collision": true
     },
-
     {
       "id": "glyph_tablet_a",
       "type": "box",
-      "params": { "width": 1.2, "height": 1.8, "depth": 0.15 },
-      "position": [-8, 1.4, 4],
-      "rotation": [0, 20, 0],
+      "params": {
+        "width": 1.2,
+        "height": 1.8,
+        "depth": 0.15
+      },
+      "position": [
+        -8,
+        1.4,
+        4
+      ],
+      "rotation": [
+        0,
+        20,
+        0
+      ],
       "material": {
         "color": "#2a2a5a",
         "emissive": "#01cdfe",
@@ -255,9 +436,21 @@
     {
       "id": "glyph_tablet_b",
       "type": "box",
-      "params": { "width": 1.2, "height": 1.8, "depth": 0.15 },
-      "position": [7, 1.4, 0],
-      "rotation": [0, -15, 0],
+      "params": {
+        "width": 1.2,
+        "height": 1.8,
+        "depth": 0.15
+      },
+      "position": [
+        7,
+        1.4,
+        0
+      ],
+      "rotation": [
+        0,
+        -15,
+        0
+      ],
       "material": {
         "color": "#2a2a5a",
         "emissive": "#01cdfe",
@@ -275,9 +468,21 @@
     {
       "id": "glyph_tablet_c",
       "type": "box",
-      "params": { "width": 1.2, "height": 1.8, "depth": 0.15 },
-      "position": [-6, 1.4, -8],
-      "rotation": [0, 10, 0],
+      "params": {
+        "width": 1.2,
+        "height": 1.8,
+        "depth": 0.15
+      },
+      "position": [
+        -6,
+        1.4,
+        -8
+      ],
+      "rotation": [
+        0,
+        10,
+        0
+      ],
       "material": {
         "color": "#2a2a5a",
         "emissive": "#b967ff",
@@ -294,12 +499,19 @@
         "text": "VERIFICATION TABLET C — 'According to the records, existence is a F O R M A L I T Y and the distinction between existing and not existing is P U R E L Y   A D M I N I S T R A T I V E. This record is F I N A L and cannot be contested.'"
       }
     },
-
     {
       "id": "guardian_pedestal",
       "type": "box",
-      "params": { "width": 2, "height": 1.5, "depth": 2 },
-      "position": [0, 0.75, -10],
+      "params": {
+        "width": 2,
+        "height": 1.5,
+        "depth": 2
+      },
+      "position": [
+        0,
+        0.75,
+        -9.5
+      ],
       "material": {
         "color": "#1a1a3a",
         "roughness": 0.3,
@@ -310,15 +522,26 @@
     {
       "id": "guardian_head",
       "type": "head",
-      "params": { "scale": 1.4 },
-      "position": [0, 2.8, -10],
+      "params": {
+        "scale": 1.4
+      },
+      "position": [
+        0,
+        2.8,
+        -9.5
+      ],
       "material": {
         "color": "#3a3a6a",
         "roughness": 0.4,
         "metalness": 0.3,
         "flatShading": true
       },
-      "animation": { "type": "bob", "speed": 0.5, "amplitude": 0.12, "offset": 0 },
+      "animation": {
+        "type": "bob",
+        "speed": 0.5,
+        "amplitude": 0.12,
+        "offset": 0
+      },
       "collision": false,
       "interactable": {
         "type": "dialogue",
@@ -327,29 +550,61 @@
         "requiresText": "The Auditor looms beyond the security barrier. Its eyes scan endlessly, verifying, verifying...",
         "dialogue": {
           "nodes": [
-            { "speaker": "T H E   A U D I T O R", "text": "Your documents have been R E V I E W E D. There is... an inconsistency." },
-            { "speaker": "T H E   A U D I T O R", "text": "Your records contradict themselves. This is U N U S U A L. Usually they contradict someone else's." },
+            {
+              "speaker": "T H E   A U D I T O R",
+              "text": "Your documents have been R E V I E W E D. There is... an inconsistency."
+            },
+            {
+              "speaker": "T H E   A U D I T O R",
+              "text": "Your records contradict themselves. This is U N U S U A L. Usually they contradict someone else's."
+            },
             {
               "speaker": "T H E   A U D I T O R",
               "text": "You must reconcile this discrepancy. Which statement is C O R R E C T?",
               "choices": [
-                { "text": "All of the above", "correct": true, "response": "C O R R E C T. Per Regulation §47.3(b), all contradictory records are simultaneously valid. This has always been true. You have always known this. You may P R O C E E D to the Director." },
-                { "text": "I exist (Tablet A)", "correct": false, "response": "But Tablet B says otherwise. And its record is also F I N A L. You cannot choose one truth in a system that runs on many." },
-                { "text": "I don't exist (Tablet B)", "correct": false, "response": "If you do not exist, then who is standing before me? And who was standing here before you?" },
-                { "text": "It doesn't matter (Tablet C)", "correct": false, "response": "It is administrative, yes. But administrative matters are the O N L Y matters in the Inspektorat. Try again." }
+                {
+                  "text": "All of the above",
+                  "correct": true,
+                  "response": "C O R R E C T. Per Regulation §47.3(b), all contradictory records are simultaneously valid. This has always been true. You have always known this. You may P R O C E E D to the Director."
+                },
+                {
+                  "text": "I exist (Tablet A)",
+                  "correct": false,
+                  "response": "But Tablet B says otherwise. And its record is also F I N A L. You cannot choose one truth in a system that runs on many."
+                },
+                {
+                  "text": "I don't exist (Tablet B)",
+                  "correct": false,
+                  "response": "If you do not exist, then who is standing before me? And who was standing here before you?"
+                },
+                {
+                  "text": "It doesn't matter (Tablet C)",
+                  "correct": false,
+                  "response": "It is administrative, yes. But administrative matters are the O N L Y matters in the Inspektorat. Try again."
+                }
               ]
             }
           ]
         },
-        "onSuccess": { "type": "transition", "target": "spire" }
+        "onSuccess": {
+          "type": "transition",
+          "target": "spire"
+        }
       }
     },
-
     {
       "id": "crystal_1",
       "type": "cone",
-      "params": { "radius": 0.3, "height": 1.5, "segments": 5 },
-      "position": [-3, 0.75, 6],
+      "params": {
+        "radius": 0.3,
+        "height": 1.5,
+        "segments": 5
+      },
+      "position": [
+        -3,
+        0.75,
+        6
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
@@ -364,9 +619,21 @@
     {
       "id": "crystal_2",
       "type": "cone",
-      "params": { "radius": 0.2, "height": 1.0, "segments": 4 },
-      "position": [4, 0.5, 8],
-      "rotation": [0, 0, 15],
+      "params": {
+        "radius": 0.2,
+        "height": 1,
+        "segments": 4
+      },
+      "position": [
+        4,
+        0.5,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        15
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
@@ -381,9 +648,21 @@
     {
       "id": "crystal_3",
       "type": "cone",
-      "params": { "radius": 0.25, "height": 1.2, "segments": 4 },
-      "position": [6, 0.6, -6],
-      "rotation": [0, 0, -10],
+      "params": {
+        "radius": 0.25,
+        "height": 1.2,
+        "segments": 4
+      },
+      "position": [
+        6,
+        0.6,
+        -6
+      ],
+      "rotation": [
+        0,
+        0,
+        -10
+      ],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
@@ -398,8 +677,16 @@
     {
       "id": "crystal_4",
       "type": "cone",
-      "params": { "radius": 0.35, "height": 1.8, "segments": 5 },
-      "position": [-5, 0.9, -10],
+      "params": {
+        "radius": 0.35,
+        "height": 1.8,
+        "segments": 5
+      },
+      "position": [
+        -5,
+        0.9,
+        -10
+      ],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
@@ -411,12 +698,19 @@
       },
       "collision": false
     },
-
     {
       "id": "tile_glow_1",
       "type": "box",
-      "params": { "width": 2, "height": 0.02, "depth": 2 },
-      "position": [-4, 0.01, 4],
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [
+        -4,
+        0.01,
+        4
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
@@ -429,8 +723,16 @@
     {
       "id": "tile_glow_4",
       "type": "box",
-      "params": { "width": 2, "height": 0.02, "depth": 2 },
-      "position": [4, 0.01, -6],
+      "params": {
+        "width": 2,
+        "height": 0.02,
+        "depth": 2
+      },
+      "position": [
+        4,
+        0.01,
+        -6
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
@@ -440,57 +742,106 @@
       },
       "collision": false
     },
-
     {
       "id": "orb_1",
       "type": "sphere",
-      "params": { "radius": 0.2, "widthSegments": 6, "heightSegments": 4 },
-      "position": [-6, 3, 2],
+      "params": {
+        "radius": 0.2,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -6,
+        3,
+        2
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
         "emissiveIntensity": 1.5,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 0.8, "amplitude": 0.3, "offset": 0 },
+      "animation": {
+        "type": "float",
+        "speed": 0.8,
+        "amplitude": 0.3,
+        "offset": 0
+      },
       "collision": false
     },
     {
       "id": "orb_2",
       "type": "sphere",
-      "params": { "radius": 0.15, "widthSegments": 6, "heightSegments": 4 },
-      "position": [5, 4, -4],
+      "params": {
+        "radius": 0.15,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        5,
+        4,
+        -4
+      ],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
         "emissiveIntensity": 1.5,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 1.1, "amplitude": 0.25, "offset": 2 },
+      "animation": {
+        "type": "float",
+        "speed": 1.1,
+        "amplitude": 0.25,
+        "offset": 2
+      },
       "collision": false
     },
     {
       "id": "orb_3",
       "type": "sphere",
-      "params": { "radius": 0.25, "widthSegments": 6, "heightSegments": 4 },
-      "position": [0, 5, -6],
+      "params": {
+        "radius": 0.25,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        0,
+        5,
+        -6
+      ],
       "material": {
         "color": "#fffb96",
         "emissive": "#fffb96",
-        "emissiveIntensity": 1.0,
+        "emissiveIntensity": 1,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 0.6, "amplitude": 0.4, "offset": 4 },
+      "animation": {
+        "type": "float",
+        "speed": 0.6,
+        "amplitude": 0.4,
+        "offset": 4
+      },
       "collision": false
     },
-
     {
       "_comment": "Bureaucratic flavor objects",
       "id": "employee_frame",
       "type": "box",
-      "params": { "width": 1.2, "height": 1.0, "depth": 0.05 },
-      "position": [-9.7, 2.5, -4],
-      "rotation": [0, 90, 0],
+      "params": {
+        "width": 1.2,
+        "height": 1,
+        "depth": 0.05
+      },
+      "position": [
+        -9.7,
+        2.5,
+        -4
+      ],
+      "rotation": [
+        0,
+        90,
+        0
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#fffb96",
@@ -508,9 +859,21 @@
     {
       "id": "regulation_poster",
       "type": "box",
-      "params": { "width": 1.5, "height": 1.0, "depth": 0.05 },
-      "position": [9.7, 2.5, 2],
-      "rotation": [0, -90, 0],
+      "params": {
+        "width": 1.5,
+        "height": 1,
+        "depth": 0.05
+      },
+      "position": [
+        9.7,
+        2.5,
+        2
+      ],
+      "rotation": [
+        0,
+        -90,
+        0
+      ],
       "material": {
         "color": "#2a2a5a",
         "emissive": "#01cdfe",
@@ -522,7 +885,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "✧ Read the Poster",
-        "text": "MOTIVATIONAL POSTER: 'E X I S T E N C E   I S   A   P R I V I L E G E,   N O T   A   R I G H T.' — Department of Verification, Third Era. Below in smaller text: 'This poster exists. You may not.'"
+        "text": "MOTIVATIONAL POSTER: 'E X I S T E N C E   I S   A   P R I V I L E G E,   N O T   A   R I G H T.' Below, in smaller text: 'This poster exists. You may not.'"
       }
     }
   ]

@@ -33,14 +33,35 @@ Then open `http://localhost:8000` in your browser.
 ## Project Structure
 
 ```
-vaporwave-game/
-├── index.html              # Main page with UI elements
+├── index.html                  # Game shell — UI, dialogue box, HUD, title screen
+├── editor.html                 # WYSIWYG scene editor
 ├── js/
-│   └── game.js             # Complete game engine
+│   ├── shared/
+│   │   ├── geometry.js         # GeometryBuilders factory (primitives + compound types)
+│   │   ├── textures.js         # Texture registry and cached loader
+│   │   └── materials.js        # createMaterial() factory
+│   ├── constants.js            # Game constants (physics, rendering)
+│   ├── shaders.js              # GLSL post-processing + PSX effects
+│   ├── dialogue.js             # DialogueEngine (typewriter, branching choices)
+│   ├── notifications.js        # NotificationSystem (timed messages)
+│   ├── collision.js            # CollisionSystem (AABB)
+│   ├── animation.js            # AnimationSystem (float/rotate/bob/pulse)
+│   ├── audio.js                # AudioSystem (procedural typing blips)
+│   ├── scene-loader.js         # SceneLoader (JSON → THREE.Scene)
+│   ├── engine.js               # VaporwaveEngine (main orchestrator)
+│   ├── game.js                 # Game entry point
+│   ├── editor-commands.js      # Undo/redo command pattern classes
+│   ├── editor-schema.js        # Editor param schemas and defaults
+│   ├── editor-utils.js         # Utility functions (round3, escHtml)
+│   └── editor.js               # SceneEditor class + bootstrap
 ├── scenes/
-│   ├── temple_exterior.json  # First scene (also embedded in engine)
-│   └── temple_interior.json  # Second scene (also embedded in engine)
-└── README.md
+│   ├── temple_exterior.json    # Scene 1: temple on water with oracle riddle
+│   └── temple_interior.json    # Scene 2: dark room with crystal altar
+├── tests/                      # Unit tests (Vitest)
+│   ├── setup.js
+│   └── unit/                   # 15 test files, 259 tests
+├── assets/textures/            # Procedural tileable textures (64×64 PNG)
+└── scripts/generate_textures.py
 ```
 
 ## Architecture
@@ -57,8 +78,11 @@ vaporwave-game/
 | **Interaction** | Raycasting from camera center; click to interact |
 | **Dialogue** | Typewriter text, branching choices, riddles with success/failure |
 | **Animation** | Float, rotate, bob, pulse — all declarative via JSON |
-| **Notifications** | Transient on-screen messages |
+| **Notifications** | Transient on-screen messages with interrupt prevention |
+| **Audio** | Procedural typing blips via Web Audio (Animal Crossing style) |
 | **Transitions** | Fade-to-black between scenes |
+| **PSX Effects** | Vertex jitter, affine texture warping, bloom/glow |
+| **Undo/Redo** | Command pattern in editor (transform, property, add/delete) |
 
 ### Adding New Scenes
 
@@ -102,7 +126,7 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
   // Lights array
   "lights": [
     {
-      "type": "directional",   // directional | point | hemisphere
+      "type": "directional",   // directional | point | spot | hemisphere
       "color": "#ffffff",
       "intensity": 1.0,
       "position": [x, y, z],
@@ -114,6 +138,16 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
       "intensity": 0.8,
       "distance": 15,          // Falloff distance
       "position": [x, y, z]
+    },
+    {
+      "type": "spot",
+      "color": "#ffffff",
+      "intensity": 1.0,
+      "distance": 20,
+      "angle": 45,             // Cone angle in degrees
+      "penumbra": 0.3,
+      "position": [x, y, z],
+      "target": [x, y, z]     // Point the spot looks at
     },
     {
       "type": "hemisphere",
@@ -175,11 +209,16 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
     "textureRepeat": [4, 2]   // UV tiling [x, y], default [1, 1]
   },
 
+  // Conditional visibility (optional)
+  "visibleWhen": "stateKey",  // Show only when gameState[key] is truthy
+  "hiddenWhen": "stateKey",   // Hide when gameState[key] is truthy
+
   // Physics
   "collision": true,          // Enable AABB collision
   "collisionOptions": {
     "walkable": true,         // Can be walked on
-    "isStairs": true          // Step-up behavior
+    "isStairs": true,         // Step-up behavior
+    "trigger": true           // Non-blocking zone that fires events
   },
 
   // Animation (optional)
@@ -192,9 +231,14 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
   },
 
   // Interaction (optional)
+  // Interaction (optional)
   "interactable": {
     "type": "dialogue",       // dialogue | examine | trigger | pickup
     "hoverText": "Click me",  // Shown when looking at object
+    "requires": "stateKey",   // Gate interaction behind game state
+    // OR: "requires": { "all": ["key1", "key2"] }
+    // OR: "requires": { "any": ["key1", "key2"] }
+    "requiresText": "You need a key...",  // Shown when requires fails
     // ... type-specific data (see below)
   }
 }
@@ -212,6 +256,7 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
 | `plane` | `width`, `height` |
 | `cone` | `radius`, `height`, `segments` |
 | `torus` | `radius`, `tube`, `radialSegments`, `tubularSegments` |
+| `terrain` | `width`, `depth`, `segments`, `hillHeight`, `hillFrequency`, `seed`, `bowl` |
 
 ### Compound Types
 
@@ -221,6 +266,7 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
 | `stairs` | `steps`, `stepWidth`, `stepHeight`, `stepDepth` | Ascending staircase |
 | `pediment` | `width`, `height`, `depth` | Triangular Greek roof element |
 | `head` | `scale`, `eyeMaterial` | Sculptural head with eyes and mouth |
+| `water` | `width`, `height`, `color`, `level` | Transparent animated water plane |
 
 ### Groups
 
@@ -314,6 +360,16 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
 | `transition` | `target: "scene_id"` | Load a new scene |
 | `notify` | `text`, `duration` | Show a notification |
 | `setState` | `key`, `value` | Set a game state variable |
+| `fadeIn` | `target: "object_id"`, `duration` | Fade an object in (default 1.5s) |
+| `fadeOut` | `target: "object_id"`, `duration` | Fade an object out (default 1.5s) |
+
+Actions can also be arrays to execute multiple actions at once:
+```jsonc
+"onSuccess": [
+  { "type": "setState", "key": "solved", "value": true },
+  { "type": "notify", "text": "Puzzle solved!" }
+]
+```
 
 ## Visual Style Guide
 
@@ -337,15 +393,28 @@ Create a new `.json` file in `/scenes/` following the schema below. The engine w
 - Emissive materials create the neon glow effect
 - Use fog to limit draw distance and add atmosphere
 
+## Testing
+
+Unit tests use [Vitest](https://vitest.dev/). Three.js is installed as a dev dependency (matching CDN version r160) so tests use real THREE math classes.
+
+```bash
+npm install            # first time only
+npm test               # run all 259 tests
+npm run test:watch     # interactive watch mode
+npm run test:coverage  # with coverage report
+```
+
 ## Technical Notes
 
 - Renders at 640×480, scaled to fill window (pixelated)
 - Uses Bayer 8×8 ordered dithering for authentic retro look
 - Chromatic aberration and vignette for CRT feel
 - Scanline overlay via CSS
-- Scenes can be embedded in `game.js` or loaded from `/scenes/*.json`
+- Scenes loaded from `/scenes/*.json` by ID
 - Pointer lock API for FPS-style mouse look
 - All collision is AABB (axis-aligned bounding boxes)
+- PSX vertex jitter + affine texture warping for retro 3D feel
+- Bloom/glow post-processing for neon emissive surfaces
 
 ## Browser Requirements
 

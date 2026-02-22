@@ -16,37 +16,58 @@ python3 -m http.server 8000
 - Game: `http://localhost:8000`
 - Editor: `http://localhost:8000/editor.html`
 
-No build step, no bundler, no `node_modules`. All dependencies load from CDN via import maps.
+No build step, no bundler. Game dependencies load from CDN via import maps. Dev dependencies (vitest, three) are in `node_modules` for testing only.
+
+## Testing
+
+```bash
+npm install            # first time only
+npm test               # vitest run — all tests
+npm run test:watch     # vitest interactive mode
+npm run test:coverage  # with v8 coverage
+```
+
+- 259 unit tests across 15 test files in `tests/unit/`
+- Uses Vitest with jsdom environment
+- `three@0.160.0` installed as devDependency (matching CDN version) — tests use real THREE math objects
+- `tests/setup.js` stubs TextureLoader, DOM elements, AudioContext, pointer lock
+- `vitest.config.js` aliases `'three'` import to `node_modules` so CDN import maps work in Node
 
 ## File Structure
 
 ```
 ├── index.html                 # Game shell — UI, dialogue box, HUD, title screen, CSS
 ├── editor.html                # WYSIWYG scene editor — toolbar, panels, modal, CSS
+├── package.json               # Dev dependencies only (vitest, three for tests)
+├── vitest.config.js           # Test runner config (jsdom, import aliases)
+├── .gitignore                 # Excludes node_modules
 ├── js/
 │   ├── shared/
 │   │   ├── geometry.js        # GeometryBuilders factory + COMPOUND_TYPES (shared by game & editor)
 │   │   ├── textures.js        # TEXTURE_REGISTRY, loadTexture(), TEXTURE_OPTIONS (shared)
 │   │   └── materials.js       # createMaterial() (shared)
 │   ├── constants.js           # Game constants (RENDER_WIDTH, PLAYER_HEIGHT, GRAVITY, etc.)
-│   ├── shaders.js             # DitherShader (GLSL post-processing)
+│   ├── shaders.js             # DitherShader, BloomShaders, PSX effects (GLSL post-processing)
 │   ├── dialogue.js            # DialogueEngine class
 │   ├── notifications.js       # NotificationSystem class
 │   ├── collision.js           # CollisionSystem class (AABB)
 │   ├── animation.js           # AnimationSystem class
+│   ├── audio.js               # AudioSystem class (procedural Web Audio blips)
 │   ├── scene-loader.js        # SceneLoader class (JSON → THREE.Scene)
 │   ├── engine.js              # VaporwaveEngine class (main orchestrator)
 │   ├── game.js                # Game entry point (imports engine, bootstraps)
+│   ├── editor-commands.js     # UndoStack, TransformCommand, PropertyCommand, etc.
 │   ├── editor-schema.js       # DEFAULT_PARAMS, PARAM_SCHEMA, DEFAULT_MATERIAL
 │   ├── editor-utils.js        # round3(), escHtml()
 │   └── editor.js              # SceneEditor class + bootstrap (editor entry point)
+├── tests/
+│   ├── setup.js               # Global test setup (THREE stubs, DOM elements)
+│   └── unit/                  # 15 test files (259 tests)
 ├── scenes/
 │   ├── temple_exterior.json   # Scene 1: temple on water with oracle riddle
 │   └── temple_interior.json   # Scene 2: dark room with crystal altar
 ├── assets/
 │   └── textures/              # Procedural tileable textures (64×64 PNG)
-│       ├── sky.png            # Blue sky with clouds
-│       └── marble.png         # Dark purple marble veining
 ├── scripts/
 │   └── generate_textures.py   # Python script to regenerate texture PNGs
 ├── README.md                  # User-facing docs, scene schema reference
@@ -62,7 +83,7 @@ index.html ─► js/game.js (entry)
                 └─► js/engine.js (VaporwaveEngine)
                       ├─► js/constants.js
                       ├─► js/shaders.js
-                      ├─► js/dialogue.js
+                      ├─► js/dialogue.js ─► js/audio.js
                       ├─► js/notifications.js
                       ├─► js/collision.js
                       ├─► js/animation.js
@@ -71,6 +92,7 @@ index.html ─► js/game.js (entry)
                             └─► js/shared/materials.js ─► js/shared/textures.js
 
 editor.html ─► js/editor.js (entry + SceneEditor)
+                 ├─► js/editor-commands.js
                  ├─► js/shared/geometry.js
                  ├─► js/shared/textures.js
                  ├─► js/shared/materials.js
@@ -89,20 +111,22 @@ These modules are imported by both the game and editor:
 ### Game modules
 
 - **`constants.js`** — All game constants: `RENDER_WIDTH=640`, `RENDER_HEIGHT=480`, `PLAYER_HEIGHT=1.6`, `GRAVITY=-15`, `STEP_HEIGHT=0.5`, etc.
-- **`shaders.js`** — `DitherShader` GLSL post-processing: Bayer 8×8 ordered dithering, color quantization, chromatic aberration, vignette
+- **`shaders.js`** — `DitherShader`, `BloomExtractShader`, `BloomBlurShader`, `BloomCompositeShader` GLSL post-processing; `applyPSXEffects()` for vertex jitter + affine warping; `chainOnBeforeCompile()` for composing material hooks
 - **`dialogue.js`** — `DialogueEngine` class: typewriter text, branching choices, correct/incorrect riddle logic, callbacks
 - **`notifications.js`** — `NotificationSystem` class: timed on-screen text messages
 - **`collision.js`** — `CollisionSystem` class: AABB collision with ground detection, step-up for stairs, fall-through recovery
 - **`animation.js`** — `AnimationSystem` class: declarative float/rotate/bob/pulse animations
 - **`scene-loader.js`** — `SceneLoader` class: parses JSON → builds THREE.Scene with objects, lights, sky, fog, water, interactables, collision meshes
 - **`engine.js`** — `VaporwaveEngine` class: main orchestrator — renderer setup, pointer lock FPS controls, player physics loop, interaction raycasting, scene transitions
+- **`audio.js`** — `AudioSystem` class: procedural Web Audio typing blips (Animal Crossing style), lazy-init AudioContext
 - **`game.js`** — Entry point: imports `VaporwaveEngine`, instantiates and calls `init()`
 
 ### Editor modules
 
+- **`editor-commands.js`** — `UndoStack`, `TransformCommand`, `PropertyCommand`, `AddObjectCommand`, `DeleteObjectCommand` — command pattern for undo/redo
 - **`editor-schema.js`** — `DEFAULT_PARAMS`, `DEFAULT_MATERIAL`, `PARAM_SCHEMA` for the inspector panel
 - **`editor-utils.js`** — `round3()`, `escHtml()` utility functions
-- **`editor.js`** — `SceneEditor` class + bootstrap: 3D viewport, OrbitControls + TransformControls, hierarchy panel, inspector panel, dialogue tree modal editor, spawn point visualization, scene-level settings
+- **`editor.js`** — `SceneEditor` class + bootstrap: 3D viewport, OrbitControls + TransformControls, hierarchy panel, inspector panel, dialogue tree modal editor, spawn point visualization, scene-level settings, undo/redo
 
 ### Scene JSON format
 
@@ -224,11 +248,9 @@ Then call it from `__main__` and run `python3 scripts/generate_textures.py`.
 
 ## Known Limitations
 
-- No audio system yet
 - No save/load game state (only scene transitions carry `gameState` object in memory)
 - Collision is AABB only — no mesh-accurate collision
 - No pathfinding or NPC movement
-- Editor has no undo/redo system
 
 ## Vaporwave Color Palette Reference
 

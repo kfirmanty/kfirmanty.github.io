@@ -428,6 +428,10 @@ export class VaporwaveEngine {
 
   handleAction(action) {
     if (!action) return;
+    if (Array.isArray(action)) {
+      for (const a of action) this.handleAction(a);
+      return;
+    }
     if (action.type === 'transition') {
       this.loadScene(action.target);
     } else if (action.type === 'notify') {
@@ -435,6 +439,75 @@ export class VaporwaveEngine {
     } else if (action.type === 'setState') {
       this.gameState[action.key] = action.value;
       this.updateConditionalVisibility();
+    } else if (action.type === 'fadeIn') {
+      this.fadeObject(action.target, action.duration ?? 1.5, true);
+    } else if (action.type === 'fadeOut') {
+      this.fadeObject(action.target, action.duration ?? 1.5, false);
+    }
+  }
+
+  findSceneObject(id) {
+    let found = null;
+    this.scene.traverse(obj => {
+      if (!found && obj.userData.id === id) found = obj;
+    });
+    return found;
+  }
+
+  fadeObject(targetId, duration, fadeIn) {
+    const object = this.findSceneObject(targetId);
+    if (!object) return;
+
+    // Collect all meshes
+    const meshes = [];
+    if (object.isMesh) meshes.push(object);
+    object.traverse(child => { if (child.isMesh) meshes.push(child); });
+    if (meshes.length === 0) return;
+
+    if (fadeIn) {
+      object.visible = true;
+      const targets = meshes.map(m => {
+        const targetOpacity = m.material.opacity || 1.0;
+        m.material.transparent = true;
+        m.material.opacity = 0;
+        m.material.needsUpdate = true;
+        return { mesh: m, targetOpacity };
+      });
+      let startTime = null;
+      this.animations.add(object, (time) => {
+        if (startTime === null) startTime = time;
+        const t = Math.min((time - startTime) / duration, 1);
+        for (const { mesh, targetOpacity } of targets) {
+          mesh.material.opacity = targetOpacity * t;
+        }
+        if (t >= 1) {
+          for (const { mesh, targetOpacity } of targets) {
+            if (targetOpacity >= 1) mesh.material.transparent = false;
+            mesh.material.needsUpdate = true;
+          }
+          return false; // Remove animation
+        }
+      });
+    } else {
+      const targets = meshes.map(m => {
+        const startOpacity = m.material.opacity;
+        m.material.transparent = true;
+        m.material.needsUpdate = true;
+        return { mesh: m, startOpacity };
+      });
+      let startTime = null;
+      this.animations.add(object, (time) => {
+        if (startTime === null) startTime = time;
+        const t = Math.min((time - startTime) / duration, 1);
+        for (const { mesh, startOpacity } of targets) {
+          mesh.material.opacity = startOpacity * (1 - t);
+        }
+        if (t >= 1) {
+          object.visible = false;
+          this.collision.removeObject(object);
+          return false; // Remove animation
+        }
+      });
     }
   }
 

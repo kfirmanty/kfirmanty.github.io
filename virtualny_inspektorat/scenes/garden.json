@@ -512,11 +512,10 @@
             }
           ]
         },
-        "onSuccess": {
-          "type": "setState",
-          "key": "arch_open",
-          "value": true
-        }
+        "onSuccess": [
+          { "type": "setState", "key": "arch_open", "value": true },
+          { "type": "fadeIn", "target": "root_key", "duration": 1.5 }
+        ]
       }
     },
     {
@@ -533,6 +532,7 @@
         2.5,
         -9
       ],
+      "visibleWhen": "arch_open",
       "material": {
         "color": "#05d9a6",
         "emissive": "#05d9a6",

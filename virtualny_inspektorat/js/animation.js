@@ -12,8 +12,8 @@ export class AnimationSystem {
   }
 
   tick(time, delta) {
-    for (const anim of this.animations) {
-      anim.update(time, delta, anim.object);
-    }
+    this.animations = this.animations.filter(anim => {
+      return anim.update(time, delta, anim.object) !== false;
+    });
   }
 }

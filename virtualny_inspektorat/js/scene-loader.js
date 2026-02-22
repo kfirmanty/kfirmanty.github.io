@@ -92,6 +92,17 @@ export class SceneLoader {
             lDef.decay ?? 2
           );
           if (lDef.position) light.position.set(...lDef.position);
+        } else if (lDef.type === 'spot') {
+          light = new THREE.SpotLight(
+            new THREE.Color(lDef.color || '#ffffff'),
+            lDef.intensity ?? 1.0,
+            lDef.distance || 20,
+            (lDef.angle ?? 45) * Math.PI / 180,
+            lDef.penumbra ?? 0.3,
+            lDef.decay ?? 2
+          );
+          if (lDef.position) light.position.set(...lDef.position);
+          if (lDef.target) light.target.position.set(...lDef.target);
         } else if (lDef.type === 'hemisphere') {
           light = new THREE.HemisphereLight(
             new THREE.Color(lDef.skyColor || '#ffffff'),
@@ -99,7 +110,10 @@ export class SceneLoader {
             lDef.intensity ?? 0.6
           );
         }
-        if (light) scene.add(light);
+        if (light) {
+          scene.add(light);
+          if (light.isSpotLight) scene.add(light.target);
+        }
       }
     }
 

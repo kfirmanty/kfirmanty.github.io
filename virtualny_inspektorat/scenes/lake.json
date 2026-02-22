@@ -623,9 +623,9 @@
         "heightSegments": 3
       },
       "position": [
-        10.5,
+        10.3,
         3.8,
-        -0.75
+        -0.5
       ],
       "material": {
         "color": "#05d9a6",
@@ -644,9 +644,9 @@
         "heightSegments": 3
       },
       "position": [
-        11,
+        10.7,
         3.8,
-        -0.75
+        -0.5
       ],
       "material": {
         "color": "#05d9a6",
@@ -776,14 +776,27 @@
     {
       "id": "chrome_sphere",
       "type": "sphere",
-      "params": { "radius": 2.0, "widthSegments": 12, "heightSegments": 10 },
-      "position": [0, 4, 0],
+      "params": {
+        "radius": 2,
+        "widthSegments": 12,
+        "heightSegments": 10
+      },
+      "position": [
+        0,
+        4,
+        0
+      ],
       "material": {
         "color": "#c0c0c0",
         "metalness": 0.98,
         "roughness": 0.02
       },
-      "animation": { "type": "bob", "speed": 0.3, "amplitude": 0.3, "offset": 0 },
+      "animation": {
+        "type": "bob",
+        "speed": 0.3,
+        "amplitude": 0.3,
+        "offset": 0
+      },
       "collision": false
     },
     {
@@ -813,20 +826,32 @@
       },
       "collision": false
     },
-
     {
       "id": "garden_portal",
       "type": "torus",
-      "params": { "radius": 1.5, "tube": 0.15, "radialSegments": 6, "tubularSegments": 12 },
-      "position": [-18, 3, -14],
+      "params": {
+        "radius": 1.5,
+        "tube": 0.15,
+        "radialSegments": 6,
+        "tubularSegments": 12
+      },
+      "position": [
+        -18,
+        3,
+        -14
+      ],
       "material": {
         "color": "#05d9a6",
         "emissive": "#05d9a6",
-        "emissiveIntensity": 1.0,
+        "emissiveIntensity": 1,
         "roughness": 0.2,
         "metalness": 0.4
       },
-      "animation": { "type": "rotate", "speed": 0.5, "axis": "y" },
+      "animation": {
+        "type": "rotate",
+        "speed": 0.5,
+        "axis": "y"
+      },
       "collision": false,
       "interactable": {
         "type": "dialogue",
@@ -836,35 +861,66 @@
         "requiresText": "The portal is sealed. A sign reads: 'S T A M P   R E Q U I R E D   F O R   P A S S A G E. Unauthorized passage is unauthorized.'",
         "dialogue": {
           "nodes": [
-            { "text": "The Stamp of Passage glows. The portal recognizes your authorization level: M I N I M A L." },
-            { "text": "Access granted. Transferring to the A R C H I V E." }
+            {
+              "text": "The Stamp of Passage glows. The portal recognizes your authorization level: M I N I M A L."
+            },
+            {
+              "text": "Access granted. Transferring to the A R C H I V E."
+            }
           ]
         },
-        "onComplete": { "type": "transition", "target": "garden" }
+        "onComplete": {
+          "type": "transition",
+          "target": "garden"
+        }
       }
     },
     {
       "id": "portal_glow",
       "type": "sphere",
-      "params": { "radius": 0.3, "widthSegments": 6, "heightSegments": 4 },
-      "position": [-18, 3, -14],
+      "params": {
+        "radius": 0.3,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -18,
+        3,
+        -14
+      ],
       "material": {
         "color": "#05d9a6",
         "emissive": "#05d9a6",
-        "emissiveIntensity": 2.0,
+        "emissiveIntensity": 2,
         "roughness": 0.1
       },
-      "animation": { "type": "pulse", "speed": 1.5, "amplitude": 0.3, "offset": 0 },
+      "animation": {
+        "type": "pulse",
+        "speed": 1.5,
+        "amplitude": 0.3,
+        "offset": 0
+      },
       "collision": false
     },
-
     {
       "_comment": "Waiting room flavor objects",
       "id": "now_serving",
       "type": "box",
-      "params": { "width": 1.5, "height": 0.8, "depth": 0.1 },
-      "position": [-6, 3.5, 14],
-      "rotation": [0, 25, 0],
+      "params": {
+        "width": 1.5,
+        "height": 0.8,
+        "depth": 0.1
+      },
+      "position": [
+        -6,
+        3.5,
+        14
+      ],
+      "rotation": [
+        0,
+        25,
+        0
+      ],
       "material": {
         "color": "#fffb96",
         "emissive": "#fffb96",
@@ -882,8 +938,16 @@
     {
       "id": "stone_bench",
       "type": "box",
-      "params": { "width": 3, "height": 0.5, "depth": 1 },
-      "position": [-8, 1.5, 18],
+      "params": {
+        "width": 3,
+        "height": 0.5,
+        "depth": 1
+      },
+      "position": [
+        -8,
+        1.5,
+        18
+      ],
       "material": {
         "color": "#5a5a4a",
         "roughness": 0.9,
@@ -899,8 +963,14 @@
     {
       "id": "petrified_head",
       "type": "head",
-      "params": { "scale": 0.8 },
-      "position": [-8, 2.5, 18],
+      "params": {
+        "scale": 0.8
+      },
+      "position": [
+        -8,
+        2.5,
+        18
+      ],
       "material": {
         "color": "#5a5a4a",
         "roughness": 0.9,
@@ -917,9 +987,21 @@
     {
       "id": "waiting_sign",
       "type": "box",
-      "params": { "width": 2, "height": 0.6, "depth": 0.08 },
-      "position": [4, 3, 16],
-      "rotation": [0, -15, 0],
+      "params": {
+        "width": 2,
+        "height": 0.6,
+        "depth": 0.08
+      },
+      "position": [
+        4,
+        3,
+        16
+      ],
+      "rotation": [
+        0,
+        -15,
+        0
+      ],
       "material": {
         "color": "#2a4a3a",
         "emissive": "#05d9a6",
@@ -931,7 +1013,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "✧ Read the Sign",
-        "text": "P A T I E N C E   I S   M A N D A T O R Y. Your comfort is not our department. For complaints, please visit the Complaints Department. The Complaints Department does not accept complaints."
+        "text": "The paint is peeling. For complaints, please visit the Complaints Department. The Complaints Department does not accept complaints."
       }
     }
   ]

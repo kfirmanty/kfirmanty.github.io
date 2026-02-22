@@ -12,180 +12,10 @@ import { TEXTURE_REGISTRY, TEXTURE_OPTIONS, loadTexture } from './shared/texture
 import { createMaterial } from './shared/materials.js';
 import { DEFAULT_PARAMS, DEFAULT_MATERIAL, PARAM_SCHEMA } from './editor-schema.js';
 import { round3, escHtml } from './editor-utils.js';
-
-// ─────────────────────────────────────────────
-//  UNDO/REDO COMMAND SYSTEM
-// ─────────────────────────────────────────────
-
-class UndoStack {
-  constructor(editor) {
-    this.editor = editor;
-    this.undoStack = [];
-    this.redoStack = [];
-    this.maxSize = 50;
-  }
-
-  push(command) {
-    this.undoStack.push(command);
-    if (this.undoStack.length > this.maxSize) this.undoStack.shift();
-    this.redoStack = []; // Clear redo on new action
-  }
-
-  undo() {
-    const cmd = this.undoStack.pop();
-    if (!cmd) return;
-    cmd.undo();
-    this.redoStack.push(cmd);
-  }
-
-  redo() {
-    const cmd = this.redoStack.pop();
-    if (!cmd) return;
-    cmd.execute();
-    this.undoStack.push(cmd);
-  }
-
-  clear() {
-    this.undoStack = [];
-    this.redoStack = [];
-  }
-}
-
-// Command: Transform change (position/rotation/scale)
-class TransformCommand {
-  constructor(editor, def, obj, oldState, newState) {
-    this.editor = editor;
-    this.def = def;
-    this.obj = obj;
-    this.oldState = oldState;
-    this.newState = newState;
-  }
-  execute() {
-    this._applyState(this.newState);
-  }
-  undo() {
-    this._applyState(this.oldState);
-  }
-  _applyState(state) {
-    this.def.position = state.position.slice();
-    this.def.rotation = state.rotation?.slice();
-    this.def.scale = Array.isArray(state.scale) ? state.scale.slice() : state.scale;
-    if (this.obj) {
-      this.obj.position.set(...this.def.position);
-      if (this.def.rotation) {
-        this.obj.rotation.set(
-          this.def.rotation[0] * Math.PI / 180,
-          this.def.rotation[1] * Math.PI / 180,
-          this.def.rotation[2] * Math.PI / 180
-        );
-      }
-      if (this.def.scale != null) {
-        if (typeof this.def.scale === 'number') this.obj.scale.setScalar(this.def.scale);
-        else this.obj.scale.set(...this.def.scale);
-      }
-    }
-    this.editor.refreshInspector();
-  }
-}
-
-// Command: Add object
-class AddObjectCommand {
-  constructor(editor, def) {
-    this.editor = editor;
-    this.def = def;
-  }
-  execute() {
-    this.editor.objectDefs.push(this.def);
-    this.editor.sceneData.objects = this.editor.objectDefs;
-    this.editor.buildAndAddObject(this.def);
-    this.editor.refreshHierarchy();
-    this.editor.updateStatusBar();
-  }
-  undo() {
-    const obj = this.editor.threeObjects.get(this.def);
-    if (obj) {
-      this.editor.sceneRoot.remove(obj);
-      this.editor.disposeObject(obj);
-      this.editor.defsByObject.delete(obj);
-    }
-    this.editor.threeObjects.delete(this.def);
-    const idx = this.editor.objectDefs.indexOf(this.def);
-    if (idx !== -1) this.editor.objectDefs.splice(idx, 1);
-    this.editor.sceneData.objects = this.editor.objectDefs;
-    if (this.editor.selected === this.def) this.editor.deselect();
-    this.editor.refreshHierarchy();
-    this.editor.updateStatusBar();
-  }
-}
-
-// Command: Delete object
-class DeleteObjectCommand {
-  constructor(editor, def, index) {
-    this.editor = editor;
-    this.def = def;
-    this.index = index;
-  }
-  execute() {
-    const obj = this.editor.threeObjects.get(this.def);
-    if (this.editor.selected === this.def || this.editor.selectionSet.has(this.def)) {
-      this.editor.deselect();
-    }
-    if (obj) {
-      this.editor.sceneRoot.remove(obj);
-      this.editor.disposeObject(obj);
-      this.editor.defsByObject.delete(obj);
-    }
-    this.editor.threeObjects.delete(this.def);
-    const idx = this.editor.objectDefs.indexOf(this.def);
-    if (idx !== -1) this.editor.objectDefs.splice(idx, 1);
-    this.editor.sceneData.objects = this.editor.objectDefs;
-    this.editor.refreshHierarchy();
-    this.editor.updateStatusBar();
-  }
-  undo() {
-    this.editor.objectDefs.splice(this.index, 0, this.def);
-    this.editor.sceneData.objects = this.editor.objectDefs;
-    this.editor.buildAndAddObject(this.def);
-    this.editor.refreshHierarchy();
-    this.editor.updateStatusBar();
-  }
-}
-
-// Command: Property change
-class PropertyCommand {
-  constructor(editor, def, path, oldValue, newValue, rebuildFn) {
-    this.editor = editor;
-    this.def = def;
-    this.path = path;
-    this.oldValue = JSON.parse(JSON.stringify(oldValue ?? null));
-    this.newValue = JSON.parse(JSON.stringify(newValue ?? null));
-    this.rebuildFn = rebuildFn;
-  }
-  execute() {
-    this._setValue(this.newValue);
-    if (this.rebuildFn) this.rebuildFn();
-    this.editor.refreshInspector();
-  }
-  undo() {
-    this._setValue(this.oldValue);
-    if (this.rebuildFn) this.rebuildFn();
-    this.editor.refreshInspector();
-  }
-  _setValue(val) {
-    const parts = this.path.split('.');
-    let target = this.def;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!target[parts[i]]) target[parts[i]] = {};
-      target = target[parts[i]];
-    }
-    const key = parts[parts.length - 1];
-    if (val === null || val === undefined) {
-      delete target[key];
-    } else {
-      target[key] = val;
-    }
-  }
-}
+import {
+  UndoStack, TransformCommand, AddObjectCommand,
+  DeleteObjectCommand, PropertyCommand
+} from './editor-commands.js';
 
 // ─────────────────────────────────────────────
 //  SCENE EDITOR ENGINE
@@ -207,6 +37,7 @@ class SceneEditor {
     this.collisionPreview = false;
     this.useSceneLights = false;
     this._collisionHelpers = [];
+    this._lightHelpers = [];
     this._transformStartState = null; // For undo on transform
 
     this.undoStack = new UndoStack(this);
@@ -276,6 +107,11 @@ class SceneEditor {
     this.sceneLightsGroup = new THREE.Group();
     this.sceneLightsGroup.name = 'sceneLights';
     this.scene.add(this.sceneLightsGroup);
+
+    // Container for light helpers (editor-only visualizations)
+    this.lightHelpersGroup = new THREE.Group();
+    this.lightHelpersGroup.name = 'lightHelpers';
+    this.scene.add(this.lightHelpersGroup);
 
     // Container for collision helpers
     this.collisionHelpersGroup = new THREE.Group();
@@ -502,20 +338,7 @@ class SceneEditor {
     }
 
     // Scene lights
-    this.sceneLightsGroup.clear();
-    if (this.sceneData.ambient) {
-      const a = new THREE.AmbientLight(
-        new THREE.Color(this.sceneData.ambient.color || '#ffffff'),
-        this.sceneData.ambient.intensity ?? 0.4
-      );
-      this.sceneLightsGroup.add(a);
-    }
-    if (this.sceneData.lights) {
-      for (const lDef of this.sceneData.lights) {
-        const light = this.buildLight(lDef);
-        if (light) this.sceneLightsGroup.add(light);
-      }
-    }
+    this.rebuildSceneLights();
 
     // Water
     if (this.sceneData.water) {
@@ -575,6 +398,17 @@ class SceneEditor {
     } else if (def.type === 'point') {
       light = new THREE.PointLight(new THREE.Color(def.color || '#ffffff'), def.intensity ?? 1, def.distance || 20, def.decay ?? 2);
       if (def.position) light.position.set(...def.position);
+    } else if (def.type === 'spot') {
+      light = new THREE.SpotLight(
+        new THREE.Color(def.color || '#ffffff'),
+        def.intensity ?? 1,
+        def.distance || 20,
+        (def.angle ?? 45) * Math.PI / 180,
+        def.penumbra ?? 0.3,
+        def.decay ?? 2
+      );
+      if (def.position) light.position.set(...def.position);
+      if (def.target) light.target.position.set(...def.target);
     } else if (def.type === 'hemisphere') {
       light = new THREE.HemisphereLight(
         new THREE.Color(def.skyColor || '#ffffff'),
@@ -583,6 +417,19 @@ class SceneEditor {
       );
     }
     return light;
+  }
+
+  buildLightHelper(light) {
+    if (light.isPointLight) {
+      return new THREE.PointLightHelper(light, 0.5);
+    } else if (light.isSpotLight) {
+      return new THREE.SpotLightHelper(light);
+    } else if (light.isDirectionalLight) {
+      return new THREE.DirectionalLightHelper(light, 1);
+    } else if (light.isHemisphereLight) {
+      return new THREE.HemisphereLightHelper(light, 1);
+    }
+    return null;
   }
 
   clearScene() {
@@ -595,6 +442,8 @@ class SceneEditor {
     this.threeObjects.clear();
     this.defsByObject.clear();
     this.sceneLightsGroup.clear();
+    this.lightHelpersGroup.clear();
+    this._lightHelpers = [];
     this.clearCollisionHelpers();
 
     // Remove spawn helper if exists
@@ -914,11 +763,17 @@ class SceneEditor {
   addObject(type) {
     if (!this.sceneData) this.newScene();
 
-    if (type === 'point_light') {
+    if (type === 'point_light' || type === 'spot_light' || type === 'dir_light') {
       this.sceneData.lights = this.sceneData.lights || [];
-      this.sceneData.lights.push({
-        type: 'point', color: '#ffffff', intensity: 1.0, distance: 20, position: [0, 4, 0]
-      });
+      let lightDef;
+      if (type === 'point_light') {
+        lightDef = { type: 'point', color: '#ffffff', intensity: 1.0, distance: 20, decay: 2, position: [0, 4, 0] };
+      } else if (type === 'spot_light') {
+        lightDef = { type: 'spot', color: '#ffffff', intensity: 1.0, distance: 20, angle: 45, penumbra: 0.3, decay: 2, position: [0, 6, 0], target: [0, 0, 0] };
+      } else {
+        lightDef = { type: 'directional', color: '#ffffff', intensity: 1.0, position: [10, 20, 5] };
+      }
+      this.sceneData.lights.push(lightDef);
       this.rebuildSceneLights();
       this.refreshSceneProps();
       this.refreshHierarchy();
@@ -982,6 +837,9 @@ class SceneEditor {
 
   rebuildSceneLights() {
     this.sceneLightsGroup.clear();
+    this.lightHelpersGroup.clear();
+    this._lightHelpers = [];
+
     if (this.sceneData.ambient) {
       this.sceneLightsGroup.add(new THREE.AmbientLight(
         new THREE.Color(this.sceneData.ambient.color || '#fff'),
@@ -991,7 +849,13 @@ class SceneEditor {
     if (this.sceneData.lights) {
       for (const lDef of this.sceneData.lights) {
         const l = this.buildLight(lDef);
-        if (l) this.sceneLightsGroup.add(l);
+        if (l) {
+          this.sceneLightsGroup.add(l);
+          if (l.isSpotLight) this.sceneLightsGroup.add(l.target);
+          const helper = this.buildLightHelper(l);
+          if (helper) this.lightHelpersGroup.add(helper);
+          this._lightHelpers.push(helper);
+        }
       }
     }
   }
@@ -1111,24 +975,113 @@ class SceneEditor {
     const lDef = this.sceneData.lights[index];
     if (!lDef) return;
 
-    const section = this.makeSection('Point Light');
-    section.body.appendChild(this.makeRow('Color', this.makeColorInput(lDef.color || '#ffffff', (v) => {
-      lDef.color = v;
-      this.rebuildSceneLights();
-    })));
+    const typeName = { point: 'Point Light', directional: 'Directional Light', spot: 'Spot Light', hemisphere: 'Hemisphere Light' }[lDef.type] || 'Light';
+    const section = this.makeSection(typeName);
+
+    // Type selector
+    section.body.appendChild(this.makeRow('Type', this.makeSelect(
+      lDef.type, ['point', 'directional', 'spot', 'hemisphere'], (v) => {
+        const pos = lDef.position;
+        const color = lDef.color;
+        const intensity = lDef.intensity;
+        Object.keys(lDef).forEach(k => delete lDef[k]);
+        lDef.type = v;
+        lDef.intensity = intensity ?? 1;
+        if (v === 'hemisphere') {
+          lDef.skyColor = color || '#ffffff';
+          lDef.groundColor = '#444444';
+        } else {
+          lDef.color = color || '#ffffff';
+          if (pos) lDef.position = pos;
+        }
+        if (v === 'point') { lDef.distance = 20; lDef.decay = 2; if (!pos) lDef.position = [0, 4, 0]; }
+        if (v === 'spot') { lDef.distance = 20; lDef.angle = 45; lDef.penumbra = 0.3; lDef.decay = 2; lDef.target = [0, 0, 0]; if (!pos) lDef.position = [0, 6, 0]; }
+        if (v === 'directional' && !pos) { lDef.position = [10, 20, 5]; }
+        this.rebuildSceneLights();
+        this.refreshHierarchy();
+        this.refreshLightInspector(index);
+      }
+    )));
+
+    // Color (all except hemisphere)
+    if (lDef.type !== 'hemisphere') {
+      section.body.appendChild(this.makeRow('Color', this.makeColorInput(lDef.color || '#ffffff', (v) => {
+        lDef.color = v;
+        this.rebuildSceneLights();
+      })));
+    }
+
+    // Intensity (all types)
     section.body.appendChild(this.makeRow('Intensity', this.makeNumberInput(lDef.intensity ?? 1, 0.1, (v) => {
       lDef.intensity = v;
       this.rebuildSceneLights();
-    })));
-    section.body.appendChild(this.makeRow('Distance', this.makeNumberInput(lDef.distance ?? 20, 1, (v) => {
-      lDef.distance = v;
-      this.rebuildSceneLights();
-    })));
-    section.body.appendChild(this.makeRow('Position', this.makeVec3Input(lDef.position || [0, 4, 0], (v) => {
-      lDef.position = v;
-      this.rebuildSceneLights();
-    })));
+    }, 0)));
 
+    // Position (all except hemisphere)
+    if (lDef.type !== 'hemisphere') {
+      section.body.appendChild(this.makeRow('Position', this.makeVec3Input(lDef.position || [0, 4, 0], (v) => {
+        lDef.position = v;
+        this.rebuildSceneLights();
+      })));
+    }
+
+    // Point light fields
+    if (lDef.type === 'point') {
+      section.body.appendChild(this.makeRow('Distance', this.makeNumberInput(lDef.distance ?? 20, 1, (v) => {
+        lDef.distance = v;
+        this.rebuildSceneLights();
+      }, 0)));
+      section.body.appendChild(this.makeRow('Decay', this.makeNumberInput(lDef.decay ?? 2, 0.1, (v) => {
+        lDef.decay = v;
+        this.rebuildSceneLights();
+      }, 0)));
+    }
+
+    // Spot light fields
+    if (lDef.type === 'spot') {
+      section.body.appendChild(this.makeRow('Distance', this.makeNumberInput(lDef.distance ?? 20, 1, (v) => {
+        lDef.distance = v;
+        this.rebuildSceneLights();
+      }, 0)));
+      section.body.appendChild(this.makeRow('Angle', this.makeNumberInput(lDef.angle ?? 45, 1, (v) => {
+        lDef.angle = v;
+        this.rebuildSceneLights();
+      }, 1, 90)));
+      section.body.appendChild(this.makeRow('Penumbra', this.makeNumberInput(lDef.penumbra ?? 0.3, 0.05, (v) => {
+        lDef.penumbra = v;
+        this.rebuildSceneLights();
+      }, 0, 1)));
+      section.body.appendChild(this.makeRow('Decay', this.makeNumberInput(lDef.decay ?? 2, 0.1, (v) => {
+        lDef.decay = v;
+        this.rebuildSceneLights();
+      }, 0)));
+      section.body.appendChild(this.makeRow('Target', this.makeVec3Input(lDef.target || [0, 0, 0], (v) => {
+        lDef.target = v;
+        this.rebuildSceneLights();
+      })));
+    }
+
+    // Hemisphere fields
+    if (lDef.type === 'hemisphere') {
+      section.body.appendChild(this.makeRow('Sky Color', this.makeColorInput(lDef.skyColor || '#ffffff', (v) => {
+        lDef.skyColor = v;
+        this.rebuildSceneLights();
+      })));
+      section.body.appendChild(this.makeRow('Gnd Color', this.makeColorInput(lDef.groundColor || '#444444', (v) => {
+        lDef.groundColor = v;
+        this.rebuildSceneLights();
+      })));
+    }
+
+    // Directional fields
+    if (lDef.type === 'directional') {
+      section.body.appendChild(this.makeRow('Cast Shadow', this.makeCheckbox(lDef.castShadow || false, (v) => {
+        lDef.castShadow = v;
+        this.rebuildSceneLights();
+      })));
+    }
+
+    // Delete button
     const delBtn = document.createElement('button');
     delBtn.className = 'prop-btn';
     delBtn.style.cssText = 'border-color:var(--danger);color:var(--danger);margin-top:8px;width:100%';
@@ -1555,22 +1508,10 @@ class SceneEditor {
 
       if (inter.type === 'trigger') {
         interSection.body.appendChild(this.makeSectionLabel('Action'));
-        const action = inter.action || {};
-        interSection.body.appendChild(this.makeRow('Action', this.makeSelect(action.type || 'transition', ['transition', 'notify', 'setState'], (v) => {
-          def.interactable.action = def.interactable.action || {};
-          def.interactable.action.type = v;
-          this.refreshInspector();
-        })));
-        if (action.type === 'transition') {
-          interSection.body.appendChild(this.makeRow('Target', this.makeTextInput(action.target || '', (v) => { def.interactable.action.target = v; })));
-        } else if (action.type === 'notify') {
-          interSection.body.appendChild(this.makeRow('Text', this.makeTextInput(action.text || '', (v) => { def.interactable.action.text = v; })));
-        } else if (action.type === 'setState') {
-          interSection.body.appendChild(this.makeRow('Key', this.makeTextInput(action.key || '', (v) => { def.interactable.action.key = v; })));
-          interSection.body.appendChild(this.makeRow('Value', this.makeTextInput(String(action.value ?? 'true'), (v) => {
-            def.interactable.action.value = v === 'false' ? false : (v === 'true' ? true : v);
-          })));
-        }
+        this.makeActionListUI(interSection.body, inter.action, (v) => {
+          if (v) def.interactable.action = v;
+          else delete def.interactable.action;
+        });
       }
 
       if (inter.type === 'pickup') {
@@ -1587,29 +1528,19 @@ class SceneEditor {
         editBtn.addEventListener('click', () => this.openDialogueEditor(def));
         interSection.body.appendChild(editBtn);
 
-        // OnSuccess action
-        interSection.body.appendChild(this.makeSectionLabel('On Success Action'));
-        const onSuccess = inter.onSuccess || {};
-        interSection.body.appendChild(this.makeRow('Type', this.makeSelect(onSuccess.type || 'none', ['none', 'transition', 'notify', 'setState'], (v) => {
-          if (v === 'none') delete def.interactable.onSuccess;
-          else { def.interactable.onSuccess = { type: v }; }
-          this.refreshInspector();
-        })));
-        if (onSuccess.type === 'transition') {
-          interSection.body.appendChild(this.makeRow('Target', this.makeTextInput(onSuccess.target || '', (v) => {
-            def.interactable.onSuccess = def.interactable.onSuccess || {};
-            def.interactable.onSuccess.target = v;
-          })));
-        } else if (onSuccess.type === 'setState') {
-          interSection.body.appendChild(this.makeRow('Key', this.makeTextInput(onSuccess.key || '', (v) => {
-            def.interactable.onSuccess = def.interactable.onSuccess || {};
-            def.interactable.onSuccess.key = v;
-          })));
-          interSection.body.appendChild(this.makeRow('Value', this.makeTextInput(String(onSuccess.value ?? 'true'), (v) => {
-            def.interactable.onSuccess = def.interactable.onSuccess || {};
-            def.interactable.onSuccess.value = v === 'false' ? false : (v === 'true' ? true : v);
-          })));
-        }
+        // OnSuccess actions
+        interSection.body.appendChild(this.makeSectionLabel('On Success Actions'));
+        this.makeActionListUI(interSection.body, inter.onSuccess, (v) => {
+          if (v) def.interactable.onSuccess = v;
+          else delete def.interactable.onSuccess;
+        });
+
+        // OnComplete actions
+        interSection.body.appendChild(this.makeSectionLabel('On Complete Actions'));
+        this.makeActionListUI(interSection.body, inter.onComplete, (v) => {
+          if (v) def.interactable.onComplete = v;
+          else delete def.interactable.onComplete;
+        });
       }
     }
     panels.appendChild(interSection.el);
@@ -1956,6 +1887,102 @@ class SceneEditor {
     return wrapper;
   }
 
+  // ── ACTION LIST EDITOR (supports arrays) ──
+
+  makeActionListUI(container, actions, onChange) {
+    const actionTypes = ['none', 'transition', 'notify', 'setState', 'fadeIn', 'fadeOut'];
+    // Normalize to array
+    const arr = Array.isArray(actions) ? actions : (actions && actions.type ? [actions] : []);
+
+    const commit = (newArr) => {
+      if (newArr.length === 0) onChange(undefined);
+      else if (newArr.length === 1) onChange(newArr[0]);
+      else onChange(newArr);
+    };
+
+    for (let i = 0; i < arr.length; i++) {
+      const action = arr[i];
+      const idx = i;
+
+      // Header with remove button
+      const header = document.createElement('div');
+      header.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-top:4px;';
+      const label = document.createElement('span');
+      label.style.cssText = 'font-size:10px; color:var(--accent-cyan); font-family:"JetBrains Mono",monospace;';
+      label.textContent = arr.length > 1 ? `Action ${i + 1}` : '';
+      header.appendChild(label);
+      const rmBtn = document.createElement('button');
+      rmBtn.className = 'prop-btn small danger';
+      rmBtn.textContent = '✕';
+      rmBtn.style.cssText = 'padding:1px 6px; font-size:10px;';
+      rmBtn.addEventListener('click', () => {
+        arr.splice(idx, 1);
+        commit(arr);
+        this.refreshInspector();
+      });
+      header.appendChild(rmBtn);
+      container.appendChild(header);
+
+      // Type select
+      container.appendChild(this.makeRow('Type', this.makeSelect(action.type || 'none', actionTypes, (v) => {
+        if (v === 'none') {
+          arr.splice(idx, 1);
+        } else {
+          arr[idx] = { type: v };
+        }
+        commit(arr);
+        this.refreshInspector();
+      })));
+
+      // Type-specific fields
+      if (action.type === 'transition') {
+        container.appendChild(this.makeRow('Target', this.makeTextInput(action.target || '', (v) => {
+          arr[idx].target = v;
+          commit(arr);
+        })));
+      } else if (action.type === 'notify') {
+        container.appendChild(this.makeRow('Text', this.makeTextInput(action.text || '', (v) => {
+          arr[idx].text = v;
+          commit(arr);
+        })));
+        container.appendChild(this.makeRow('Duration', this.makeNumberInput(action.duration ?? 3000, 500, (v) => {
+          arr[idx].duration = v;
+          commit(arr);
+        }, 500)));
+      } else if (action.type === 'setState') {
+        container.appendChild(this.makeRow('Key', this.makeTextInput(action.key || '', (v) => {
+          arr[idx].key = v;
+          commit(arr);
+        })));
+        container.appendChild(this.makeRow('Value', this.makeTextInput(String(action.value ?? 'true'), (v) => {
+          arr[idx].value = v === 'false' ? false : (v === 'true' ? true : v);
+          commit(arr);
+        })));
+      } else if (action.type === 'fadeIn' || action.type === 'fadeOut') {
+        container.appendChild(this.makeRow('Target', this.makeTextInput(action.target || '', (v) => {
+          arr[idx].target = v;
+          commit(arr);
+        })));
+        container.appendChild(this.makeRow('Duration', this.makeNumberInput(action.duration ?? 1.5, 0.1, (v) => {
+          arr[idx].duration = v;
+          commit(arr);
+        }, 0.1)));
+      }
+    }
+
+    // Add action button
+    const addBtn = document.createElement('button');
+    addBtn.className = 'prop-btn';
+    addBtn.textContent = '+ Add Action';
+    addBtn.style.cssText = 'width:100%; margin-top:4px; font-size:10px;';
+    addBtn.addEventListener('click', () => {
+      arr.push({ type: 'setState' });
+      commit(arr);
+      this.refreshInspector();
+    });
+    container.appendChild(addBtn);
+  }
+
   makeReadonly(value) {
     const span = document.createElement('span');
     span.textContent = value;
@@ -1975,6 +2002,11 @@ class SceneEditor {
     requestAnimationFrame(() => this.animate());
 
     this.orbitControls.update();
+
+    // Update spot light helpers (required by Three.js)
+    for (const helper of this._lightHelpers) {
+      if (helper && helper.update) helper.update();
+    }
 
     // Update camera status
     const cp = this.camera.position;

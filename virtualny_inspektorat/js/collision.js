@@ -34,6 +34,13 @@ export class CollisionSystem {
     });
   }
 
+  removeObject(object) {
+    const meshes = new Set();
+    if (object.isMesh) meshes.add(object);
+    object.traverse(child => { if (child.isMesh) meshes.add(child); });
+    this.colliders = this.colliders.filter(c => !meshes.has(c.mesh));
+  }
+
   // Recalculate boxes for moved objects
   update() {
     for (const c of this.colliders) {

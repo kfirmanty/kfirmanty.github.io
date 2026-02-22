@@ -489,7 +489,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "⊕ Take Form Z-7/a",
-        "text": "This is Form Z-7/a (Application for Consideration of Application). You need Form Z-7/b. They differ by a single comma. The comma is L O A D - B E A R I N G."
+        "text": "Form Z-7/a (Application for Consideration of Application). It differs from Z-7/b by a single comma. The comma is L O A D - B E A R I N G."
       }
     },
     {
@@ -570,7 +570,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "✧ Read the Sign",
-        "text": "B E   P A T I E N T.   Your wait is important to us. Your existence, less so."
+        "text": "The sign flickers — the letters rearrange for a moment, then settle. B E   P A T I E N T.   Your wait is important to us. Your existence, less so."
       }
     }
   ]

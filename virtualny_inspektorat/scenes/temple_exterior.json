@@ -558,7 +558,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "✧ Read the Sign",
-        "text": "OFFICE HOURS: A L W A Y S   A N D   N E V E R. Please arrive on time. Time is a suggestion."
+        "text": "The brass plate is warm to the touch. OFFICE HOURS: A L W A Y S   A N D   N E V E R. Please arrive on time. Time is a suggestion."
       }
     },
     {
@@ -576,7 +576,7 @@
       "interactable": {
         "type": "examine",
         "hoverText": "✧ Read the Bulletin Board",
-        "text": "NOTICE: All petitioners must present Form C-12 to exist in this corridor. Form C-12 is available in this corridor, but only to those who already exist. — NOTICE: The previous notice has been revoked. — NOTICE: The revocation of the previous notice has been revoked."
+        "text": "The cork is soft and crumbling. A single notice, pinned with a rusted nail: 'All petitioners must present Form C-12 to exist in this corridor. Form C-12 is available in this corridor, but only to those who already exist.'"
       }
     },
     {

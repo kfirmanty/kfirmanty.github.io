@@ -4,18 +4,34 @@
   "onStart": {
     "dialogue": {
       "nodes": [
-        { "text": "You have reached the D I R E C T O R ' S   O F F I C E." },
-        { "text": "Your Certificate of Existence awaits. You are so close. You have always been so close." }
+        {
+          "text": "You have reached the D I R E C T O R ' S   O F F I C E."
+        },
+        {
+          "text": "Your Certificate of Existence awaits. You are so close. You have always been so close."
+        }
       ]
     }
   },
   "sky": {
     "type": "gradient",
     "stops": [
-      [0, "#1a0a2e"],
-      [0.3, "#2a1a4e"],
-      [0.6, "#4a2a6e"],
-      [1, "#ff71ce"]
+      [
+        0,
+        "#1a0a2e"
+      ],
+      [
+        0.3,
+        "#2a1a4e"
+      ],
+      [
+        0.6,
+        "#4a2a6e"
+      ],
+      [
+        1,
+        "#ff71ce"
+      ]
     ]
   },
   "fog": {
@@ -32,34 +48,54 @@
       "type": "directional",
       "color": "#ff71ce",
       "intensity": 0.8,
-      "position": [-5, 15, 5]
+      "position": [
+        -5,
+        15,
+        5
+      ]
     },
     {
       "type": "directional",
       "color": "#fffb96",
       "intensity": 0.6,
-      "position": [8, 20, -3]
+      "position": [
+        8,
+        20,
+        -3
+      ]
     },
     {
       "type": "point",
       "color": "#ff71ce",
-      "intensity": 1.0,
+      "intensity": 1,
       "distance": 20,
-      "position": [0, 8, -4]
+      "position": [
+        0,
+        8,
+        -4
+      ]
     },
     {
       "type": "point",
       "color": "#b967ff",
       "intensity": 0.6,
       "distance": 15,
-      "position": [-6, 5, 6]
+      "position": [
+        -6,
+        5,
+        6
+      ]
     },
     {
       "type": "point",
       "color": "#01cdfe",
       "intensity": 0.5,
       "distance": 12,
-      "position": [6, 5, 6]
+      "position": [
+        6,
+        5,
+        6
+      ]
     }
   ],
   "postProcessing": {
@@ -71,37 +107,68 @@
     "bloomStrength": 0.5
   },
   "spawn": {
-    "position": [0, 1.6, 12],
-    "rotation": [0, 0, 0]
+    "position": [
+      0,
+      1.6,
+      12
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
   },
   "objects": [
     {
       "id": "platform_base",
       "type": "box",
-      "params": { "width": 18, "height": 1.0, "depth": 28 },
-      "position": [0, -0.5, -2],
+      "params": {
+        "width": 18,
+        "height": 1,
+        "depth": 28
+      },
+      "position": [
+        0,
+        -0.5,
+        -2
+      ],
       "material": {
         "color": "#2a1a4a",
         "roughness": 0.4,
         "metalness": 0.5
       },
       "collision": true,
-      "collisionOptions": { "walkable": true }
+      "collisionOptions": {
+        "walkable": true
+      }
     },
     {
       "id": "upper_platform",
       "type": "box",
-      "params": { "width": 10, "height": 0.4, "depth": 10 },
-      "position": [0, 2.2, -6],
+      "params": {
+        "width": 10,
+        "height": 0.4,
+        "depth": 10
+      },
+      "position": [
+        0,
+        2.2,
+        -6
+      ],
       "material": {
         "color": "#8070a0",
         "roughness": 0.3,
         "metalness": 0.6,
         "texture": "checkerboard",
-        "textureRepeat": [5, 5]
+        "textureRepeat": [
+          5,
+          5
+        ]
       },
       "collision": true,
-      "collisionOptions": { "walkable": true }
+      "collisionOptions": {
+        "walkable": true
+      }
     },
     {
       "id": "stairs_to_upper",
@@ -112,21 +179,34 @@
         "stepHeight": 0.24,
         "stepDepth": 0.45
       },
-      "position": [0, 0, 0],
+      "position": [
+        0,
+        0,
+        3.5
+      ],
       "material": {
         "color": "#3a2a5a",
         "roughness": 0.4,
         "metalness": 0.4
       },
       "collision": true,
-      "collisionOptions": { "walkable": true, "isStairs": true }
+      "collisionOptions": {
+        "walkable": true,
+        "isStairs": true
+      }
     },
-
     {
       "id": "col_l1",
       "type": "column",
-      "params": { "radius": 0.4, "height": 5 },
-      "position": [-7, 0, 10],
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [
+        -7,
+        0,
+        10
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#ff71ce",
@@ -138,8 +218,15 @@
     {
       "id": "col_r1",
       "type": "column",
-      "params": { "radius": 0.4, "height": 5 },
-      "position": [7, 0, 10],
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [
+        7,
+        0,
+        10
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#ff71ce",
@@ -151,8 +238,15 @@
     {
       "id": "col_l2",
       "type": "column",
-      "params": { "radius": 0.4, "height": 5 },
-      "position": [-7, 0, 4],
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [
+        -7,
+        0,
+        4
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#b967ff",
@@ -164,8 +258,15 @@
     {
       "id": "col_r2",
       "type": "column",
-      "params": { "radius": 0.4, "height": 5 },
-      "position": [7, 0, 4],
+      "params": {
+        "radius": 0.4,
+        "height": 5
+      },
+      "position": [
+        7,
+        0,
+        4
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#b967ff",
@@ -177,8 +278,15 @@
     {
       "id": "col_l3",
       "type": "column",
-      "params": { "radius": 0.35, "height": 4 },
-      "position": [-4, 2.4, -8],
+      "params": {
+        "radius": 0.35,
+        "height": 4
+      },
+      "position": [
+        -4,
+        2.4,
+        -8
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#ff71ce",
@@ -190,8 +298,15 @@
     {
       "id": "col_r3",
       "type": "column",
-      "params": { "radius": 0.35, "height": 4 },
-      "position": [4, 2.4, -8],
+      "params": {
+        "radius": 0.35,
+        "height": 4
+      },
+      "position": [
+        4,
+        2.4,
+        -8
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#ff71ce",
@@ -200,12 +315,19 @@
       },
       "collision": true
     },
-
     {
       "id": "memorial_a",
       "type": "box",
-      "params": { "width": 1.2, "height": 2, "depth": 0.3 },
-      "position": [-6, 1, 7],
+      "params": {
+        "width": 1.2,
+        "height": 2,
+        "depth": 0.3
+      },
+      "position": [
+        -6,
+        1,
+        7
+      ],
       "material": {
         "color": "#4a3a6a",
         "emissive": "#b967ff",
@@ -223,8 +345,16 @@
     {
       "id": "memorial_b",
       "type": "box",
-      "params": { "width": 1.2, "height": 2, "depth": 0.3 },
-      "position": [6, 1, 7],
+      "params": {
+        "width": 1.2,
+        "height": 2,
+        "depth": 0.3
+      },
+      "position": [
+        6,
+        1,
+        7
+      ],
       "material": {
         "color": "#4a3a6a",
         "emissive": "#b967ff",
@@ -239,12 +369,19 @@
         "text": "Inscribed in gold: 'When the world dissolved into Vapor, the Inspektorat continued to operate. Opening hours remained unchanged: A L W A Y S   A N D   N E V E R. The queue continued. It continues still.'"
       }
     },
-
     {
       "id": "altar_base",
       "type": "box",
-      "params": { "width": 3, "height": 1.2, "depth": 3 },
-      "position": [0, 3, -6],
+      "params": {
+        "width": 3,
+        "height": 1.2,
+        "depth": 3
+      },
+      "position": [
+        0,
+        3,
+        -6
+      ],
       "material": {
         "color": "#2a1a4a",
         "roughness": 0.3,
@@ -255,8 +392,16 @@
     {
       "id": "altar_top",
       "type": "box",
-      "params": { "width": 2.5, "height": 0.15, "depth": 2.5 },
-      "position": [0, 3.68, -6],
+      "params": {
+        "width": 2.5,
+        "height": 0.15,
+        "depth": 2.5
+      },
+      "position": [
+        0,
+        3.68,
+        -6
+      ],
       "material": {
         "color": "#fffb96",
         "emissive": "#fffb96",
@@ -266,20 +411,32 @@
       },
       "collision": false
     },
-
     {
       "id": "final_fragment",
       "type": "sphere",
-      "params": { "radius": 0.3, "widthSegments": 8, "heightSegments": 6 },
-      "position": [0, 4.5, -6],
+      "params": {
+        "radius": 0.3,
+        "widthSegments": 8,
+        "heightSegments": 6
+      },
+      "position": [
+        0,
+        4.5,
+        -6
+      ],
       "material": {
         "color": "#ff71ce",
         "emissive": "#ff71ce",
-        "emissiveIntensity": 2.0,
+        "emissiveIntensity": 2,
         "roughness": 0.05,
         "metalness": 0.8
       },
-      "animation": { "type": "float", "speed": 0.8, "amplitude": 0.2, "offset": 0 },
+      "animation": {
+        "type": "float",
+        "speed": 0.8,
+        "amplitude": 0.2,
+        "offset": 0
+      },
       "collision": false,
       "interactable": {
         "type": "pickup",
@@ -288,12 +445,19 @@
         "stateKey": "has_certificate"
       }
     },
-
     {
       "id": "architect_pedestal",
       "type": "box",
-      "params": { "width": 1.8, "height": 1.5, "depth": 1.8 },
-      "position": [0, 4.35, -10],
+      "params": {
+        "width": 1.8,
+        "height": 1.5,
+        "depth": 1.8
+      },
+      "position": [
+        0,
+        4.35,
+        -10
+      ],
       "material": {
         "color": "#1a0a2e",
         "roughness": 0.3,
@@ -304,15 +468,26 @@
     {
       "id": "architect_head",
       "type": "head",
-      "params": { "scale": 1.6 },
-      "position": [0, 6.5, -10],
+      "params": {
+        "scale": 1.6
+      },
+      "position": [
+        0,
+        6.5,
+        -10
+      ],
       "material": {
         "color": "#d4b896",
         "roughness": 0.4,
         "metalness": 0.2,
         "flatShading": true
       },
-      "animation": { "type": "bob", "speed": 0.4, "amplitude": 0.15, "offset": 0 },
+      "animation": {
+        "type": "bob",
+        "speed": 0.4,
+        "amplitude": 0.15,
+        "offset": 0
+      },
       "collision": false,
       "interactable": {
         "type": "dialogue",
@@ -321,61 +496,130 @@
         "requiresText": "The Director appears to be napping. A sign on the desk reads: 'DO NOT DISTURB WITHOUT PROPER DOCUMENTATION.'",
         "dialogue": {
           "nodes": [
-            { "speaker": "T H E   D I R E C T O R", "text": "...Hm? What? Oh. A petitioner. I was not sleeping. I was C O N T E M P L A T I N G   P O L I C Y." },
-            { "speaker": "T H E   D I R E C T O R", "text": "You have made it all the way here. I am mildly I M P R E S S E D." },
-            { "speaker": "T H E   D I R E C T O R", "text": "I need only stamp your certificate and you may go. But first — one final question. A F O R M A L I T Y." },
+            {
+              "speaker": "T H E   D I R E C T O R",
+              "text": "...Hm? What? Oh. A petitioner. I was not sleeping. I was C O N T E M P L A T I N G   P O L I C Y."
+            },
+            {
+              "speaker": "T H E   D I R E C T O R",
+              "text": "You have made it all the way here. I am mildly I M P R E S S E D."
+            },
+            {
+              "speaker": "T H E   D I R E C T O R",
+              "text": "I need only stamp your certificate and you may go. But first — one final question. A F O R M A L I T Y."
+            },
             {
               "speaker": "T H E   D I R E C T O R",
               "text": "What is the P U R P O S E of your visit today?",
               "choices": [
-                { "text": "To obtain my certificate", "correct": true, "response": "Ah. Yes. The one you are already holding. How P E C U L I A R. S T A M P E D. You now officially E X I S T. Your name is misspelled. This is S T A N D A R D." },
-                { "text": "To discover the truth", "correct": false, "response": "Truth is not a service we provide. Department of Philosophy, third corridor on the left. It has been closed since before time was I N V E N T E D." },
-                { "text": "To restore the Inspektorat", "correct": false, "response": "The Inspektorat does not require restoration. It has never stopped operating. It will never stop operating. Your concern has been F I L E D." },
-                { "text": "I have forgotten", "correct": false, "response": "You said that last time too. Please state your A C T U A L   P U R P O S E." }
+                {
+                  "text": "To obtain my certificate",
+                  "correct": true,
+                  "response": "Ah. Yes. The one you are already holding. How P E C U L I A R. S T A M P E D. You now officially E X I S T. Your name is misspelled. This is S T A N D A R D."
+                },
+                {
+                  "text": "To discover the truth",
+                  "correct": false,
+                  "response": "Truth is not a service we provide. Department of Philosophy, third corridor on the left. It has been closed since before time was I N V E N T E D."
+                },
+                {
+                  "text": "To restore the Inspektorat",
+                  "correct": false,
+                  "response": "The Inspektorat does not require restoration. It has never stopped operating. It will never stop operating. Your concern has been F I L E D."
+                },
+                {
+                  "text": "I have forgotten",
+                  "correct": false,
+                  "response": "You said that last time too. Please state your A C T U A L   P U R P O S E."
+                }
               ]
             }
           ]
         },
-        "onSuccess": { "type": "notify", "text": "T H E   E N D — Your Certificate of Existence has been stamped. Your name is misspelled. Please allow 6-8 eternities for processing. Do N O T file a complaint.", "duration": 12000 }
+        "onSuccess": {
+          "type": "notify",
+          "text": "T H E   E N D — Your Certificate of Existence has been stamped. Your name is misspelled. Please allow 6-8 eternities for processing. Do N O T file a complaint.",
+          "duration": 12000
+        }
       }
     },
-
     {
       "id": "torus_1",
       "type": "torus",
-      "params": { "radius": 1.2, "tube": 0.06, "radialSegments": 6, "tubularSegments": 16 },
-      "position": [0, 5, -6],
+      "params": {
+        "radius": 1.2,
+        "tube": 0.06,
+        "radialSegments": 6,
+        "tubularSegments": 16
+      },
+      "position": [
+        0,
+        5,
+        -6
+      ],
       "material": {
         "color": "#ff71ce",
         "emissive": "#ff71ce",
         "emissiveIntensity": 0.6,
         "roughness": 0.1
       },
-      "animation": { "type": "rotate", "speed": 0.5, "axis": "y" },
+      "animation": {
+        "type": "rotate",
+        "speed": 0.5,
+        "axis": "y"
+      },
       "collision": false
     },
     {
       "id": "torus_2",
       "type": "torus",
-      "params": { "radius": 1.5, "tube": 0.04, "radialSegments": 6, "tubularSegments": 16 },
-      "position": [0, 5, -6],
-      "rotation": [90, 0, 0],
+      "params": {
+        "radius": 1.5,
+        "tube": 0.04,
+        "radialSegments": 6,
+        "tubularSegments": 16
+      },
+      "position": [
+        0,
+        5,
+        -6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
         "emissiveIntensity": 0.4,
         "roughness": 0.1
       },
-      "animation": { "type": "rotate", "speed": -0.3, "axis": "x" },
+      "animation": {
+        "type": "rotate",
+        "speed": -0.3,
+        "axis": "x"
+      },
       "collision": false
     },
-
     {
       "id": "cloud_1",
       "type": "sphere",
-      "params": { "radius": 4, "widthSegments": 6, "heightSegments": 4 },
-      "position": [-15, -3, -10],
-      "scale": [2, 0.3, 1.5],
+      "params": {
+        "radius": 4,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -15,
+        -3,
+        -10
+      ],
+      "scale": [
+        2,
+        0.3,
+        1.5
+      ],
       "material": {
         "color": "#4a3a6a",
         "emissive": "#b967ff",
@@ -388,9 +632,21 @@
     {
       "id": "cloud_2",
       "type": "sphere",
-      "params": { "radius": 5, "widthSegments": 6, "heightSegments": 4 },
-      "position": [12, -4, 5],
-      "scale": [2, 0.25, 1.8],
+      "params": {
+        "radius": 5,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        12,
+        -4,
+        5
+      ],
+      "scale": [
+        2,
+        0.25,
+        1.8
+      ],
       "material": {
         "color": "#3a2a5a",
         "emissive": "#ff71ce",
@@ -403,9 +659,21 @@
     {
       "id": "cloud_3",
       "type": "sphere",
-      "params": { "radius": 6, "widthSegments": 6, "heightSegments": 4 },
-      "position": [20, -5, -20],
-      "scale": [2.5, 0.2, 2],
+      "params": {
+        "radius": 6,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        20,
+        -5,
+        -20
+      ],
+      "scale": [
+        2.5,
+        0.2,
+        2
+      ],
       "material": {
         "color": "#2a1a4a",
         "emissive": "#b967ff",
@@ -415,55 +683,100 @@
       },
       "collision": false
     },
-
     {
       "id": "orb_float_1",
       "type": "sphere",
-      "params": { "radius": 0.4, "widthSegments": 6, "heightSegments": 4 },
-      "position": [-8, 6, 0],
+      "params": {
+        "radius": 0.4,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -8,
+        6,
+        0
+      ],
       "material": {
         "color": "#ff71ce",
         "emissive": "#ff71ce",
         "emissiveIntensity": 1.5,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 0.5, "amplitude": 0.6, "offset": 0 },
+      "animation": {
+        "type": "float",
+        "speed": 0.5,
+        "amplitude": 0.6,
+        "offset": 0
+      },
       "collision": false
     },
     {
       "id": "orb_float_2",
       "type": "sphere",
-      "params": { "radius": 0.3, "widthSegments": 6, "heightSegments": 4 },
-      "position": [10, 8, -5],
+      "params": {
+        "radius": 0.3,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        10,
+        8,
+        -5
+      ],
       "material": {
         "color": "#b967ff",
         "emissive": "#b967ff",
         "emissiveIntensity": 1.5,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 0.7, "amplitude": 0.5, "offset": 2 },
+      "animation": {
+        "type": "float",
+        "speed": 0.7,
+        "amplitude": 0.5,
+        "offset": 2
+      },
       "collision": false
     },
     {
       "id": "orb_float_4",
       "type": "sphere",
-      "params": { "radius": 0.5, "widthSegments": 8, "heightSegments": 6 },
-      "position": [0, 12, 8],
+      "params": {
+        "radius": 0.5,
+        "widthSegments": 8,
+        "heightSegments": 6
+      },
+      "position": [
+        0,
+        12,
+        8
+      ],
       "material": {
         "color": "#01cdfe",
         "emissive": "#01cdfe",
-        "emissiveIntensity": 1.0,
+        "emissiveIntensity": 1,
         "roughness": 0.1
       },
-      "animation": { "type": "float", "speed": 0.3, "amplitude": 1.0, "offset": 1 },
+      "animation": {
+        "type": "float",
+        "speed": 0.3,
+        "amplitude": 1,
+        "offset": 1
+      },
       "collision": false
     },
-
     {
       "id": "pediment_back",
       "type": "pediment",
-      "params": { "width": 10, "height": 2, "depth": 0.5 },
-      "position": [0, 6.6, -11],
+      "params": {
+        "width": 10,
+        "height": 2,
+        "depth": 0.5
+      },
+      "position": [
+        0,
+        6.6,
+        -11
+      ],
       "material": {
         "color": "#c8b850",
         "emissive": "#fffb96",
@@ -475,8 +788,16 @@
     {
       "id": "back_wall",
       "type": "box",
-      "params": { "width": 8, "height": 4, "depth": 0.3 },
-      "position": [0, 4.4, -11.2],
+      "params": {
+        "width": 8,
+        "height": 4,
+        "depth": 0.3
+      },
+      "position": [
+        0,
+        4.4,
+        -11.2
+      ],
       "material": {
         "color": "#2a1a3a",
         "emissive": "#b967ff",
@@ -486,13 +807,20 @@
       },
       "collision": true
     },
-
     {
       "_comment": "Complaints desk - the loop back to the beginning",
       "id": "complaints_desk",
       "type": "box",
-      "params": { "width": 2, "height": 1, "depth": 1.5 },
-      "position": [6, 1, 4],
+      "params": {
+        "width": 2,
+        "height": 1,
+        "depth": 1.5
+      },
+      "position": [
+        6,
+        1,
+        4
+      ],
       "material": {
         "color": "#4a3a6a",
         "emissive": "#ff71ce",
@@ -506,24 +834,45 @@
         "hoverText": "✧ File a Complaint",
         "dialogue": {
           "nodes": [
-            { "text": "A sign reads: 'To file a complaint, you must return to Reception and begin the process A N E W.'" },
+            {
+              "text": "A sign reads: 'To file a complaint, you must return to Reception and begin the process A N E W.'"
+            },
             {
               "text": "A smaller sign adds: 'All previous progress will be R E C O N S I D E R E D. Are you sure you wish to complain?'",
               "choices": [
-                { "text": "File the complaint", "correct": true, "response": "Your complaint has been F I L E D. Returning to Reception. Estimated processing time: E T E R N I T Y. Thank you for your P A T I E N C E." },
-                { "text": "Accept the misspelling", "correct": false, "response": "A wise choice. The Inspektorat appreciates your C O M P L I A N C E. Your misspelled existence is now O F F I C I A L." }
+                {
+                  "text": "File the complaint",
+                  "correct": true,
+                  "response": "Your complaint has been F I L E D. Returning to Reception. Estimated processing time: E T E R N I T Y. Thank you for your P A T I E N C E."
+                },
+                {
+                  "text": "Accept the misspelling",
+                  "correct": false,
+                  "response": "A wise choice. The Inspektorat appreciates your C O M P L I A N C E. Your misspelled existence is now O F F I C I A L."
+                }
               ]
             }
           ]
         },
-        "onSuccess": { "type": "transition", "target": "temple_exterior" }
+        "onSuccess": {
+          "type": "transition",
+          "target": "temple_exterior"
+        }
       }
     },
     {
       "id": "director_desk",
       "type": "box",
-      "params": { "width": 3, "height": 0.8, "depth": 2 },
-      "position": [0, 3, -8],
+      "params": {
+        "width": 3,
+        "height": 0.8,
+        "depth": 2
+      },
+      "position": [
+        0,
+        3,
+        -8
+      ],
       "material": {
         "color": "#3a2a4a",
         "roughness": 0.4,
@@ -539,8 +888,16 @@
     {
       "id": "motivational_sign",
       "type": "box",
-      "params": { "width": 2, "height": 0.8, "depth": 0.08 },
-      "position": [0, 6, -10.9],
+      "params": {
+        "width": 2,
+        "height": 0.8,
+        "depth": 0.08
+      },
+      "position": [
+        0,
+        6,
+        -10.9
+      ],
       "material": {
         "color": "#2a1a3a",
         "emissive": "#fffb96",
@@ -558,9 +915,21 @@
     {
       "id": "you_are_here",
       "type": "box",
-      "params": { "width": 1.5, "height": 1.5, "depth": 0.08 },
-      "position": [-6, 2, 7],
-      "rotation": [0, 20, 0],
+      "params": {
+        "width": 1.5,
+        "height": 1.5,
+        "depth": 0.08
+      },
+      "position": [
+        -6,
+        2,
+        4
+      ],
+      "rotation": [
+        0,
+        20,
+        0
+      ],
       "material": {
         "color": "#4a3a6a",
         "emissive": "#b967ff",

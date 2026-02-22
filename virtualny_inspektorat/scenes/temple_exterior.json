@@ -11,7 +11,7 @@
           "text": "Your appointment at the V I R T U A L N Y   I N S P E K T O R A T was scheduled seven years ago. You must not be late."
         },
         {
-          "text": "You are here to obtain your Z A S V I E D C Z E N I E — your Certificate of Existence."
+          "text": "You are here to obtain your Z A Ś W I A D C Z E N I E — your Certificate of Existence."
         }
       ]
     }
@@ -423,7 +423,7 @@
                 {
                   "text": "To obtain my certificate",
                   "correct": true,
-                  "response": "The Z A S V I E D C Z E N I E. Your request has been... L O G G E D. Proceed to the Hall of Forms. Take nothing that is not yours. Take everything that is required."
+                  "response": "The Z A Ś W I A D C Z E N I E. Your request has been... L O G G E D. Proceed to the Hall of Forms. Take nothing that is not yours. Take everything that is required."
                 },
                 {
                   "text": "To seek the truth",
@@ -591,7 +591,12 @@
         "roughness": 0.3,
         "metalness": 0.5
       },
-      "animation": { "type": "pulse", "speed": 1.0, "amplitude": 0.1, "offset": 0 },
+      "animation": {
+        "type": "pulse",
+        "speed": 1.0,
+        "amplitude": 0.1,
+        "offset": 0
+      },
       "collision": true,
       "interactable": {
         "type": "examine",

@@ -67,6 +67,7 @@ export class DialogueEngine {
     this.fullText = text;
     this.displayedText = '';
     this.typing = true;
+    this._typeOnDone = onDone || null;
     this.textEl.textContent = '';
     let i = 0;
     clearInterval(this.typewriterTimer);
@@ -83,7 +84,9 @@ export class DialogueEngine {
       } else {
         this.typing = false;
         clearInterval(this.typewriterTimer);
-        if (onDone) onDone();
+        const cb = this._typeOnDone;
+        this._typeOnDone = null;
+        if (cb) cb();
       }
     }, 30);
   }
@@ -94,11 +97,10 @@ export class DialogueEngine {
     this.displayedText = this.fullText;
     this.textEl.textContent = this.fullText;
 
-    const node = this.currentDialogue.nodes[this.currentNodeIndex];
-    if (node.choices && node.choices.length > 0) {
-      this.showChoices(node.choices);
-    } else {
-      this.continueEl.style.display = 'block';
+    const cb = this._typeOnDone;
+    this._typeOnDone = null;
+    if (cb) {
+      cb();
     }
   }
 

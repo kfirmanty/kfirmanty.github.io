@@ -5,9 +5,12 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 import {
   RENDER_WIDTH, RENDER_HEIGHT, PLAYER_HEIGHT, PLAYER_RADIUS,
-  MOVE_SPEED, MOUSE_SENSITIVITY, GRAVITY, JUMP_FORCE, INTERACT_DISTANCE
+  MOVE_SPEED, MOUSE_SENSITIVITY, GRAVITY, JUMP_FORCE, INTERACT_DISTANCE,
+  BOB_AMPLITUDE, BOB_FREQUENCY,
+  ACCEL, DECEL, FRICTION,
+  MAX_SLOPE_ANGLE, SLOPE_SLIDE_FORCE
 } from './constants.js';
-import { DitherShader } from './shaders.js';
+import { DitherShader, BloomExtractShader, BloomBlurShader, BloomCompositeShader } from './shaders.js';
 import { SceneLoader } from './scene-loader.js';
 import { DialogueEngine } from './dialogue.js';
 import { NotificationSystem } from './notifications.js';
@@ -18,6 +21,7 @@ export class VaporwaveEngine {
   constructor() {
     this.canvas = document.getElementById('game-canvas');
     this.cursor = document.getElementById('cursor');
+    this.crosshair = document.getElementById('crosshair');
     this.scene = null;
     this.camera = null;
     this.renderer = null;
@@ -39,10 +43,12 @@ export class VaporwaveEngine {
     this.player = {
       position: new THREE.Vector3(0, PLAYER_HEIGHT, 0),
       velocity: new THREE.Vector3(),
+      moveVelocity: new THREE.Vector3(), // Smoothed horizontal movement
       yaw: 0,
       pitch: 0,
       onGround: false,
-      canMove: true
+      canMove: true,
+      bobTimer: 0
     };
 
     // Input state
@@ -51,10 +57,16 @@ export class VaporwaveEngine {
 
     // Raycaster for interaction
     this.raycaster = new THREE.Raycaster();
-    this.raycaster.far = INTERACT_DISTANCE;
+    this.raycaster.far = 50;
 
     this.currentSceneId = null;
     this.gameState = {};  // Persistent state across scenes
+
+    // Trigger tracking
+    this._activeTriggers = new Set();
+
+    // Brightness (gamma)
+    this.gamma = parseFloat(localStorage.getItem('brightness') || '1.2');
   }
 
   async init() {
@@ -65,6 +77,18 @@ export class VaporwaveEngine {
     // Show title screen
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('title-screen').style.display = 'flex';
+
+    // Brightness slider
+    const brightnessSlider = document.getElementById('brightness-slider');
+    if (brightnessSlider) {
+      brightnessSlider.value = this.gamma;
+      document.getElementById('brightness-value').textContent = this.gamma.toFixed(1);
+      brightnessSlider.addEventListener('input', (e) => {
+        this.gamma = parseFloat(e.target.value);
+        localStorage.setItem('brightness', this.gamma.toFixed(2));
+        document.getElementById('brightness-value').textContent = this.gamma.toFixed(1);
+      });
+    }
 
     const startGame = async (sceneId) => {
       document.getElementById('title-screen').style.display = 'none';
@@ -122,15 +146,61 @@ export class VaporwaveEngine {
     // We'll set up passes after scene is loaded
   }
 
-  rebuildComposer() {
+  rebuildComposer(postProcessing) {
     this.composer = new EffectComposer(this.renderer);
     this.composer.setSize(RENDER_WIDTH, RENDER_HEIGHT);
 
     const renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(renderPass);
 
+    // Bloom pass (extract bright pixels → blur → composite)
+    const bloomExtract = new ShaderPass(BloomExtractShader);
+    bloomExtract.uniforms.threshold.value = postProcessing?.bloomThreshold ?? 0.7;
+
+    const bloomRT = new THREE.WebGLRenderTarget(RENDER_WIDTH / 2, RENDER_HEIGHT / 2);
+    this._bloomRT = bloomRT;
+
+    // We use a separate mini-composer for bloom blur
+    this._bloomComposer = new EffectComposer(this.renderer, bloomRT);
+    this._bloomComposer.renderToScreen = false;
+    this._bloomComposer.addPass(new RenderPass(this.scene, this.camera));
+    this._bloomComposer.addPass(bloomExtract);
+
+    const blurH = new ShaderPass(BloomBlurShader);
+    blurH.uniforms.direction.value.set(1.0, 0.0);
+    blurH.uniforms.resolution.value.set(RENDER_WIDTH / 2, RENDER_HEIGHT / 2);
+    this._bloomComposer.addPass(blurH);
+
+    const blurV = new ShaderPass(BloomBlurShader);
+    blurV.uniforms.direction.value.set(0.0, 1.0);
+    blurV.uniforms.resolution.value.set(RENDER_WIDTH / 2, RENDER_HEIGHT / 2);
+    this._bloomComposer.addPass(blurV);
+
+    // Main composite: merge bloom into main render
+    const bloomComposite = new ShaderPass(BloomCompositeShader);
+    bloomComposite.uniforms.tBloom.value = bloomRT.texture;
+    bloomComposite.uniforms.bloomStrength.value = postProcessing?.bloomStrength ?? 0.4;
+    this.composer.addPass(bloomComposite);
+    this._bloomCompositePass = bloomComposite;
+
+    // Dither pass with per-scene tuning
     const ditherPass = new ShaderPass(DitherShader);
     ditherPass.uniforms.resolution.value.set(RENDER_WIDTH, RENDER_HEIGHT);
+
+    // Apply per-scene overrides
+    if (postProcessing) {
+      if (postProcessing.ditherIntensity !== undefined)
+        ditherPass.uniforms.ditherIntensity.value = postProcessing.ditherIntensity;
+      if (postProcessing.colorLevels !== undefined)
+        ditherPass.uniforms.colorDepth.value = postProcessing.colorLevels;
+      if (postProcessing.chromaticAberration !== undefined)
+        ditherPass.uniforms.chromaticAberration.value = postProcessing.chromaticAberration;
+      if (postProcessing.vignette !== undefined)
+        ditherPass.uniforms.vignette.value = postProcessing.vignette;
+    }
+
+    ditherPass.uniforms.gamma.value = this.gamma;
+
     this.composer.addPass(ditherPass);
     this.ditherPass = ditherPass;
   }
@@ -180,8 +250,10 @@ export class VaporwaveEngine {
       this.pointerLocked = document.pointerLockElement === this.canvas;
       if (this.pointerLocked) {
         this.cursor.classList.add('hidden');
+        this.crosshair.style.display = 'block';
       } else {
         this.cursor.classList.remove('hidden');
+        this.crosshair.style.display = 'none';
       }
     });
   }
@@ -196,6 +268,7 @@ export class VaporwaveEngine {
     this.collision.clear();
     this.animations.clear();
     this.interactables = [];
+    this._activeTriggers.clear();
 
     const result = await this.sceneLoader.loadScene(sceneId);
     if (!result) {
@@ -208,13 +281,39 @@ export class VaporwaveEngine {
     this.interactables = result.interactables;
     this.currentSceneId = sceneId;
 
+    // Fog culling — match camera far plane to fog distance
+    if (result.data.fog) {
+      this.camera.far = result.data.fog.far || 60;
+      this.camera.updateProjectionMatrix();
+    } else {
+      this.camera.far = 200;
+      this.camera.updateProjectionMatrix();
+    }
+
     // Setup collision
     for (const { object, options } of result.collisionMeshes) {
-      if (object.isMesh) {
+      if (options.terrain) {
+        if (object.isMesh) {
+          object.updateMatrixWorld(true);
+          this.collision.addTerrain(object);
+        }
+      } else if (options.trigger) {
+        // Trigger zones: add all meshes (or the group's bounding box)
+        object.updateMatrixWorld(true);
+        if (object.isMesh) {
+          this.collision.addBox(object, options);
+        } else {
+          // For groups, create a single bounding box for the trigger
+          object.traverse((child) => {
+            if (child.isMesh) {
+              this.collision.addBox(child, options);
+            }
+          });
+        }
+      } else if (object.isMesh) {
         this.collision.addBox(object, options);
       } else {
         // For groups, ensure world matrices are computed before extracting bounding boxes
-        // (setFromObject uses updateWorldMatrix(false,false) which won't update parents)
         object.updateMatrixWorld(true);
         object.traverse((child) => {
           if (child.isMesh) {
@@ -228,14 +327,16 @@ export class VaporwaveEngine {
     const spawn = result.spawnPoint;
     this.player.position.set(...spawn.position);
     this.player.velocity.set(0, 0, 0);
+    this.player.moveVelocity.set(0, 0, 0);
     if (spawn.rotation) {
       this.player.yaw = (spawn.rotation[1] || 0) * Math.PI / 180;
       this.player.pitch = (spawn.rotation[0] || 0) * Math.PI / 180;
     }
     this.player.onGround = false;
+    this.player.bobTimer = 0;
 
-    // Rebuild post-processing
-    this.rebuildComposer();
+    // Rebuild post-processing with per-scene tuning
+    this.rebuildComposer(result.postProcessing);
 
     await new Promise(r => setTimeout(r, 400));
     transition.classList.remove('active');
@@ -266,11 +367,31 @@ export class VaporwaveEngine {
     }
   }
 
+  // Check requires — supports string (single key) or object with all/any arrays
+  checkRequires(requires) {
+    if (!requires) return true;
+
+    // Simple string check (backward compatible)
+    if (typeof requires === 'string') {
+      return !!this.gameState[requires];
+    }
+
+    // Object with all/any arrays
+    if (requires.all) {
+      return requires.all.every(key => !!this.gameState[key]);
+    }
+    if (requires.any) {
+      return requires.any.some(key => !!this.gameState[key]);
+    }
+
+    return true;
+  }
+
   handleInteraction() {
     if (!this.hoveredInteractable) return;
     const inter = this.hoveredInteractable;
 
-    if (inter.data.requires && !this.gameState[inter.data.requires]) {
+    if (inter.data.requires && !this.checkRequires(inter.data.requires)) {
       this.notifications.show(inter.data.requiresText || 'Something is missing...', 2500);
       return;
     }
@@ -292,13 +413,16 @@ export class VaporwaveEngine {
         }, 100);
       });
     } else if (inter.type === 'examine') {
-      this.notifications.show(inter.data.examineText || 'Nothing special.', 3000);
+      const examText = inter.data.text || inter.data.examineText || 'Nothing special.';
+      const examDur = Math.max(3000, examText.length * 40);
+      this.notifications.show(examText, examDur);
     } else if (inter.type === 'trigger') {
       this.handleAction(inter.data.action);
     } else if (inter.type === 'pickup') {
       this.notifications.show(`Picked up: ${inter.data.itemName || 'item'}`, 2000);
       this.gameState[inter.data.stateKey || inter.id] = true;
       inter.object.visible = false;
+      this.updateConditionalVisibility();
     }
   }
 
@@ -310,7 +434,22 @@ export class VaporwaveEngine {
       this.notifications.show(action.text, action.duration || 3000);
     } else if (action.type === 'setState') {
       this.gameState[action.key] = action.value;
+      this.updateConditionalVisibility();
     }
+  }
+
+  // Re-evaluate visibleWhen/hiddenWhen for all objects in the scene
+  updateConditionalVisibility() {
+    if (!this.scene) return;
+    this.scene.traverse((obj) => {
+      const rule = obj.userData.visibilityRule;
+      if (!rule) return;
+      if (rule.visibleWhen) {
+        obj.visible = !!this.gameState[rule.visibleWhen];
+      } else if (rule.hiddenWhen) {
+        obj.visible = !this.gameState[rule.hiddenWhen];
+      }
+    });
   }
 
   updatePlayer(delta) {
@@ -325,8 +464,7 @@ export class VaporwaveEngine {
       this.mouse.dy = 0;
     }
 
-    // Movement
-    const moveDir = new THREE.Vector3();
+    // Movement direction (target velocity)
     const forward = new THREE.Vector3(
       -Math.sin(this.player.yaw),
       0,
@@ -338,14 +476,35 @@ export class VaporwaveEngine {
       -Math.sin(this.player.yaw)
     );
 
-    if (this.keys['KeyW'] || this.keys['ArrowUp']) moveDir.add(forward);
-    if (this.keys['KeyS'] || this.keys['ArrowDown']) moveDir.sub(forward);
-    if (this.keys['KeyA'] || this.keys['ArrowLeft']) moveDir.sub(right);
-    if (this.keys['KeyD'] || this.keys['ArrowRight']) moveDir.add(right);
+    const targetDir = new THREE.Vector3();
+    if (this.keys['KeyW'] || this.keys['ArrowUp']) targetDir.add(forward);
+    if (this.keys['KeyS'] || this.keys['ArrowDown']) targetDir.sub(forward);
+    if (this.keys['KeyA'] || this.keys['ArrowLeft']) targetDir.sub(right);
+    if (this.keys['KeyD'] || this.keys['ArrowRight']) targetDir.add(right);
 
-    if (moveDir.lengthSq() > 0) {
-      moveDir.normalize().multiplyScalar(MOVE_SPEED * delta);
+    const isMoving = targetDir.lengthSq() > 0;
+    const targetVelocity = new THREE.Vector3();
+    if (isMoving) {
+      targetDir.normalize();
+      targetVelocity.copy(targetDir).multiplyScalar(MOVE_SPEED);
     }
+
+    // Momentum: lerp toward target velocity
+    const accelFactor = isMoving ? ACCEL : DECEL;
+    const lerpFactor = 1 - Math.exp(-accelFactor * delta);
+    this.player.moveVelocity.lerp(targetVelocity, lerpFactor);
+
+    // Apply friction when stopping
+    if (!isMoving && this.player.moveVelocity.lengthSq() > 0) {
+      const frictionFactor = Math.exp(-FRICTION * delta);
+      this.player.moveVelocity.multiplyScalar(frictionFactor);
+      // Snap to zero when very slow
+      if (this.player.moveVelocity.lengthSq() < 0.001) {
+        this.player.moveVelocity.set(0, 0, 0);
+      }
+    }
+
+    const moveDir = this.player.moveVelocity.clone().multiplyScalar(delta);
 
     // Gravity (clamped to prevent tunneling)
     this.player.velocity.y += GRAVITY * delta;
@@ -374,6 +533,22 @@ export class VaporwaveEngine {
       newPos.z += check.pushback.z;
     }
 
+    // Slope sliding
+    if (check.slopeNormal && check.groundY > -Infinity) {
+      const slopeAngle = Math.acos(Math.min(1, check.slopeNormal.y)) * 180 / Math.PI;
+      if (slopeAngle > MAX_SLOPE_ANGLE) {
+        // Apply slide force along the slope
+        const slideDir = new THREE.Vector3(
+          check.slopeNormal.x,
+          0,
+          check.slopeNormal.z
+        ).normalize();
+        const slideFactor = (slopeAngle - MAX_SLOPE_ANGLE) / 90 * SLOPE_SLIDE_FORCE * delta;
+        newPos.x += slideDir.x * slideFactor;
+        newPos.z += slideDir.z * slideFactor;
+      }
+    }
+
     // Ground check — snap to ground if close enough
     if (check.groundY > -Infinity) {
       const targetY = check.groundY + PLAYER_HEIGHT;
@@ -388,6 +563,7 @@ export class VaporwaveEngine {
       if (spawn) {
         newPos.set(...spawn.position);
         this.player.velocity.set(0, 0, 0);
+        this.player.moveVelocity.set(0, 0, 0);
       } else {
         newPos.y = PLAYER_HEIGHT + 5;
         this.player.velocity.y = 0;
@@ -398,17 +574,78 @@ export class VaporwaveEngine {
 
     this.player.position.copy(newPos);
 
+    // Process trigger zones
+    if (check.triggeredIds && check.triggeredIds.length > 0) {
+      for (const triggerId of check.triggeredIds) {
+        if (!this._activeTriggers.has(triggerId)) {
+          this._activeTriggers.add(triggerId);
+          this.fireTrigger(triggerId);
+        }
+      }
+    }
+    // Clear triggers the player has left
+    for (const id of this._activeTriggers) {
+      if (!check.triggeredIds || !check.triggeredIds.includes(id)) {
+        this._activeTriggers.delete(id);
+      }
+    }
+
     // Update camera
     this.camera.position.copy(this.player.position);
+
+    // Head bob when moving and on ground
+    const moving = this.player.moveVelocity.lengthSq() > 0.5;
+    if (moving && this.player.onGround) {
+      this.player.bobTimer += delta * BOB_FREQUENCY;
+      this.camera.position.y += Math.sin(this.player.bobTimer) * BOB_AMPLITUDE;
+      this.camera.position.x += Math.cos(this.player.bobTimer * 0.5) * BOB_AMPLITUDE * 0.5;
+    } else {
+      // Smoothly decay bob timer
+      this.player.bobTimer *= 0.9;
+    }
+
     this.camera.rotation.order = 'YXZ';
     this.camera.rotation.y = this.player.yaw;
     this.camera.rotation.x = this.player.pitch;
+  }
+
+  // Fire a trigger zone event
+  fireTrigger(triggerId) {
+    // Find the interactable associated with this trigger
+    for (const inter of this.interactables) {
+      if (inter.id === triggerId && inter.object.visible) {
+        if (inter.data.requires && !this.checkRequires(inter.data.requires)) {
+          return; // Requirements not met
+        }
+        if (inter.type === 'trigger' && inter.data.action) {
+          this.handleAction(inter.data.action);
+        } else if (inter.type === 'dialogue') {
+          document.exitPointerLock();
+          this.dialogue.start(inter.data.dialogue, (result) => {
+            if (result === 'success' && inter.data.onSuccess) {
+              this.handleAction(inter.data.onSuccess);
+            } else if (result === 'completed' && inter.data.onComplete) {
+              this.handleAction(inter.data.onComplete);
+            }
+            setTimeout(() => {
+              if (!this.dialogueActive) {
+                this.canvas.requestPointerLock();
+              }
+            }, 100);
+          });
+        } else if (inter.type === 'examine') {
+          const trigExamText = inter.data.text || inter.data.examineText || '';
+          this.notifications.show(trigExamText, Math.max(3000, trigExamText.length * 40));
+        }
+      }
+    }
   }
 
   updateInteractionCheck() {
     if (this.dialogueActive || !this.pointerLocked) {
       this.hoveredInteractable = null;
       this.cursor.classList.remove('interact');
+      this.crosshair.classList.remove('interact');
       return;
     }
 
@@ -420,6 +657,7 @@ export class VaporwaveEngine {
 
     for (const inter of this.interactables) {
       if (!inter.object.visible) continue;
+      const maxDist = inter.data.interactDistance || INTERACT_DISTANCE;
       const objects = [];
       inter.object.traverse((child) => {
         if (child.isMesh) objects.push(child);
@@ -427,7 +665,7 @@ export class VaporwaveEngine {
       if (inter.object.isMesh) objects.push(inter.object);
 
       const hits = this.raycaster.intersectObjects(objects, false);
-      if (hits.length > 0 && hits[0].distance < closestDist) {
+      if (hits.length > 0 && hits[0].distance <= maxDist && hits[0].distance < closestDist) {
         closestDist = hits[0].distance;
         closest = inter;
       }
@@ -435,10 +673,13 @@ export class VaporwaveEngine {
 
     this.hoveredInteractable = closest;
 
-    // Update cursor / notification
+    // Update crosshair / notification
     if (closest && this.pointerLocked) {
+      this.crosshair.classList.add('interact');
       // Show interaction hint
       this.notifications.show(closest.hoverText, 500);
+    } else {
+      this.crosshair.classList.remove('interact');
     }
   }
 
@@ -476,12 +717,18 @@ export class VaporwaveEngine {
       this.animations.tick(time, delta);
       this.updateWater(time);
 
-      // Update dither shader time
+      // Update dither shader uniforms
       if (this.ditherPass) {
         this.ditherPass.uniforms.time.value = time;
+        this.ditherPass.uniforms.gamma.value = this.gamma;
       }
 
-      // Render
+      // Render bloom pass
+      if (this._bloomComposer && this.scene && this.camera) {
+        this._bloomComposer.render();
+      }
+
+      // Render main pass
       if (this.scene && this.camera) {
         this.composer.render();
       }

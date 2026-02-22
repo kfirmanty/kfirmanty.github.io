@@ -14,6 +14,180 @@ import { DEFAULT_PARAMS, DEFAULT_MATERIAL, PARAM_SCHEMA } from './editor-schema.
 import { round3, escHtml } from './editor-utils.js';
 
 // ─────────────────────────────────────────────
+//  UNDO/REDO COMMAND SYSTEM
+// ─────────────────────────────────────────────
+
+class UndoStack {
+  constructor(editor) {
+    this.editor = editor;
+    this.undoStack = [];
+    this.redoStack = [];
+    this.maxSize = 50;
+  }
+
+  push(command) {
+    this.undoStack.push(command);
+    if (this.undoStack.length > this.maxSize) this.undoStack.shift();
+    this.redoStack = []; // Clear redo on new action
+  }
+
+  undo() {
+    const cmd = this.undoStack.pop();
+    if (!cmd) return;
+    cmd.undo();
+    this.redoStack.push(cmd);
+  }
+
+  redo() {
+    const cmd = this.redoStack.pop();
+    if (!cmd) return;
+    cmd.execute();
+    this.undoStack.push(cmd);
+  }
+
+  clear() {
+    this.undoStack = [];
+    this.redoStack = [];
+  }
+}
+
+// Command: Transform change (position/rotation/scale)
+class TransformCommand {
+  constructor(editor, def, obj, oldState, newState) {
+    this.editor = editor;
+    this.def = def;
+    this.obj = obj;
+    this.oldState = oldState;
+    this.newState = newState;
+  }
+  execute() {
+    this._applyState(this.newState);
+  }
+  undo() {
+    this._applyState(this.oldState);
+  }
+  _applyState(state) {
+    this.def.position = state.position.slice();
+    this.def.rotation = state.rotation?.slice();
+    this.def.scale = Array.isArray(state.scale) ? state.scale.slice() : state.scale;
+    if (this.obj) {
+      this.obj.position.set(...this.def.position);
+      if (this.def.rotation) {
+        this.obj.rotation.set(
+          this.def.rotation[0] * Math.PI / 180,
+          this.def.rotation[1] * Math.PI / 180,
+          this.def.rotation[2] * Math.PI / 180
+        );
+      }
+      if (this.def.scale != null) {
+        if (typeof this.def.scale === 'number') this.obj.scale.setScalar(this.def.scale);
+        else this.obj.scale.set(...this.def.scale);
+      }
+    }
+    this.editor.refreshInspector();
+  }
+}
+
+// Command: Add object
+class AddObjectCommand {
+  constructor(editor, def) {
+    this.editor = editor;
+    this.def = def;
+  }
+  execute() {
+    this.editor.objectDefs.push(this.def);
+    this.editor.sceneData.objects = this.editor.objectDefs;
+    this.editor.buildAndAddObject(this.def);
+    this.editor.refreshHierarchy();
+    this.editor.updateStatusBar();
+  }
+  undo() {
+    const obj = this.editor.threeObjects.get(this.def);
+    if (obj) {
+      this.editor.sceneRoot.remove(obj);
+      this.editor.disposeObject(obj);
+      this.editor.defsByObject.delete(obj);
+    }
+    this.editor.threeObjects.delete(this.def);
+    const idx = this.editor.objectDefs.indexOf(this.def);
+    if (idx !== -1) this.editor.objectDefs.splice(idx, 1);
+    this.editor.sceneData.objects = this.editor.objectDefs;
+    if (this.editor.selected === this.def) this.editor.deselect();
+    this.editor.refreshHierarchy();
+    this.editor.updateStatusBar();
+  }
+}
+
+// Command: Delete object
+class DeleteObjectCommand {
+  constructor(editor, def, index) {
+    this.editor = editor;
+    this.def = def;
+    this.index = index;
+  }
+  execute() {
+    const obj = this.editor.threeObjects.get(this.def);
+    if (this.editor.selected === this.def || this.editor.selectionSet.has(this.def)) {
+      this.editor.deselect();
+    }
+    if (obj) {
+      this.editor.sceneRoot.remove(obj);
+      this.editor.disposeObject(obj);
+      this.editor.defsByObject.delete(obj);
+    }
+    this.editor.threeObjects.delete(this.def);
+    const idx = this.editor.objectDefs.indexOf(this.def);
+    if (idx !== -1) this.editor.objectDefs.splice(idx, 1);
+    this.editor.sceneData.objects = this.editor.objectDefs;
+    this.editor.refreshHierarchy();
+    this.editor.updateStatusBar();
+  }
+  undo() {
+    this.editor.objectDefs.splice(this.index, 0, this.def);
+    this.editor.sceneData.objects = this.editor.objectDefs;
+    this.editor.buildAndAddObject(this.def);
+    this.editor.refreshHierarchy();
+    this.editor.updateStatusBar();
+  }
+}
+
+// Command: Property change
+class PropertyCommand {
+  constructor(editor, def, path, oldValue, newValue, rebuildFn) {
+    this.editor = editor;
+    this.def = def;
+    this.path = path;
+    this.oldValue = JSON.parse(JSON.stringify(oldValue ?? null));
+    this.newValue = JSON.parse(JSON.stringify(newValue ?? null));
+    this.rebuildFn = rebuildFn;
+  }
+  execute() {
+    this._setValue(this.newValue);
+    if (this.rebuildFn) this.rebuildFn();
+    this.editor.refreshInspector();
+  }
+  undo() {
+    this._setValue(this.oldValue);
+    if (this.rebuildFn) this.rebuildFn();
+    this.editor.refreshInspector();
+  }
+  _setValue(val) {
+    const parts = this.path.split('.');
+    let target = this.def;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!target[parts[i]]) target[parts[i]] = {};
+      target = target[parts[i]];
+    }
+    const key = parts[parts.length - 1];
+    if (val === null || val === undefined) {
+      delete target[key];
+    } else {
+      target[key] = val;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
 //  SCENE EDITOR ENGINE
 // ─────────────────────────────────────────────
 
@@ -23,12 +197,19 @@ class SceneEditor {
     this.objectDefs = [];         // Array of object definition objects
     this.threeObjects = new Map();// Map<def, THREE.Object3D>
     this.defsByObject = new Map();// Map<THREE.Object3D, def> (reverse)
-    this.selected = null;         // Currently selected def
+    this.selected = null;         // Currently selected def (primary)
     this.selectedObject = null;   // Currently selected THREE object
+    this.selectionSet = new Set();// Multi-select: set of selected defs
     this.selectedLightIndex = -1; // Currently selected light index (-1 = none)
     this.snap = 0.5;
     this.gridVisible = true;
     this.animating = true;
+    this.collisionPreview = false;
+    this.useSceneLights = false;
+    this._collisionHelpers = [];
+    this._transformStartState = null; // For undo on transform
+
+    this.undoStack = new UndoStack(this);
 
     this.init();
   }
@@ -95,6 +276,12 @@ class SceneEditor {
     this.sceneLightsGroup = new THREE.Group();
     this.sceneLightsGroup.name = 'sceneLights';
     this.scene.add(this.sceneLightsGroup);
+
+    // Container for collision helpers
+    this.collisionHelpersGroup = new THREE.Group();
+    this.collisionHelpersGroup.name = 'collisionHelpers';
+    this.collisionHelpersGroup.visible = false;
+    this.scene.add(this.collisionHelpersGroup);
   }
 
   // ─────────────── CONTROLS ───────────────
@@ -112,6 +299,13 @@ class SceneEditor {
     this.transformControls.setTranslationSnap(this.snap);
     this.transformControls.addEventListener('dragging-changed', (e) => {
       this.orbitControls.enabled = !e.value;
+      if (e.value) {
+        // Starting drag — save state for undo
+        this._captureTransformStart();
+      } else {
+        // Ended drag — create undo command
+        this._commitTransform();
+      }
     });
     this.transformControls.addEventListener('objectChange', () => {
       if (this.selected && this.selectedObject) {
@@ -135,6 +329,7 @@ class SceneEditor {
       this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       this._pointerDownPos = { x: e.clientX, y: e.clientY };
+      this._pointerShift = e.shiftKey; // Track shift for multi-select
     });
 
     this.renderer.domElement.addEventListener('pointerup', (e) => {
@@ -143,7 +338,7 @@ class SceneEditor {
       const dy = e.clientY - this._pointerDownPos.y;
       // Only select on click (not drag)
       if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
-        this.pickObject();
+        this.pickObject(this._pointerShift);
       }
       this._pointerDownPos = null;
     });
@@ -157,13 +352,50 @@ class SceneEditor {
         case 'KeyR': this.setTransformMode('scale'); break;
         case 'KeyG': this.toggleGrid(); break;
         case 'KeyF': this.focusSelected(); break;
+        case 'KeyC': this.toggleCollisionPreview(); break;
         case 'Delete': case 'Backspace': this.deleteSelected(); break;
         case 'KeyD':
           if (e.ctrlKey || e.metaKey) { e.preventDefault(); this.duplicateSelected(); }
           break;
+        case 'KeyZ':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            if (e.shiftKey) this.undoStack.redo();
+            else this.undoStack.undo();
+          }
+          break;
+        case 'KeyY':
+          if (e.ctrlKey || e.metaKey) { e.preventDefault(); this.undoStack.redo(); }
+          break;
         case 'Escape': this.deselect(); break;
       }
     });
+  }
+
+  // ─────────────── TRANSFORM UNDO HELPERS ───────────────
+
+  _captureTransformStart() {
+    if (!this.selected) return;
+    const def = this.selected;
+    this._transformStartState = {
+      position: def.position ? def.position.slice() : [0, 0, 0],
+      rotation: def.rotation ? def.rotation.slice() : undefined,
+      scale: Array.isArray(def.scale) ? def.scale.slice() : def.scale
+    };
+  }
+
+  _commitTransform() {
+    if (!this.selected || !this._transformStartState) return;
+    const def = this.selected;
+    const obj = this.threeObjects.get(def);
+    const newState = {
+      position: def.position ? def.position.slice() : [0, 0, 0],
+      rotation: def.rotation ? def.rotation.slice() : undefined,
+      scale: Array.isArray(def.scale) ? def.scale.slice() : def.scale
+    };
+    const cmd = new TransformCommand(this, def, obj, this._transformStartState, newState);
+    this.undoStack.push(cmd);
+    this._transformStartState = null;
   }
 
   // ─────────────── UI BINDING ───────────────
@@ -180,6 +412,8 @@ class SceneEditor {
     document.getElementById('btn-delete').addEventListener('click', () => this.deleteSelected());
     document.getElementById('btn-play').addEventListener('click', () => this.playScene());
     document.getElementById('btn-snap-toggle').addEventListener('click', () => this.cycleSnap());
+    document.getElementById('btn-collision').addEventListener('click', () => this.toggleCollisionPreview());
+    document.getElementById('btn-scene-lights').addEventListener('click', () => this.toggleSceneLights());
 
     // File input
     document.getElementById('file-input').addEventListener('change', (e) => {
@@ -250,6 +484,7 @@ class SceneEditor {
     this.sceneData = JSON.parse(JSON.stringify(data)); // Deep clone
     this.deselect();
     this.clearScene();
+    this.undoStack.clear();
     this.objectDefs = this.sceneData.objects || [];
 
     // Apply sky
@@ -305,6 +540,9 @@ class SceneEditor {
     // Spawn helper
     this.updateSpawnHelper();
 
+    // Collision preview
+    this.rebuildCollisionHelpers();
+
     this.refreshHierarchy();
     this.refreshSceneProps();
     this.updateStatusBar();
@@ -357,6 +595,7 @@ class SceneEditor {
     this.threeObjects.clear();
     this.defsByObject.clear();
     this.sceneLightsGroup.clear();
+    this.clearCollisionHelpers();
 
     // Remove spawn helper if exists
     if (this._spawnHelper) {
@@ -398,7 +637,12 @@ class SceneEditor {
       object = GeometryBuilders[def.type](params);
     } else if (def.type === 'group') {
       object = new THREE.Group();
-      // Groups not fully supported in editor yet
+      if (def.children) {
+        for (const childDef of def.children) {
+          const childObj = this.buildObject(childDef);
+          if (childObj) object.add(childObj);
+        }
+      }
     } else if (GeometryBuilders[def.type]) {
       const geom = GeometryBuilders[def.type](def.params || {});
       object = new THREE.Mesh(geom, mat);
@@ -446,6 +690,8 @@ class SceneEditor {
       this.selectedObject = newObj;
       this.transformControls.attach(newObj);
     }
+
+    this.rebuildCollisionHelpers();
     return newObj;
   }
 
@@ -518,9 +764,62 @@ class SceneEditor {
     this._spawnHelper = group;
   }
 
+  // ─────────────── COLLISION PREVIEW ───────────────
+
+  toggleCollisionPreview() {
+    this.collisionPreview = !this.collisionPreview;
+    this.collisionHelpersGroup.visible = this.collisionPreview;
+    document.getElementById('btn-collision').classList.toggle('active', this.collisionPreview);
+  }
+
+  clearCollisionHelpers() {
+    while (this.collisionHelpersGroup.children.length > 0) {
+      const child = this.collisionHelpersGroup.children[0];
+      this.collisionHelpersGroup.remove(child);
+      if (child.geometry) child.geometry.dispose();
+      if (child.material) child.material.dispose();
+    }
+  }
+
+  rebuildCollisionHelpers() {
+    this.clearCollisionHelpers();
+    for (const def of this.objectDefs) {
+      if (!def.collision) continue;
+      const obj = this.threeObjects.get(def);
+      if (!obj) continue;
+
+      const isTrigger = def.collisionOptions?.trigger;
+      const isWalkable = def.collisionOptions?.walkable;
+      const color = isTrigger ? 0xfffb96 : (isWalkable ? 0x05d9a6 : 0xff4466);
+
+      obj.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+
+      const geom = new THREE.BoxGeometry(size.x, size.y, size.z);
+      const mat = new THREE.MeshBasicMaterial({
+        color, wireframe: true, transparent: true, opacity: 0.6
+      });
+      const helper = new THREE.Mesh(geom, mat);
+      helper.position.copy(center);
+      this.collisionHelpersGroup.add(helper);
+    }
+  }
+
+  // ─────────────── SCENE LIGHTING TOGGLE ───────────────
+
+  toggleSceneLights() {
+    this.useSceneLights = !this.useSceneLights;
+    this.editorAmbient.visible = !this.useSceneLights;
+    this.editorDirLight.visible = !this.useSceneLights;
+    this.sceneLightsGroup.visible = true; // Scene lights always on (they contribute)
+    document.getElementById('btn-scene-lights').classList.toggle('active', this.useSceneLights);
+  }
+
   // ─────────────── SELECTION ───────────────
 
-  pickObject() {
+  pickObject(shiftKey) {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     // Gather all meshes from scene objects
@@ -533,7 +832,7 @@ class SceneEditor {
 
     const hits = this.raycaster.intersectObjects(targets, false);
     if (hits.length === 0) {
-      this.deselect();
+      if (!shiftKey) this.deselect();
       return;
     }
 
@@ -546,13 +845,46 @@ class SceneEditor {
       hitObj = hitObj.parent;
     }
 
-    if (def) this.selectDef(def);
-    else this.deselect();
+    if (def) {
+      if (shiftKey) {
+        // Multi-select toggle
+        if (this.selectionSet.has(def)) {
+          this.selectionSet.delete(def);
+          if (this.selected === def) {
+            // Pick another from the set or deselect
+            const remaining = [...this.selectionSet];
+            if (remaining.length > 0) {
+              this.selected = remaining[0];
+              this.selectedObject = this.threeObjects.get(remaining[0]);
+              this.transformControls.attach(this.selectedObject);
+            } else {
+              this.deselect();
+              return;
+            }
+          }
+        } else {
+          this.selectionSet.add(def);
+          if (!this.selected) {
+            this.selected = def;
+            this.selectedObject = this.threeObjects.get(def);
+            this.transformControls.attach(this.selectedObject);
+          }
+        }
+        this.refreshHierarchy();
+        this.refreshInspector();
+      } else {
+        this.selectDef(def);
+      }
+    } else if (!shiftKey) {
+      this.deselect();
+    }
   }
 
   selectDef(def) {
     this.selected = def;
     this.selectedObject = this.threeObjects.get(def);
+    this.selectionSet.clear();
+    this.selectionSet.add(def);
     if (this.selectedObject) {
       this.transformControls.attach(this.selectedObject);
     }
@@ -564,6 +896,7 @@ class SceneEditor {
     this.selected = null;
     this.selectedObject = null;
     this.selectedLightIndex = -1;
+    this.selectionSet.clear();
     this.transformControls.detach();
     this.refreshHierarchy();
     this.refreshInspector();
@@ -601,50 +934,50 @@ class SceneEditor {
       material: { ...DEFAULT_MATERIAL },
       collision: false
     };
-    this.objectDefs.push(def);
-    this.sceneData.objects = this.objectDefs;
-    this.buildAndAddObject(def);
+
+    // Use undo-able command
+    const cmd = new AddObjectCommand(this, def);
+    cmd.execute();
+    this.undoStack.push(cmd);
     this.selectDef(def);
-    this.refreshHierarchy();
-    this.updateStatusBar();
   }
 
   deleteSelected() {
     if (!this.selected) return;
-    const def = this.selected;
-    const obj = this.threeObjects.get(def);
+
+    // Delete all selected objects
+    const toDelete = [...this.selectionSet];
+    if (toDelete.length === 0 && this.selected) toDelete.push(this.selected);
 
     this.deselect();
 
-    if (obj) {
-      this.sceneRoot.remove(obj);
-      this.disposeObject(obj);
+    for (const def of toDelete) {
+      const idx = this.objectDefs.indexOf(def);
+      const cmd = new DeleteObjectCommand(this, def, idx);
+      cmd.execute();
+      this.undoStack.push(cmd);
     }
-    this.threeObjects.delete(def);
-    this.defsByObject.delete(obj);
-
-    const idx = this.objectDefs.indexOf(def);
-    if (idx !== -1) this.objectDefs.splice(idx, 1);
-    this.sceneData.objects = this.objectDefs;
-
-    this.refreshHierarchy();
-    this.updateStatusBar();
   }
 
   duplicateSelected() {
     if (!this.selected) return;
-    const clone = JSON.parse(JSON.stringify(this.selected));
-    clone.id = (clone.id || clone.type) + '_' + Date.now().toString(36);
-    // Offset position
-    if (clone.position) {
-      clone.position[0] += 2;
+
+    const toClone = [...this.selectionSet];
+    if (toClone.length === 0) toClone.push(this.selected);
+
+    let lastDef = null;
+    for (const srcDef of toClone) {
+      const clone = JSON.parse(JSON.stringify(srcDef));
+      clone.id = (clone.id || clone.type) + '_' + Date.now().toString(36);
+      if (clone.position) clone.position[0] += 2;
+
+      const cmd = new AddObjectCommand(this, clone);
+      cmd.execute();
+      this.undoStack.push(cmd);
+      lastDef = clone;
     }
-    this.objectDefs.push(clone);
-    this.sceneData.objects = this.objectDefs;
-    this.buildAndAddObject(clone);
-    this.selectDef(clone);
-    this.refreshHierarchy();
-    this.updateStatusBar();
+
+    if (lastDef) this.selectDef(lastDef);
   }
 
   rebuildSceneLights() {
@@ -720,15 +1053,44 @@ class SceneEditor {
 
     // Scene objects
     for (const def of this.objectDefs) {
+      const isSelected = this.selectionSet.has(def);
       const item = document.createElement('div');
-      item.className = 'hier-item' + (this.selected === def ? ' selected' : '');
+      item.className = 'hier-item' + (isSelected ? ' selected' : '');
       item.innerHTML = `
         <span class="type-badge">${def.type}</span>
         <span>${def.id || 'unnamed'}</span>
       `;
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
         this.selectedLightIndex = -1;
-        this.selectDef(def);
+        if (e.shiftKey) {
+          // Multi-select
+          if (this.selectionSet.has(def)) {
+            this.selectionSet.delete(def);
+            if (this.selected === def) {
+              const remaining = [...this.selectionSet];
+              if (remaining.length > 0) {
+                this.selected = remaining[0];
+                this.selectedObject = this.threeObjects.get(remaining[0]);
+                this.transformControls.attach(this.selectedObject);
+              } else {
+                this.deselect();
+              }
+            }
+            this.refreshHierarchy();
+            this.refreshInspector();
+          } else {
+            this.selectionSet.add(def);
+            if (!this.selected) {
+              this.selected = def;
+              this.selectedObject = this.threeObjects.get(def);
+              this.transformControls.attach(this.selectedObject);
+            }
+            this.refreshHierarchy();
+            this.refreshInspector();
+          }
+        } else {
+          this.selectDef(def);
+        }
       });
       item.addEventListener('dblclick', () => {
         this.selectedLightIndex = -1;
@@ -857,6 +1219,43 @@ class SceneEditor {
       d.water = d.water || {};
       d.water.color = v;
     })));
+
+    // Post-Processing
+    container.appendChild(this.makeSectionLabel('Post-Processing'));
+    const pp = d.postProcessing || {};
+    container.appendChild(this.makeRow('Dither', this.makeNumberInput(pp.ditherIntensity ?? 0.08, 0.01, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.ditherIntensity = v;
+    })));
+    container.appendChild(this.makeRow('Color Lvls', this.makeNumberInput(pp.colorLevels ?? 32, 1, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.colorLevels = v;
+    }, 4)));
+    container.appendChild(this.makeRow('Chrom. Ab.', this.makeNumberInput(pp.chromaticAberration ?? 0.0008, 0.0002, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.chromaticAberration = v;
+    })));
+    container.appendChild(this.makeRow('Vignette', this.makeNumberInput(pp.vignette ?? 0.4, 0.05, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.vignette = v;
+    }, 0, 2)));
+    container.appendChild(this.makeRow('Bloom Str', this.makeNumberInput(pp.bloomStrength ?? 0.4, 0.05, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.bloomStrength = v;
+    }, 0, 2)));
+    container.appendChild(this.makeRow('Bloom Thr', this.makeNumberInput(pp.bloomThreshold ?? 0.7, 0.05, (v) => {
+      d.postProcessing = d.postProcessing || {};
+      d.postProcessing.bloomThreshold = v;
+    }, 0, 1)));
+
+    // PSX Effects
+    container.appendChild(this.makeSectionLabel('PSX Effects'));
+    container.appendChild(this.makeRow('Vtx Snap', this.makeNumberInput(d.vertexSnap ?? 0, 10, (v) => {
+      d.vertexSnap = v;
+    }, 0)));
+    container.appendChild(this.makeRow('Affine UV', this.makeCheckbox(d.affineWarp || false, (v) => {
+      d.affineWarp = v;
+    })));
   }
 
   // ─────────────── INSPECTOR PANEL ───────────────
@@ -873,6 +1272,14 @@ class SceneEditor {
     empty.style.display = 'none';
     panels.style.display = 'block';
     panels.innerHTML = '';
+
+    // Show multi-select count
+    if (this.selectionSet.size > 1) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'padding:6px 12px; font-size:10px; color:var(--accent-cyan); font-family:"JetBrains Mono",monospace; border-bottom:1px solid var(--border);';
+      badge.textContent = `${this.selectionSet.size} objects selected`;
+      panels.appendChild(badge);
+    }
 
     const def = this.selected;
 
@@ -911,7 +1318,7 @@ class SceneEditor {
 
     // ── GEOMETRY PARAMS SECTION ──
     const schema = PARAM_SCHEMA[def.type];
-    if (schema) {
+    if (schema && schema.length > 0) {
       const geomSection = this.makeSection('Geometry');
       const params = def.params || {};
       for (const field of schema) {
@@ -929,98 +1336,152 @@ class SceneEditor {
       panels.appendChild(geomSection.el);
     }
 
-    // ── MATERIAL SECTION ──
-    const matSection = this.makeSection('Material');
-    const mat = def.material || {};
-    matSection.body.appendChild(this.makeRow('Color', this.makeColorInput(mat.color || '#cccccc', (v) => {
-      def.material = def.material || {};
-      def.material.color = v;
-      this.updateMaterialProp(def, 'color', new THREE.Color(v));
-    })));
-    matSection.body.appendChild(this.makeRow('Emissive', this.makeColorInput(mat.emissive || '#000000', (v) => {
-      def.material = def.material || {};
-      def.material.emissive = v === '#000000' ? undefined : v;
-      this.updateMaterialProp(def, 'emissive', new THREE.Color(v));
-    })));
-    matSection.body.appendChild(this.makeRow('Emiss. Int.', this.makeNumberInput(mat.emissiveIntensity ?? 0, 0.1, (v) => {
-      def.material = def.material || {};
-      def.material.emissiveIntensity = v;
-      this.updateMaterialProp(def, 'emissiveIntensity', v);
-    })));
-    matSection.body.appendChild(this.makeRow('Metalness', this.makeNumberInput(mat.metalness ?? 0.1, 0.05, (v) => {
-      def.material = def.material || {};
-      def.material.metalness = v;
-      this.updateMaterialProp(def, 'metalness', v);
-    }, 0, 1)));
-    matSection.body.appendChild(this.makeRow('Roughness', this.makeNumberInput(mat.roughness ?? 0.8, 0.05, (v) => {
-      def.material = def.material || {};
-      def.material.roughness = v;
-      this.updateMaterialProp(def, 'roughness', v);
-    }, 0, 1)));
-    matSection.body.appendChild(this.makeRow('Transparent', this.makeCheckbox(mat.transparent || false, (v) => {
-      def.material = def.material || {};
-      def.material.transparent = v;
-      this.rebuildObject(def);
-    })));
-    if (mat.transparent) {
-      matSection.body.appendChild(this.makeRow('Opacity', this.makeNumberInput(mat.opacity ?? 1, 0.05, (v) => {
-        def.material = def.material || {};
-        def.material.opacity = v;
-        this.updateMaterialProp(def, 'opacity', v);
-      }, 0, 1)));
-    }
-    matSection.body.appendChild(this.makeRow('Texture', this.makeSelect(
-      mat.texture || 'none',
-      TEXTURE_OPTIONS,
-      (v) => {
-        def.material = def.material || {};
-        if (v === 'none') {
-          delete def.material.texture;
-          delete def.material.textureRepeat;
-        } else {
-          def.material.texture = v;
-          if (!def.material.textureRepeat) {
-            def.material.textureRepeat = [1, 1];
-          }
-        }
+    // ── GROUP CHILDREN SECTION (for group type) ──
+    if (def.type === 'group') {
+      const groupSection = this.makeSection('Children');
+      const children = def.children || [];
+      groupSection.body.appendChild(this.makeReadonly(`${children.length} child objects`));
+
+      const addChildBtn = document.createElement('button');
+      addChildBtn.className = 'prop-btn';
+      addChildBtn.textContent = '+ Add Child (box)';
+      addChildBtn.style.cssText = 'width:100%; margin-top:6px;';
+      addChildBtn.addEventListener('click', () => {
+        def.children = def.children || [];
+        def.children.push({
+          id: 'child_' + Date.now().toString(36),
+          type: 'box',
+          params: { width: 1, height: 1, depth: 1 },
+          position: [0, 0, 0],
+          material: { ...DEFAULT_MATERIAL }
+        });
         this.rebuildObject(def);
         this.refreshInspector();
-      }
-    )));
-    if (mat.texture) {
-      const tr = mat.textureRepeat || [1, 1];
-      matSection.body.appendChild(this.makeRow('Tex Repeat X', this.makeNumberInput(tr[0], 0.5, (v) => {
-        def.material = def.material || {};
-        def.material.textureRepeat = def.material.textureRepeat || [1, 1];
-        def.material.textureRepeat[0] = v;
-        this.rebuildObject(def);
-      }, 0.5)));
-      matSection.body.appendChild(this.makeRow('Tex Repeat Y', this.makeNumberInput(tr[1], 0.5, (v) => {
-        def.material = def.material || {};
-        def.material.textureRepeat = def.material.textureRepeat || [1, 1];
-        def.material.textureRepeat[1] = v;
-        this.rebuildObject(def);
-      }, 0.5)));
+      });
+      groupSection.body.appendChild(addChildBtn);
+
+      panels.appendChild(groupSection.el);
     }
-    panels.appendChild(matSection.el);
+
+    // ── MATERIAL SECTION (skip for groups) ──
+    if (def.type !== 'group') {
+      const matSection = this.makeSection('Material');
+      const mat = def.material || {};
+      matSection.body.appendChild(this.makeRow('Color', this.makeColorInput(mat.color || '#cccccc', (v) => {
+        def.material = def.material || {};
+        def.material.color = v;
+        this._applyMaterialToSelection('color', new THREE.Color(v), v);
+      })));
+      matSection.body.appendChild(this.makeRow('Emissive', this.makeColorInput(mat.emissive || '#000000', (v) => {
+        def.material = def.material || {};
+        def.material.emissive = v === '#000000' ? undefined : v;
+        this._applyMaterialToSelection('emissive', new THREE.Color(v), v === '#000000' ? undefined : v);
+      })));
+      matSection.body.appendChild(this.makeRow('Emiss. Int.', this.makeNumberInput(mat.emissiveIntensity ?? 0, 0.1, (v) => {
+        def.material = def.material || {};
+        def.material.emissiveIntensity = v;
+        this._applyMaterialToSelection('emissiveIntensity', v, v);
+      })));
+      matSection.body.appendChild(this.makeRow('Metalness', this.makeNumberInput(mat.metalness ?? 0.1, 0.05, (v) => {
+        def.material = def.material || {};
+        def.material.metalness = v;
+        this._applyMaterialToSelection('metalness', v, v);
+      }, 0, 1)));
+      matSection.body.appendChild(this.makeRow('Roughness', this.makeNumberInput(mat.roughness ?? 0.8, 0.05, (v) => {
+        def.material = def.material || {};
+        def.material.roughness = v;
+        this._applyMaterialToSelection('roughness', v, v);
+      }, 0, 1)));
+      matSection.body.appendChild(this.makeRow('Transparent', this.makeCheckbox(mat.transparent || false, (v) => {
+        def.material = def.material || {};
+        def.material.transparent = v;
+        this.rebuildObject(def);
+      })));
+      if (mat.transparent) {
+        matSection.body.appendChild(this.makeRow('Opacity', this.makeNumberInput(mat.opacity ?? 1, 0.05, (v) => {
+          def.material = def.material || {};
+          def.material.opacity = v;
+          this.updateMaterialProp(def, 'opacity', v);
+        }, 0, 1)));
+      }
+      matSection.body.appendChild(this.makeRow('Texture', this.makeSelect(
+        mat.texture || 'none',
+        TEXTURE_OPTIONS,
+        (v) => {
+          def.material = def.material || {};
+          if (v === 'none') {
+            delete def.material.texture;
+            delete def.material.textureRepeat;
+          } else {
+            def.material.texture = v;
+            if (!def.material.textureRepeat) {
+              def.material.textureRepeat = [1, 1];
+            }
+          }
+          this.rebuildObject(def);
+          this.refreshInspector();
+        }
+      )));
+      if (mat.texture) {
+        const tr = mat.textureRepeat || [1, 1];
+        matSection.body.appendChild(this.makeRow('Tex Repeat X', this.makeNumberInput(tr[0], 0.5, (v) => {
+          def.material = def.material || {};
+          def.material.textureRepeat = def.material.textureRepeat || [1, 1];
+          def.material.textureRepeat[0] = v;
+          this.rebuildObject(def);
+        }, 0.5)));
+        matSection.body.appendChild(this.makeRow('Tex Repeat Y', this.makeNumberInput(tr[1], 0.5, (v) => {
+          def.material = def.material || {};
+          def.material.textureRepeat = def.material.textureRepeat || [1, 1];
+          def.material.textureRepeat[1] = v;
+          this.rebuildObject(def);
+        }, 0.5)));
+      }
+      panels.appendChild(matSection.el);
+    }
 
     // ── COLLISION SECTION ──
     const collSection = this.makeSection('Collision');
     collSection.body.appendChild(this.makeRow('Enabled', this.makeCheckbox(def.collision || false, (v) => {
       def.collision = v;
+      this.rebuildCollisionHelpers();
+      this.refreshInspector();
     })));
     if (def.collision) {
       const co = def.collisionOptions || {};
       collSection.body.appendChild(this.makeRow('Walkable', this.makeCheckbox(co.walkable || false, (v) => {
         def.collisionOptions = def.collisionOptions || {};
         def.collisionOptions.walkable = v;
+        this.rebuildCollisionHelpers();
       })));
       collSection.body.appendChild(this.makeRow('Is Stairs', this.makeCheckbox(co.isStairs || false, (v) => {
         def.collisionOptions = def.collisionOptions || {};
         def.collisionOptions.isStairs = v;
       })));
+      collSection.body.appendChild(this.makeRow('Trigger', this.makeCheckbox(co.trigger || false, (v) => {
+        def.collisionOptions = def.collisionOptions || {};
+        def.collisionOptions.trigger = v;
+        this.rebuildCollisionHelpers();
+        this.refreshInspector();
+      })));
+      collSection.body.appendChild(this.makeRow('Terrain', this.makeCheckbox(co.terrain || false, (v) => {
+        def.collisionOptions = def.collisionOptions || {};
+        def.collisionOptions.terrain = v;
+      })));
     }
     panels.appendChild(collSection.el);
+
+    // ── VISIBILITY SECTION ──
+    const visSection = this.makeSection('Conditional Visibility');
+    visSection.body.appendChild(this.makeRow('Visible When', this.makeTextInput(def.visibleWhen || '', (v) => {
+      if (v) def.visibleWhen = v;
+      else delete def.visibleWhen;
+    })));
+    visSection.body.appendChild(this.makeRow('Hidden When', this.makeTextInput(def.hiddenWhen || '', (v) => {
+      if (v) def.hiddenWhen = v;
+      else delete def.hiddenWhen;
+    })));
+    panels.appendChild(visSection.el);
 
     // ── ANIMATION SECTION ──
     const animSection = this.makeSection('Animation');
@@ -1068,9 +1529,28 @@ class SceneEditor {
     )));
     if (inter) {
       interSection.body.appendChild(this.makeRow('Hover Text', this.makeTextInput(inter.hoverText || '', (v) => { def.interactable.hoverText = v; })));
+      interSection.body.appendChild(this.makeRow('Int. Dist', this.makeNumberInput(inter.interactDistance ?? 4, 0.5, (v) => { def.interactable.interactDistance = v; })));
+
+      // Requires field (supports string or object)
+      interSection.body.appendChild(this.makeRow('Requires', this.makeTextInput(
+        typeof inter.requires === 'string' ? inter.requires : (inter.requires ? JSON.stringify(inter.requires) : ''),
+        (v) => {
+          if (!v) { delete def.interactable.requires; return; }
+          try {
+            const parsed = JSON.parse(v);
+            def.interactable.requires = parsed;
+          } catch {
+            def.interactable.requires = v; // plain string
+          }
+        }
+      )));
+      interSection.body.appendChild(this.makeRow('Req. Text', this.makeTextInput(inter.requiresText || '', (v) => {
+        if (v) def.interactable.requiresText = v;
+        else delete def.interactable.requiresText;
+      })));
 
       if (inter.type === 'examine') {
-        interSection.body.appendChild(this.makeRow('Text', this.makeTextArea(inter.examineText || '', (v) => { def.interactable.examineText = v; })));
+        interSection.body.appendChild(this.makeRow('Text', this.makeTextArea(inter.text || inter.examineText || '', (v) => { def.interactable.text = v; })));
       }
 
       if (inter.type === 'trigger') {
@@ -1085,6 +1565,11 @@ class SceneEditor {
           interSection.body.appendChild(this.makeRow('Target', this.makeTextInput(action.target || '', (v) => { def.interactable.action.target = v; })));
         } else if (action.type === 'notify') {
           interSection.body.appendChild(this.makeRow('Text', this.makeTextInput(action.text || '', (v) => { def.interactable.action.text = v; })));
+        } else if (action.type === 'setState') {
+          interSection.body.appendChild(this.makeRow('Key', this.makeTextInput(action.key || '', (v) => { def.interactable.action.key = v; })));
+          interSection.body.appendChild(this.makeRow('Value', this.makeTextInput(String(action.value ?? 'true'), (v) => {
+            def.interactable.action.value = v === 'false' ? false : (v === 'true' ? true : v);
+          })));
         }
       }
 
@@ -1105,7 +1590,7 @@ class SceneEditor {
         // OnSuccess action
         interSection.body.appendChild(this.makeSectionLabel('On Success Action'));
         const onSuccess = inter.onSuccess || {};
-        interSection.body.appendChild(this.makeRow('Type', this.makeSelect(onSuccess.type || 'none', ['none', 'transition', 'notify'], (v) => {
+        interSection.body.appendChild(this.makeRow('Type', this.makeSelect(onSuccess.type || 'none', ['none', 'transition', 'notify', 'setState'], (v) => {
           if (v === 'none') delete def.interactable.onSuccess;
           else { def.interactable.onSuccess = { type: v }; }
           this.refreshInspector();
@@ -1115,10 +1600,34 @@ class SceneEditor {
             def.interactable.onSuccess = def.interactable.onSuccess || {};
             def.interactable.onSuccess.target = v;
           })));
+        } else if (onSuccess.type === 'setState') {
+          interSection.body.appendChild(this.makeRow('Key', this.makeTextInput(onSuccess.key || '', (v) => {
+            def.interactable.onSuccess = def.interactable.onSuccess || {};
+            def.interactable.onSuccess.key = v;
+          })));
+          interSection.body.appendChild(this.makeRow('Value', this.makeTextInput(String(onSuccess.value ?? 'true'), (v) => {
+            def.interactable.onSuccess = def.interactable.onSuccess || {};
+            def.interactable.onSuccess.value = v === 'false' ? false : (v === 'true' ? true : v);
+          })));
         }
       }
     }
     panels.appendChild(interSection.el);
+  }
+
+  // Apply a material property change to all selected objects (multi-select)
+  _applyMaterialToSelection(prop, threeValue, defValue) {
+    for (const def of this.selectionSet) {
+      def.material = def.material || {};
+      if (prop === 'emissive') {
+        def.material.emissive = defValue;
+      } else if (prop === 'color') {
+        def.material.color = defValue;
+      } else {
+        def.material[prop] = defValue;
+      }
+      this.updateMaterialProp(def, prop, threeValue);
+    }
   }
 
   updateMaterialProp(def, prop, value) {

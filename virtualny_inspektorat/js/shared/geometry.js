@@ -210,6 +210,52 @@ export const GeometryBuilders = {
     return group;
   },
 
+  // Terrain — displaced plane with sine-based hills and optional bowl for lakes
+  terrain(params) {
+    const w = params.width || 40;
+    const d = params.depth || 40;
+    const segs = params.segments || 32;
+    const hillHeight = params.hillHeight || 3;
+    const freq = params.hillFrequency || 0.15;
+    const seed = params.seed || 0;
+    const bowl = params.bowl || 0;
+
+    const geom = new THREE.PlaneGeometry(w, d, segs, segs);
+    geom.rotateX(-Math.PI / 2);
+
+    const pos = geom.attributes.position;
+    // Bowl radius — the flat lake zone before hills start rising
+    const bowlR = Math.min(w, d) * 0.25;
+
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+
+      const dist = Math.sqrt(x * x + z * z);
+      const t = Math.min(dist / bowlR, 1);
+      // Smoothstep: smooth transition from lake bed to hills
+      const ss = t * t * (3 - 2 * t);
+
+      // Base profile: center depressed by bowl, edges at 0
+      const baseH = bowl > 0 ? -bowl * (1 - ss) : 0;
+
+      // Layered sine noise
+      let n = 0;
+      n += Math.sin(x * freq * 0.7 + seed) * Math.cos(z * freq * 0.5 + seed * 1.3);
+      n += Math.sin(x * freq * 1.3 + seed * 2.1) * Math.sin(z * freq * 1.1 + seed * 0.7) * 0.5;
+      n += Math.cos(x * freq * 0.3 + z * freq * 0.4 + seed * 3.1) * 0.3;
+
+      // Absolute noise biased positive — terrain always rises at edges, never dips below base
+      const hillH = (Math.abs(n) * 0.6 + 0.4) * hillHeight * ss;
+
+      pos.setY(i, baseH + hillH);
+    }
+
+    pos.needsUpdate = true;
+    geom.computeVertexNormals();
+    return geom;
+  },
+
   // Water plane with custom material
   water(params) {
     const w = params.width || 100;

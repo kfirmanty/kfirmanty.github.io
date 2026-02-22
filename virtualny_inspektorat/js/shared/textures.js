@@ -2,7 +2,8 @@ import * as THREE from 'three';
 
 const TEXTURE_REGISTRY = {
   sky: 'assets/textures/sky.png',
-  marble: 'assets/textures/marble.png'
+  marble: 'assets/textures/marble.png',
+  checkerboard: 'assets/textures/checkerboard.png'
 };
 
 const TEXTURE_OPTIONS = ['none', ...Object.keys(TEXTURE_REGISTRY)];

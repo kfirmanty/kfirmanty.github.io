@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PLAYER_HEIGHT } from './constants.js';
 import { GeometryBuilders, COMPOUND_TYPES } from './shared/geometry.js';
 import { createMaterial } from './shared/materials.js';
+import { applyPSXEffects } from './shaders.js';
 
 export class SceneLoader {
   constructor(game) {
@@ -28,6 +29,8 @@ export class SceneLoader {
     const interactables = [];
     const collisionMeshes = [];
     const spawnPoint = data.spawn || { position: [0, PLAYER_HEIGHT, 0], rotation: [0, 0, 0] };
+    const vertexSnap = data.vertexSnap || 0;
+    const affineWarp = data.affineWarp || false;
 
     // Sky
     if (data.sky) {
@@ -109,14 +112,29 @@ export class SceneLoader {
     // Objects
     if (data.objects) {
       for (const objDef of data.objects) {
-        const result = this.buildObject(objDef);
+        const result = this.buildObject(objDef, vertexSnap, affineWarp);
         if (!result) continue;
         const { object, collision } = result;
+
+        // Conditional visibility
+        const visible = this._checkVisibility(objDef, this.game.gameState);
+        object.visible = visible;
+        if (objDef.visibleWhen || objDef.hiddenWhen) {
+          object.userData.visibilityRule = {
+            visibleWhen: objDef.visibleWhen,
+            hiddenWhen: objDef.hiddenWhen
+          };
+        }
 
         scene.add(object);
 
         if (collision) {
-          collisionMeshes.push({ object, options: objDef.collisionOptions || {} });
+          const options = { ...(objDef.collisionOptions || {}) };
+          // Mark trigger zones
+          if (options.trigger) {
+            options.triggerId = objDef.id;
+          }
+          collisionMeshes.push({ object, options });
         }
 
         if (objDef.interactable) {
@@ -136,11 +154,21 @@ export class SceneLoader {
       }
     }
 
-    return { scene, interactables, collisionMeshes, spawnPoint, data };
+    return {
+      scene, interactables, collisionMeshes, spawnPoint, data,
+      postProcessing: data.postProcessing || null
+    };
   }
 
-  buildObject(def) {
+  buildObject(def, vertexSnap, affineWarp) {
     const mat = createMaterial(def.material);
+
+    // Apply PSX effects (vertex jitter + affine warping)
+    const hasTexture = !!def.material?.texture;
+    if (vertexSnap > 0 || (affineWarp && hasTexture)) {
+      applyPSXEffects(mat, vertexSnap, affineWarp && hasTexture);
+    }
+
     let object;
     let isMesh = true;
 
@@ -152,11 +180,20 @@ export class SceneLoader {
       }
       object = GeometryBuilders[def.type](params);
       isMesh = false;
+
+      // Apply PSX effects to all child meshes in compound types
+      if (vertexSnap > 0 || affineWarp) {
+        object.traverse((child) => {
+          if (child.isMesh && child.material) {
+            applyPSXEffects(child.material, vertexSnap, false); // No affine on compound internals
+          }
+        });
+      }
     } else if (def.type === 'group') {
       object = new THREE.Group();
       if (def.children) {
         for (const childDef of def.children) {
-          const childResult = this.buildObject(childDef);
+          const childResult = this.buildObject(childDef, vertexSnap, affineWarp);
           if (childResult) object.add(childResult.object);
         }
       }
@@ -199,6 +236,17 @@ export class SceneLoader {
       object,
       collision: def.collision ?? false
     };
+  }
+
+  // Check if an object should be visible based on game state
+  _checkVisibility(def, gameState) {
+    if (def.visibleWhen) {
+      return !!gameState[def.visibleWhen];
+    }
+    if (def.hiddenWhen) {
+      return !gameState[def.hiddenWhen];
+    }
+    return true;
   }
 
   applyAnimation(object, animDef) {

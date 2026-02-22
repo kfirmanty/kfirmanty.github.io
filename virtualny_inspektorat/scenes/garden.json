@@ -1,0 +1,812 @@
+{
+  "id": "garden",
+  "title": "T H E   A R C H I V E",
+  "onStart": {
+    "dialogue": {
+      "nodes": [
+        {
+          "text": "You have entered the A R C H I V E. It has been... unattended for some time."
+        },
+        {
+          "text": "Nature has filed its own claim over the shelves. The filing system appears to be B O T A N I C A L."
+        }
+      ]
+    }
+  },
+  "sky": {
+    "type": "gradient",
+    "stops": [
+      [
+        0,
+        "#b8c0b8"
+      ],
+      [
+        0.3,
+        "#98b898"
+      ],
+      [
+        0.6,
+        "#88a888"
+      ],
+      [
+        1,
+        "#98a898"
+      ]
+    ]
+  },
+  "fog": {
+    "color": "#90b090",
+    "near": 5,
+    "far": 35
+  },
+  "ambient": {
+    "color": "#a8c8a0",
+    "intensity": 0.9
+  },
+  "lights": [
+    {
+      "type": "directional",
+      "color": "#fff8e0",
+      "intensity": 1,
+      "position": [
+        10,
+        18,
+        8
+      ]
+    },
+    {
+      "type": "point",
+      "color": "#05d9a6",
+      "intensity": 0.6,
+      "distance": 15,
+      "position": [
+        0,
+        4,
+        0
+      ]
+    },
+    {
+      "type": "point",
+      "color": "#b967ff",
+      "intensity": 0.4,
+      "distance": 12,
+      "position": [
+        10,
+        3,
+        -6
+      ]
+    },
+    {
+      "type": "point",
+      "color": "#ff71ce",
+      "intensity": 0.3,
+      "distance": 10,
+      "position": [
+        -6,
+        3,
+        4
+      ]
+    }
+  ],
+  "postProcessing": {
+    "ditherIntensity": 0.06,
+    "colorLevels": 24,
+    "chromaticAberration": 0.001,
+    "vignette": 0.3,
+    "bloomThreshold": 0.7,
+    "bloomStrength": 0.3
+  },
+  "spawn": {
+    "position": [
+      0,
+      6,
+      20
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "objects": [
+    {
+      "id": "terrain",
+      "type": "terrain",
+      "params": {
+        "width": 50,
+        "depth": 50,
+        "segments": 36,
+        "hillHeight": 1.5,
+        "hillFrequency": 0.1,
+        "seed": 7,
+        "bowl": 0
+      },
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "material": {
+        "color": "#3a6a2a",
+        "roughness": 0.9,
+        "metalness": 0.05
+      },
+      "collision": true,
+      "collisionOptions": {
+        "terrain": true
+      }
+    },
+    {
+      "id": "stone_sign",
+      "type": "box",
+      "params": {
+        "width": 1.5,
+        "height": 1.8,
+        "depth": 0.3
+      },
+      "position": [
+        4,
+        2.5,
+        10
+      ],
+      "material": {
+        "color": "#8a8a7a",
+        "roughness": 0.8,
+        "metalness": 0.1
+      },
+      "collision": true,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Stone Sign",
+        "text": "ARCHIVE PROCEDURE (etched in stone): Present credential. Receive clue. Speak Word. Retrieve code. Present code. — NOTE: The procedure has not been updated since the world was G R E E N."
+      }
+    },
+    {
+      "id": "fountain_base",
+      "type": "cylinder",
+      "params": {
+        "radius": 2,
+        "height": 0.8,
+        "segments": 8
+      },
+      "position": [
+        0,
+        0.4,
+        0
+      ],
+      "material": {
+        "color": "#7a7a6a",
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "collision": true
+    },
+    {
+      "id": "fountain_pillar",
+      "type": "cylinder",
+      "params": {
+        "radius": 0.25,
+        "height": 2.5,
+        "segments": 6
+      },
+      "position": [
+        0,
+        2.05,
+        0
+      ],
+      "material": {
+        "color": "#7a7a6a",
+        "roughness": 0.5,
+        "metalness": 0.3
+      },
+      "collision": true
+    },
+    {
+      "id": "fountain_basin",
+      "type": "torus",
+      "params": {
+        "radius": 1.5,
+        "tube": 0.2,
+        "radialSegments": 6,
+        "tubularSegments": 8
+      },
+      "position": [
+        0,
+        0.9,
+        0
+      ],
+      "material": {
+        "color": "#6a8a6a",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.4,
+        "metalness": 0.3
+      },
+      "collision": false,
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "✧ Enter Access Code at Fountain",
+        "requires": "has_access_code",
+        "requiresText": "The Fountain Terminal is locked. A faded label reads: 'ACCESS CODE REQUIRED. Code available beyond the Sealed Arch. Arch requires the Word.'",
+        "dialogue": {
+          "nodes": [
+            {
+              "text": "Access Code (Expired) accepted. The system notes that the code expired seven centuries ago, but agrees that this is F I N E."
+            },
+            {
+              "text": "The Fountain activates. Water rises, glowing teal. A passage opens below — descending into the V E R I F I C A T I O N   D E P A R T M E N T."
+            }
+          ]
+        },
+        "onComplete": {
+          "type": "transition",
+          "target": "vault"
+        }
+      }
+    },
+    {
+      "id": "keeper_pedestal",
+      "type": "box",
+      "params": {
+        "width": 1.5,
+        "height": 1.2,
+        "depth": 1.5
+      },
+      "position": [
+        4,
+        0.6,
+        -2
+      ],
+      "material": {
+        "color": "#5a6a5a",
+        "roughness": 0.5,
+        "metalness": 0.3
+      },
+      "collision": true
+    },
+    {
+      "id": "keeper_head",
+      "type": "head",
+      "params": {
+        "scale": 1.2
+      },
+      "position": [
+        4,
+        2.2,
+        -2
+      ],
+      "material": {
+        "color": "#6a8a6a",
+        "roughness": 0.4,
+        "metalness": 0.2,
+        "flatShading": true
+      },
+      "animation": {
+        "type": "bob",
+        "speed": 0.6,
+        "amplitude": 0.1,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "☉ Speak to the Archivist",
+        "requires": "has_credential",
+        "requiresText": "The Archivist's stone nostrils flare. It sniffs the air and turns away. It seems to require some kind of... olfactory credential.",
+        "dialogue": {
+          "nodes": [
+            {
+              "speaker": "T H E   A R C H I V I S T",
+              "text": "You bring the correct scent... yes. I file all records by S M E L L. You smell like the last petitioner. And the one before that."
+            },
+            {
+              "speaker": "T H E   A R C H I V I S T",
+              "text": "You want the Word for the Sealed Arch? I catalogued it once... under G R E E N   M I N E R A L S. Or was it 'things that are not plants'? The categories overlap."
+            },
+            {
+              "speaker": "T H E   A R C H I V I S T",
+              "text": "I cannot remember the exact Word. But I remember it was the name of a S T O N E — the green one. Check the Obelisk. I filed the mineral registry there. Under 'tall things.'"
+            },
+            {
+              "speaker": "T H E   A R C H I V I S T",
+              "text": "The code beyond the Arch is expired. But we have not updated the system. This is... A D V A N T A G E O U S."
+            }
+          ]
+        },
+        "onComplete": {
+          "type": "setState",
+          "key": "keeper_spoke",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "bloom",
+      "type": "sphere",
+      "params": {
+        "radius": 0.25,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -6,
+        1.5,
+        4
+      ],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 1.5,
+        "roughness": 0.1,
+        "metalness": 0.3
+      },
+      "animation": {
+        "type": "float",
+        "speed": 1,
+        "amplitude": 0.15,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "pickup",
+        "hoverText": "⊕ Take the Olfactory Credential",
+        "itemName": "O L F A C T O R Y   C R E D E N T I A L",
+        "stateKey": "has_credential"
+      }
+    },
+    {
+      "id": "flower_1",
+      "type": "cone",
+      "params": {
+        "radius": 0.5,
+        "height": 0.8,
+        "segments": 5
+      },
+      "position": [
+        -4.5,
+        0.5,
+        3
+      ],
+      "material": {
+        "color": "#ff71ce",
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "flower_2",
+      "type": "cone",
+      "params": {
+        "radius": 0.4,
+        "height": 0.7,
+        "segments": 5
+      },
+      "position": [
+        -7,
+        1,
+        5
+      ],
+      "material": {
+        "color": "#b967ff",
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "flower_3",
+      "type": "cone",
+      "params": {
+        "radius": 0.6,
+        "height": 0.9,
+        "segments": 5
+      },
+      "position": [
+        -6.5,
+        1,
+        2.5
+      ],
+      "material": {
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "arch_pillar_l",
+      "type": "column",
+      "params": {
+        "radius": 0.3,
+        "height": 3.5
+      },
+      "position": [
+        6,
+        1,
+        -6
+      ],
+      "material": {
+        "color": "#7a7a6a",
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "collision": true
+    },
+    {
+      "id": "arch_pillar_r",
+      "type": "column",
+      "params": {
+        "radius": 0.3,
+        "height": 3.5
+      },
+      "position": [
+        10,
+        1,
+        -6
+      ],
+      "material": {
+        "color": "#7a7a6a",
+        "roughness": 0.6,
+        "metalness": 0.2
+      },
+      "collision": true
+    },
+    {
+      "id": "sealed_arch",
+      "type": "pediment",
+      "params": {
+        "width": 5,
+        "height": 1.5,
+        "depth": 0.5
+      },
+      "position": [
+        8,
+        4.5,
+        -6
+      ],
+      "material": {
+        "color": "#6a8a6a",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.5,
+        "metalness": 0.3
+      },
+      "collision": false,
+      "interactable": {
+        "type": "dialogue",
+        "hoverText": "✧ Speak to the Sealed Arch",
+        "requires": "keeper_spoke",
+        "requiresText": "The Arch is sealed. A plaque reads: 'VOICE-ACTIVATED SECURITY. Authorized Word required. Unauthorized words will be F I L E D.'",
+        "dialogue": {
+          "nodes": [
+            {
+              "text": "The Arch's voice-activation system crackles to life:"
+            },
+            {
+              "text": "P L E A S E   S T A T E   T H E   W O R D. You have four attempts before your existence is Q U E S T I O N E D.",
+              "choices": [
+                {
+                  "text": "Malachite",
+                  "correct": true,
+                  "response": "W O R D   A C C E P T E D. The Arch unseals. Your pronunciation has been rated: A D E Q U A T E."
+                },
+                {
+                  "text": "Obsidian",
+                  "correct": false,
+                  "response": "I N C O R R E C T. Obsidian is black. The Word is not black. This has been noted in your file."
+                },
+                {
+                  "text": "Chrysalis",
+                  "correct": false,
+                  "response": "I N C O R R E C T. Chrysalis is golden. Golden is not the color of the Archive's heart."
+                },
+                {
+                  "text": "Alabaster",
+                  "correct": false,
+                  "response": "I N C O R R E C T. Alabaster is white and forgettable. The Word is more... V I V I D."
+                }
+              ]
+            }
+          ]
+        },
+        "onSuccess": {
+          "type": "setState",
+          "key": "arch_open",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "root_key",
+      "type": "torus",
+      "params": {
+        "radius": 0.3,
+        "tube": 0.08,
+        "radialSegments": 5,
+        "tubularSegments": 8
+      },
+      "position": [
+        8,
+        2.5,
+        -9
+      ],
+      "material": {
+        "color": "#05d9a6",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 1,
+        "roughness": 0.2,
+        "metalness": 0.5
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.8,
+        "amplitude": 0.1,
+        "offset": 0
+      },
+      "collision": false,
+      "interactable": {
+        "type": "pickup",
+        "hoverText": "⊕ Take the Access Code",
+        "requires": "arch_open",
+        "requiresText": "The Access Code hovers beyond the Sealed Arch. You cannot reach it without the W O R D.",
+        "itemName": "A C C E S S   C O D E   ( E X P I R E D )",
+        "stateKey": "has_access_code"
+      }
+    },
+    {
+      "id": "obelisk",
+      "type": "box",
+      "params": {
+        "width": 0.6,
+        "height": 3,
+        "depth": 0.6
+      },
+      "position": [
+        -8,
+        2,
+        -5
+      ],
+      "rotation": [
+        0,
+        0,
+        8
+      ],
+      "material": {
+        "color": "#8a8a7a",
+        "roughness": 0.8,
+        "metalness": 0.1
+      },
+      "collision": true,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Obelisk",
+        "text": "OFFICIAL MINERAL REGISTRY (Archive Section 7, filed under 'tall things'): O B S I D I A N — black, volcanic, sharp. C H R Y S A L I S — golden, metamorphic, patient. M A L A C H I T E — green, banded, the living stone. A L A B A S T E R — white, soft, forgettable."
+      }
+    },
+    {
+      "id": "tree1_trunk",
+      "type": "cylinder",
+      "params": {
+        "radiusTop": 0.15,
+        "radiusBottom": 0.25,
+        "height": 4.5,
+        "segments": 6
+      },
+      "position": [
+        12,
+        2.25,
+        12
+      ],
+      "material": {
+        "color": "#5a3a1a",
+        "roughness": 0.9,
+        "metalness": 0
+      },
+      "collision": true
+    },
+    {
+      "id": "tree1_canopy",
+      "type": "sphere",
+      "params": {
+        "radius": 2,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        12,
+        5.5,
+        12
+      ],
+      "material": {
+        "color": "#2a7a2a",
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "tree2_trunk",
+      "type": "cylinder",
+      "params": {
+        "radiusTop": 0.12,
+        "radiusBottom": 0.2,
+        "height": 5,
+        "segments": 6
+      },
+      "position": [
+        -14,
+        2.5,
+        14
+      ],
+      "material": {
+        "color": "#4a2a10",
+        "roughness": 0.9,
+        "metalness": 0
+      },
+      "collision": true
+    },
+    {
+      "id": "tree2_canopy",
+      "type": "sphere",
+      "params": {
+        "radius": 2.2,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -14,
+        6,
+        14
+      ],
+      "material": {
+        "color": "#1a6a1a",
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "tree3_trunk",
+      "type": "cylinder",
+      "params": {
+        "radiusTop": 0.18,
+        "radiusBottom": 0.28,
+        "height": 5.5,
+        "segments": 6
+      },
+      "position": [
+        -18,
+        2.75,
+        -2
+      ],
+      "material": {
+        "color": "#5a3a1a",
+        "roughness": 0.9,
+        "metalness": 0
+      },
+      "collision": true
+    },
+    {
+      "id": "tree3_canopy",
+      "type": "sphere",
+      "params": {
+        "radius": 2.5,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        -18,
+        6.5,
+        -2
+      ],
+      "material": {
+        "color": "#2a7a2a",
+        "roughness": 0.8,
+        "metalness": 0
+      },
+      "collision": false
+    },
+    {
+      "id": "flower_arch_1",
+      "type": "torus",
+      "params": {
+        "radius": 2,
+        "tube": 0.1,
+        "radialSegments": 6,
+        "tubularSegments": 12
+      },
+      "position": [
+        -3.5,
+        2.5,
+        8
+      ],
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.5,
+        "metalness": 0.2
+      },
+      "collision": false
+    },
+    {
+      "id": "rock1",
+      "type": "sphere",
+      "params": {
+        "radius": 0.7,
+        "widthSegments": 5,
+        "heightSegments": 3
+      },
+      "position": [
+        8,
+        0.2,
+        8
+      ],
+      "scale": [
+        1,
+        0.5,
+        0.9
+      ],
+      "material": {
+        "color": "#5a5a4a",
+        "roughness": 0.95,
+        "metalness": 0
+      },
+      "collision": true
+    },
+    {
+      "id": "ruin_col1",
+      "type": "column",
+      "params": {
+        "radius": 0.25,
+        "height": 2.5
+      },
+      "position": [
+        -12,
+        1,
+        8
+      ],
+      "material": {
+        "color": "#7a7a6a",
+        "roughness": 0.7,
+        "metalness": 0.2
+      },
+      "collision": true
+    },
+    {
+      "id": "garden_orb",
+      "type": "sphere",
+      "params": {
+        "radius": 0.35,
+        "widthSegments": 6,
+        "heightSegments": 4
+      },
+      "position": [
+        0,
+        4,
+        0
+      ],
+      "material": {
+        "color": "#05d9a6",
+        "emissive": "#05d9a6",
+        "emissiveIntensity": 1.2,
+        "roughness": 0.1
+      },
+      "animation": {
+        "type": "float",
+        "speed": 0.6,
+        "amplitude": 0.3,
+        "offset": 0
+      },
+      "collision": false
+    }
+  ]
+}

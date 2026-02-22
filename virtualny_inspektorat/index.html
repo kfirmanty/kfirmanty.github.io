@@ -210,6 +210,9 @@
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
+      max-width: 70%;
+      text-align: center;
+      line-height: 1.4;
     }
 
     #notification.show {
@@ -327,6 +330,60 @@
       text-shadow: 0 0 8px #ff71ce88;
     }
 
+    /* Brightness slider */
+    #brightness-setting {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    #brightness-setting label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #b967ff88;
+      letter-spacing: 4px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #brightness-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 200px;
+      height: 4px;
+      background: #b967ff44;
+      border-radius: 0;
+      outline: none;
+      cursor: none;
+    }
+
+    #brightness-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 16px;
+      background: #fffb96;
+      border: none;
+      box-shadow: 0 0 8px #fffb9688;
+      cursor: none;
+    }
+
+    #brightness-slider::-moz-range-thumb {
+      width: 12px;
+      height: 16px;
+      background: #fffb96;
+      border: none;
+      box-shadow: 0 0 8px #fffb9688;
+      cursor: none;
+    }
+
+    #brightness-value {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: #fffb96;
+      margin-left: 12px;
+      text-shadow: 0 0 6px #fffb9644;
+    }
+
     /* Loading */
     #loading {
       position: fixed;
@@ -376,6 +433,20 @@
       transform: translate(-50%, -50%);
       z-index: 150;
       display: none;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff71ce;
+      box-shadow: 0 0 6px #ff71ce88, 0 0 12px #ff71ce44;
+      transition: all 0.15s;
+      pointer-events: none;
+    }
+
+    #crosshair.interact {
+      width: 10px;
+      height: 10px;
+      background: #01cdfe;
+      box-shadow: 0 0 8px #01cdfe88, 0 0 16px #01cdfe44;
     }
   </style>
 </head>
@@ -388,12 +459,20 @@
     <h2>I N S P E K T O R A T</h2>
     <button id="start-btn">E N T E R</button>
     <div class="hint">WASD to move · Mouse to look · Click to interact</div>
+    <div id="brightness-setting">
+      <label>B R I G H T N E S S</label>
+      <input type="range" id="brightness-slider" min="0.5" max="2.0" step="0.1" value="1.0">
+      <span id="brightness-value">1.0</span>
+    </div>
     <div id="scene-select">
       <div class="scene-select-label">S C E N E S</div>
       <div class="scene-select-buttons">
         <button class="scene-btn" data-scene="temple_exterior">Temple Exterior</button>
         <button class="scene-btn" data-scene="temple_interior">Temple Interior</button>
         <button class="scene-btn" data-scene="lake">Lake</button>
+        <button class="scene-btn" data-scene="garden">Garden</button>
+        <button class="scene-btn" data-scene="vault">Vault</button>
+        <button class="scene-btn" data-scene="spire">Spire</button>
       </div>
     </div>
   </div>
@@ -401,6 +480,7 @@
   <canvas id="game-canvas"></canvas>
   <div id="scanlines"></div>
   <div id="cursor"></div>
+  <div id="crosshair"></div>
 
   <div id="hud"></div>
 

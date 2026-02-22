@@ -3,11 +3,22 @@ import { STEP_HEIGHT } from './constants.js';
 
 export class CollisionSystem {
   constructor() {
-    this.colliders = []; // { box: THREE.Box3, mesh: THREE.Mesh, walkable: bool, stepHeight: number }
+    this.colliders = []; // { box: THREE.Box3, mesh: THREE.Mesh, walkable: bool, stepHeight: number, trigger: bool }
+    this.terrains = []; // { mesh: THREE.Mesh }
+    this._terrainRay = new THREE.Raycaster();
+    this._terrainRayOrigin = new THREE.Vector3();
+    this._terrainRayDir = new THREE.Vector3(0, -1, 0);
+    this._activeTriggers = new Set(); // Currently overlapping trigger IDs
   }
 
   clear() {
     this.colliders = [];
+    this.terrains = [];
+    this._activeTriggers.clear();
+  }
+
+  addTerrain(mesh) {
+    this.terrains.push({ mesh });
   }
 
   addBox(mesh, options = {}) {
@@ -17,7 +28,9 @@ export class CollisionSystem {
       mesh,
       walkable: options.walkable || false,
       stepHeight: options.stepHeight || 0,
-      isStairs: options.isStairs || false
+      isStairs: options.isStairs || false,
+      trigger: options.trigger || false,
+      triggerId: options.triggerId || null
     });
   }
 
@@ -29,7 +42,7 @@ export class CollisionSystem {
   }
 
   // Check if a sphere (player) at position would collide
-  // Returns { collided, groundY, pushback }
+  // Returns { collided, groundY, pushback, slopeNormal, triggeredIds[] }
   checkPosition(pos, radius, height, prevY) {
     let groundY = -Infinity;
     let collided = false;
@@ -37,6 +50,8 @@ export class CollisionSystem {
     const playerTop = pos.y;
     const prevBottom = (prevY !== undefined ? prevY : pos.y) - height;
     const pushback = new THREE.Vector3();
+    const triggeredIds = [];
+    let slopeNormal = null;
 
     for (const c of this.colliders) {
       const box = c.box;
@@ -46,6 +61,18 @@ export class CollisionSystem {
       const inZ = pos.z >= box.min.z - radius && pos.z <= box.max.z + radius;
 
       if (inX && inZ) {
+        // Check vertical overlap for trigger zones
+        if (c.trigger) {
+          const overlapBottom = playerBottom < box.max.y;
+          const overlapTop = playerTop > box.min.y;
+          if (overlapBottom && overlapTop &&
+              pos.x > box.min.x - radius && pos.x < box.max.x + radius &&
+              pos.z > box.min.z - radius && pos.z < box.max.z + radius) {
+            if (c.triggerId) triggeredIds.push(c.triggerId);
+          }
+          continue; // Triggers don't block movement
+        }
+
         // ── GROUND DETECTION ──
         // Case 1: Player feet are near or on the surface top
         if (Math.abs(playerBottom - box.max.y) < 0.5 && box.max.y > groundY) {
@@ -70,8 +97,8 @@ export class CollisionSystem {
       }
 
       // ── WALL COLLISION ──
-      // Only check wall pushback for boxes whose top is significantly above player feet
-      // (i.e., we can't step onto them)
+      if (c.trigger) continue; // Triggers don't block
+
       const closestX = Math.max(box.min.x, Math.min(pos.x, box.max.x));
       const closestZ = Math.max(box.min.z, Math.min(pos.z, box.max.z));
       const dx = pos.x - closestX;
@@ -103,6 +130,26 @@ export class CollisionSystem {
       }
     }
 
-    return { collided, groundY, pushback };
+    // Terrain ground detection via raycast
+    for (const t of this.terrains) {
+      this._terrainRayOrigin.set(pos.x, pos.y + 10, pos.z);
+      this._terrainRay.set(this._terrainRayOrigin, this._terrainRayDir);
+      this._terrainRay.far = 50;
+      const hits = this._terrainRay.intersectObject(t.mesh);
+      if (hits.length > 0) {
+        const terrainY = hits[0].point.y;
+        if (terrainY > groundY) {
+          groundY = terrainY;
+          // Get slope normal for sliding
+          if (hits[0].face) {
+            slopeNormal = hits[0].face.normal.clone();
+            // Transform normal from local to world space
+            slopeNormal.transformDirection(t.mesh.matrixWorld);
+          }
+        }
+      }
+    }
+
+    return { collided, groundY, pushback, slopeNormal, triggeredIds };
   }
 }

@@ -180,8 +180,31 @@ def generate_marble():
     write_png(os.path.join(OUTDIR, 'marble.png'), SIZE, SIZE, pixels)
 
 
+def generate_checkerboard():
+    """Grayscale checkerboard for POV-Ray raytracer aesthetic."""
+    print('Generating checkerboard.png...')
+    noise, _ = make_perlin(seed=55)
+    pixels = []
+    SQUARE = 8  # 8px per square = 8x8 grid on 64x64
+
+    for y in range(SIZE):
+        for x in range(SIZE):
+            sx, sy = x // SQUARE, y // SQUARE
+            is_light = (sx + sy) % 2 == 0
+            base = 248 if is_light else 96
+            # Subtle noise for VGA texture grain
+            nx, ny = x / SIZE, y / SIZE
+            n = noise(nx * 16, ny * 16) * 8
+            v = base + n
+            v = int(v / 8) * 8
+            pixels.append((clamp(v), clamp(v), clamp(v)))
+
+    write_png(os.path.join(OUTDIR, 'checkerboard.png'), SIZE, SIZE, pixels)
+
+
 if __name__ == '__main__':
     os.makedirs(OUTDIR, exist_ok=True)
     generate_sky()
     generate_marble()
+    generate_checkerboard()
     print('Done!')

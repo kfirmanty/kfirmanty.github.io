@@ -8,7 +8,9 @@ export const DEFAULT_PARAMS = {
   column: { radius: 0.35, height: 4 },
   stairs: { steps: 8, stepWidth: 6, stepHeight: 0.25, stepDepth: 0.4 },
   pediment: { width: 8, height: 2, depth: 0.5 },
-  head: { scale: 1 }
+  head: { scale: 1 },
+  terrain: { width: 40, depth: 40, segments: 32, hillHeight: 3, hillFrequency: 0.15, seed: 0, bowl: 0 },
+  group: {}
 };
 
 export const DEFAULT_MATERIAL = { color: '#cccccc', roughness: 0.8, metalness: 0.1 };
@@ -63,5 +65,15 @@ export const PARAM_SCHEMA = {
   ],
   head: [
     { key: 'scale', label: 'Scale', type: 'number', step: 0.1, min: 0.1 }
-  ]
+  ],
+  terrain: [
+    { key: 'width', label: 'Width', type: 'number', step: 1 },
+    { key: 'depth', label: 'Depth', type: 'number', step: 1 },
+    { key: 'segments', label: 'Segments', type: 'number', step: 1, min: 4 },
+    { key: 'hillHeight', label: 'Hill H', type: 'number', step: 0.5 },
+    { key: 'hillFrequency', label: 'Hill Freq', type: 'number', step: 0.01 },
+    { key: 'seed', label: 'Seed', type: 'number', step: 0.1 },
+    { key: 'bowl', label: 'Bowl', type: 'number', step: 0.5 }
+  ],
+  group: []
 };

@@ -5,7 +5,13 @@
     "dialogue": {
       "nodes": [
         {
-          "text": "You have been C H O S E N ."
+          "text": "You have been S U M M O N E D."
+        },
+        {
+          "text": "Your appointment at the V I R T U A L N Y   I N S P E K T O R A T was scheduled seven years ago. You must not be late."
+        },
+        {
+          "text": "You are here to obtain your Z A S V I E D C Z E N I E — your Certificate of Existence."
         }
       ]
     }
@@ -62,6 +68,14 @@
     "height": 200,
     "level": -1.5,
     "color": "#2244aa"
+  },
+  "postProcessing": {
+    "ditherIntensity": 0.06,
+    "colorLevels": 24,
+    "chromaticAberration": 0.001,
+    "vignette": 0.3,
+    "bloomThreshold": 0.8,
+    "bloomStrength": 0.3
   },
   "spawn": {
     "position": [0, 2.2, 10],
@@ -389,42 +403,42 @@
       },
       "interactable": {
         "type": "dialogue",
-        "hoverText": "☉ Speak to the Oracle",
+        "hoverText": "☉ Speak to the Receptionist",
         "dialogue": {
           "nodes": [
             {
-              "speaker": "T H E   O R A C L E",
-              "text": "W E L C O M E,   T R A V E L E R . . .",
+              "speaker": "R E C E P T I O N I S T",
+              "text": "T A K E   A   N U M B E R . . .   Your number is: I N F I N I T Y.  Please wait until your number is called.",
               "next": 1
             },
             {
-              "speaker": "T H E   O R A C L E",
-              "text": "You stand at the threshold of the V I R T U A L N Y I N S P E K T O R A T. To enter, you must prove your mind is sharp enough to navigate its halls.",
+              "speaker": "R E C E P T I O N I S T",
+              "text": "...Actually, you appear to have an A P P O I N T M E N T. Seven years overdue. This is... acceptable.",
               "next": 2
             },
             {
-              "speaker": "T H E   O R A C L E",
-              "text": "Answer me this: I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. I have roads, but no cars. What am I?",
+              "speaker": "R E C E P T I O N I S T",
+              "text": "Before you may enter, you must answer the mandatory S E C U R I T Y   Q U E S T I O N. State the purpose of your visit.",
               "choices": [
                 {
-                  "text": "A map",
+                  "text": "To obtain my certificate",
                   "correct": true,
-                  "response": "Y E S . . .   You see beyond the surface. The temple opens its mouth to receive you. Enter, and discover what lies within the dream."
+                  "response": "The Z A S V I E D C Z E N I E. Your request has been... L O G G E D. Proceed to the Hall of Forms. Take nothing that is not yours. Take everything that is required."
                 },
                 {
-                  "text": "A painting",
+                  "text": "To seek the truth",
                   "correct": false,
-                  "response": "A painting has detail, but not the structure I describe. Think again, traveler..."
+                  "response": "Truth is not a service we provide. Try the Department of Philosophy. It closed seven centuries ago."
                 },
                 {
-                  "text": "A computer",
+                  "text": "To gain power",
                   "correct": false,
-                  "response": "Technology is a mirror of the mind, but it is not what I am. Consider my words once more..."
+                  "response": "Power is reserved for management. Please state your actual purpose."
                 },
                 {
-                  "text": "A dream",
+                  "text": "I don't remember",
                   "correct": false,
-                  "response": "Dreams are vast and formless. What I am is more... defined. Try again..."
+                  "response": "You remember. You have always remembered. Please consult your original summons."
                 }
               ]
             }
@@ -465,9 +479,9 @@
       "material": {
         "color": "#d162a4",
         "emissive": "#d162a4",
-        "emissiveIntensity": 0.3,
-        "roughness": 0.2,
-        "metalness": 0.8
+        "emissiveIntensity": 0.05,
+        "roughness": 0.05,
+        "metalness": 0.95
       },
       "animation": {
         "type": "float",
@@ -489,9 +503,9 @@
       "material": {
         "color": "#05d9a6",
         "emissive": "#05d9a6",
-        "emissiveIntensity": 0.2,
-        "roughness": 0.2,
-        "metalness": 0.8
+        "emissiveIntensity": 0.05,
+        "roughness": 0.05,
+        "metalness": 0.95
       },
       "animation": {
         "type": "float",
@@ -513,9 +527,9 @@
       "material": {
         "color": "#d162a4",
         "emissive": "#d162a4",
-        "emissiveIntensity": 0.3,
-        "roughness": 0.2,
-        "metalness": 0.8
+        "emissiveIntensity": 0.05,
+        "roughness": 0.05,
+        "metalness": 0.95
       },
       "animation": {
         "type": "float",
@@ -525,53 +539,65 @@
       },
       "collision": false
     },
+
     {
-      "id": "orb_green_2",
-      "type": "sphere",
-      "params": {
-        "radius": 1.2,
-        "widthSegments": 8,
-        "heightSegments": 6
-      },
-      "position": [10, 9, -10],
+      "_comment": "Bureaucratic flavor objects",
+      "id": "sign_hours",
+      "type": "box",
+      "params": { "width": 1.5, "height": 1, "depth": 0.1 },
+      "position": [7, 2.5, 5],
+      "rotation": [0, -30, 0],
       "material": {
-        "color": "#05d9a6",
-        "emissive": "#05d9a6",
-        "emissiveIntensity": 0.3,
-        "roughness": 0.2,
-        "metalness": 0.8
+        "color": "#c8b850",
+        "emissive": "#fffb96",
+        "emissiveIntensity": 0.15,
+        "roughness": 0.6,
+        "metalness": 0.2
       },
-      "animation": {
-        "type": "float",
-        "speed": 0.7,
-        "amplitude": 0.8,
-        "offset": 3
-      },
-      "collision": false
+      "collision": true,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Sign",
+        "text": "OFFICE HOURS: A L W A Y S   A N D   N E V E R. Please arrive on time. Time is a suggestion."
+      }
     },
     {
-      "id": "orb_purple_1",
-      "type": "sphere",
-      "params": {
-        "radius": 0.8,
-        "widthSegments": 8,
-        "heightSegments": 6
-      },
-      "position": [12, 3, 10],
+      "id": "bulletin_board",
+      "type": "box",
+      "params": { "width": 2, "height": 1.5, "depth": 0.1 },
+      "position": [-7, 2.5, 0],
+      "rotation": [0, 30, 0],
       "material": {
-        "color": "#b967ff",
-        "emissive": "#b967ff",
-        "emissiveIntensity": 0.4,
-        "roughness": 0.2,
-        "metalness": 0.8
+        "color": "#8a7a5a",
+        "roughness": 0.8,
+        "metalness": 0.1
       },
-      "animation": {
-        "type": "float",
-        "speed": 0.9,
-        "amplitude": 0.6,
-        "offset": 5
+      "collision": true,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Bulletin Board",
+        "text": "NOTICE: All petitioners must present Form C-12 to exist in this corridor. Form C-12 is available in this corridor, but only to those who already exist. — NOTICE: The previous notice has been revoked. — NOTICE: The revocation of the previous notice has been revoked."
+      }
+    },
+    {
+      "id": "number_dispenser",
+      "type": "box",
+      "params": { "width": 0.5, "height": 0.8, "depth": 0.3 },
+      "position": [3, 1.5, 6],
+      "material": {
+        "color": "#fffb96",
+        "emissive": "#fffb96",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.3,
+        "metalness": 0.5
       },
-      "collision": false
+      "animation": { "type": "pulse", "speed": 1.0, "amplitude": 0.1, "offset": 0 },
+      "collision": true,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Take a Number",
+        "text": "Your number is ∞ - 1. Currently serving: 3."
+      }
     }
   ]
 }

@@ -1,3 +1,5 @@
+import { AudioSystem } from './audio.js';
+
 export class DialogueEngine {
   constructor(game) {
     this.game = game;
@@ -9,6 +11,7 @@ export class DialogueEngine {
     this.displayedText = '';
     this.typing = false;
     this.onComplete = null;
+    this.audio = new AudioSystem();
 
     this.overlay = document.getElementById('dialogue-overlay');
     this.speakerEl = document.getElementById('dialogue-speaker');
@@ -69,8 +72,13 @@ export class DialogueEngine {
     clearInterval(this.typewriterTimer);
     this.typewriterTimer = setInterval(() => {
       if (i < text.length) {
-        this.displayedText += text[i];
+        const ch = text[i];
+        this.displayedText += ch;
         this.textEl.textContent = this.displayedText;
+        // Play blip for visible characters (not spaces/punctuation pauses)
+        if (ch !== ' ' && ch !== '\n') {
+          this.audio.playTypingBlip(ch.charCodeAt(0));
+        }
         i++;
       } else {
         this.typing = false;

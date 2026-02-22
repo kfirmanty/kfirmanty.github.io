@@ -1,6 +1,6 @@
 {
   "id": "temple_interior",
-  "title": "B E P A T I E N T",
+  "title": "H A L L   O F   F O R M S",
   "sky": {
     "type": "gradient",
     "stops": [
@@ -43,11 +43,19 @@
     {
       "type": "point",
       "color": "#fffb96",
-      "intensity": 50.5,
+      "intensity": 1.5,
       "distance": 10,
       "position": [0, 4.4, 0]
     }
   ],
+  "postProcessing": {
+    "ditherIntensity": 0.08,
+    "colorLevels": 20,
+    "chromaticAberration": 0.0012,
+    "vignette": 0.5,
+    "bloomThreshold": 0.6,
+    "bloomStrength": 0.35
+  },
   "spawn": {
     "position": [0, 1.6, 8],
     "rotation": [0, 0, 0]
@@ -63,9 +71,11 @@
       },
       "position": [0, -0.25, 0],
       "material": {
-        "color": "#1a1a2e",
-        "roughness": 0.3,
-        "metalness": 0.7
+        "color": "#8070a0",
+        "roughness": 0.2,
+        "metalness": 0.8,
+        "texture": "checkerboard",
+        "textureRepeat": [8, 10]
       },
       "collision": true,
       "collisionOptions": {
@@ -280,9 +290,9 @@
       "collision": false,
       "interactable": {
         "type": "pickup",
-        "hoverText": "⊕ Pick up the D E C R E T",
-        "itemName": "D E C R E T",
-        "stateKey": "has_decret"
+        "hoverText": "⊕ Take Form Z-7/b",
+        "itemName": "F O R M   Z - 7 / b",
+        "stateKey": "has_form_z7b"
       }
     },
     {
@@ -312,16 +322,16 @@
       "collision": false,
       "interactable": {
         "type": "dialogue",
-        "hoverText": "✧ Touch the Crystal",
-        "requires": "has_decret",
-        "requiresText": "The crystal is dormant. It lacks power.",
+        "hoverText": "✧ Insert Form into Processing Terminal",
+        "requires": "has_form_z7b",
+        "requiresText": "The Processing Terminal hums expectantly. It requires a valid form.",
         "dialogue": {
           "nodes": [
             {
-              "text": "The D E C R E T dissolves into the crystal. Pure vapor energy surges through the chamber..."
+              "text": "Form Z-7/b (Application for Application) inserted. Processing..."
             },
             {
-              "text": "I N S P E K T O R A T regains its power. The walls shimmer and a passage opens..."
+              "text": "P R O C E S S I N G   C O M P L E T E. You have been issued Form Z-7/c (Confirmation of Application for Application). Please proceed to the Waiting Area."
             }
           ]
         },
@@ -415,42 +425,6 @@
       "collision": false
     },
     {
-      "id": "tile_glow_3",
-      "type": "box",
-      "params": {
-        "width": 2,
-        "height": 0.02,
-        "depth": 2
-      },
-      "position": [-3, 0.01, 3],
-      "material": {
-        "color": "#ff71ce",
-        "emissive": "#ff71ce",
-        "emissiveIntensity": 0.15,
-        "roughness": 0.3,
-        "metalness": 0.8
-      },
-      "collision": false
-    },
-    {
-      "id": "tile_glow_4",
-      "type": "box",
-      "params": {
-        "width": 2,
-        "height": 0.02,
-        "depth": 2
-      },
-      "position": [3, 0.01, 3],
-      "material": {
-        "color": "#b967ff",
-        "emissive": "#b967ff",
-        "emissiveIntensity": 0.15,
-        "roughness": 0.3,
-        "metalness": 0.8
-      },
-      "collision": false
-    },
-    {
       "id": "int_orb_1",
       "type": "sphere",
       "params": {
@@ -496,28 +470,108 @@
       },
       "collision": false
     },
+
     {
-      "id": "int_orb_3",
-      "type": "sphere",
-      "params": {
-        "radius": 0.2,
-        "widthSegments": 6,
-        "heightSegments": 4
-      },
-      "position": [3, 4, 4],
+      "_comment": "Decoy forms - wrong ones the player might grab first",
+      "id": "decoy_form_a",
+      "type": "cylinder",
+      "params": { "radius": 0.15, "height": 0.6, "segments": 6 },
+      "position": [-3, 0.3, -3],
       "material": {
-        "color": "#fffb96",
-        "emissive": "#fffb96",
-        "emissiveIntensity": 1.5,
-        "roughness": 0.1
+        "color": "#ff71ce",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.6,
+        "roughness": 0.2,
+        "metalness": 0.6
       },
-      "animation": {
-        "type": "float",
-        "speed": 0.9,
-        "amplitude": 0.3,
-        "offset": 4
+      "animation": { "type": "float", "speed": 1.5, "amplitude": 0.15, "offset": 1 },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "⊕ Take Form Z-7/a",
+        "text": "This is Form Z-7/a (Application for Consideration of Application). You need Form Z-7/b. They differ by a single comma. The comma is L O A D - B E A R I N G."
+      }
+    },
+    {
+      "id": "decoy_form_c",
+      "type": "cylinder",
+      "params": { "radius": 0.15, "height": 0.6, "segments": 6 },
+      "position": [-3, 0.3, 3],
+      "material": {
+        "color": "#b967ff",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.6,
+        "roughness": 0.2,
+        "metalness": 0.6
       },
-      "collision": false
+      "animation": { "type": "float", "speed": 1.5, "amplitude": 0.15, "offset": 3 },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "⊕ Take Form Z-7/c",
+        "text": "This is Form Z-7/c (Confirmation that an Application Might Exist). You cannot take what you have not yet earned."
+      }
+    },
+    {
+      "id": "decoy_form_d",
+      "type": "cylinder",
+      "params": { "radius": 0.15, "height": 0.6, "segments": 6 },
+      "position": [3, 0.3, 3],
+      "material": {
+        "color": "#01cdfe",
+        "emissive": "#01cdfe",
+        "emissiveIntensity": 0.6,
+        "roughness": 0.2,
+        "metalness": 0.6
+      },
+      "animation": { "type": "float", "speed": 1.5, "amplitude": 0.15, "offset": 5 },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "⊕ Take Form Z-0",
+        "text": "This is Form Z-0 (Proof of Nonexistence). This form certifies that you do N O T exist. Useful, but not what you came for."
+      }
+    },
+
+    {
+      "_comment": "Flavor objects",
+      "id": "regulation_sign",
+      "type": "box",
+      "params": { "width": 1.8, "height": 1, "depth": 0.08 },
+      "position": [-7, 2, 0],
+      "rotation": [0, 90, 0],
+      "material": {
+        "color": "#2a1a4a",
+        "emissive": "#b967ff",
+        "emissiveIntensity": 0.2,
+        "roughness": 0.4,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Regulation",
+        "text": "REGULATION §12.4: All forms must be submitted in triplicate. The original is for the Archive. The first copy is for the Void. The second copy is for Y O U, but you may not keep it."
+      }
+    },
+    {
+      "id": "patience_sign",
+      "type": "box",
+      "params": { "width": 2, "height": 0.6, "depth": 0.08 },
+      "position": [0, 4.5, 9.8],
+      "material": {
+        "color": "#1a1a2e",
+        "emissive": "#ff71ce",
+        "emissiveIntensity": 0.3,
+        "roughness": 0.3,
+        "metalness": 0.5
+      },
+      "collision": false,
+      "interactable": {
+        "type": "examine",
+        "hoverText": "✧ Read the Sign",
+        "text": "B E   P A T I E N T.   Your wait is important to us. Your existence, less so."
+      }
     }
   ]
 }
